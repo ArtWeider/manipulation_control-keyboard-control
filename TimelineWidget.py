@@ -42,8 +42,6 @@ class TimelineWidget:
                              )
         self.canvas.place(x=10, y=10)
 
-        # self.canvas.xscrollincrement = self.canvas.bbox("all")[2]
-
         self.canvas.bind("<MouseWheel>", self._on_mousewheel)
         self.canvas.bind("<Double-Button-1>", self.create_point)
 
