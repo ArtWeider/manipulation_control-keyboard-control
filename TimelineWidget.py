@@ -25,8 +25,6 @@ class TimelineWidget:
         elif self.scrollX > 2450:
             self.scrollX = 2450
 
-        print(self.scrollX)
-
     def __init__(self, root):
 
         self.root = root
