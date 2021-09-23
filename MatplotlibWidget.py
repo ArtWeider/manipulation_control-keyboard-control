@@ -20,7 +20,7 @@ class MatplotlibWidget:
             self.create_form(self.figure, root)  # Отображение рисунка над формой tkinter
 
         def create_plot(self):
-            fig = plt.figure(figsize=(cm2inch(10), cm2inch(10)), facecolor='silver', edgecolor='blue')
+            fig = plt.figure(figsize=(cm2inch(14), cm2inch(12)))
             ax_3d = fig.add_subplot(111, projection="3d")
 
             return fig, ax_3d
@@ -30,9 +30,8 @@ class MatplotlibWidget:
             figure.canvas.mpl_disconnect(figure.canvas.manager.key_press_handler_id)
             canvas = FigureCanvasTkAgg(figure, root)
             canvas.draw()
-            canvas.get_tk_widget().pack()
+            canvas.get_tk_widget().place(x=MatplotlibWidget.X+11, y=MatplotlibWidget.Y+15)
 
-            canvas.tkcanvas.pack()
 
     class CreatePoint:
         def __init__(self, root):
@@ -195,7 +194,7 @@ class MatplotlibWidget:
 
             # удаление точек
             if event.keysym == 'Delete':
-                print()  # не работет
+                pass  # не работет
             # отменить размещение
             elif event.keysym == 'Escape':
                 self.dictionaryUpdate(False)

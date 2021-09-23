@@ -40,7 +40,6 @@ class XYVisualisationWidget:
                                extent=abs(cfg.ManipulatorConfig.Z_ANGLE_LIMIT[0])+cfg.ManipulatorConfig.Z_ANGLE_LIMIT[1])
 
         display_min_x = (cfg.ManipulatorConfig.LIMIT_X[0] / cfg.ManipulatorConfig.LIMIT_X[1]) * circle_size
-        print(display_min_x)
         self.canvas.create_arc(self.canvasSize / 2 - display_min_x,
                                self.canvasSize / 2 - display_min_x,
                                self.canvasSize / 2 + display_min_x,
