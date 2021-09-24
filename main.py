@@ -12,12 +12,15 @@ from TimelineWidget import TimelineWidget
 from XYVisualisationWidget import XYVisualisationWidget
 from XZVisualisationWidget import XZVisualisationWidget
 from ControlPanelWidget import ControlPanelWidget
+from SavesManager import SavesManager
 
 
 class Main:
 
     root = None
     style = None
+
+    savesManager = None
 
     upperStatusBar = None
     savesWidget = None
@@ -48,13 +51,15 @@ class Main:
 
         self.root.configure(bg=cfg.MAIN_COLOR)
 
+        self.savesManager = SavesManager()
+
         self.upperStatusBar = UpperStatusBar()
-        self.savesWidget = SavesWidget()
+        self.savesWidget = SavesWidget(self)
         self.pointMenuWidget = PointMenuWidget()
         self.handVisualisationWidget = HandVisualisationWidget()
         self.savesMenuWidget = SavesMenuWidget()
         self.matplotlibWidget = MatplotlibWidget(self.root)
-        self.timelineWidget = TimelineWidget(self.root)
+        self.timelineWidget = TimelineWidget(self)
         self.xyVisualisationWidget = XYVisualisationWidget()
         self.xzVisualisationWidget = XZVisualisationWidget()
         self.controlPanelWidget = ControlPanelWidget()

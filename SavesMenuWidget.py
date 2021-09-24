@@ -25,7 +25,7 @@ class SavesMenuWidget:
                                bg=cfg.MAIN_COLOR,
                                bd=0,
                                fg=cfg.TEXT_COLOR,
-                               justify=CENTER
+                               justify=CENTER,
                                )
         self.nameEntry.place(x=13, y=10)
 
@@ -36,7 +36,7 @@ class SavesMenuWidget:
                                    fg=cfg.TEXT_COLOR,
                                    width=16,
                                    activebackground=cfg.BUTTON_ACTIVE_COLOR,
-                                   activeforeground=cfg.TEXT_COLOR
+                                   activeforeground=cfg.TEXT_COLOR,
                                    )
         self.createButton.place(x=12, y=35)
 
@@ -47,7 +47,8 @@ class SavesMenuWidget:
                                    fg=cfg.TEXT_COLOR,
                                    width=16,
                                    activebackground=cfg.BUTTON_ACTIVE_COLOR,
-                                   activeforeground=cfg.TEXT_COLOR
+                                   activeforeground=cfg.TEXT_COLOR,
+                                   state=DISABLED
                                    )
         self.deleteButton.place(x=12, y=65)
 
@@ -58,7 +59,8 @@ class SavesMenuWidget:
                                  fg=cfg.TEXT_COLOR,
                                  width=16,
                                  activebackground=cfg.BUTTON_ACTIVE_COLOR,
-                                 activeforeground=cfg.TEXT_COLOR
+                                 activeforeground=cfg.TEXT_COLOR,
+                                 state=DISABLED
                                    )
         self.saveButton.place(x=12, y=95)
 

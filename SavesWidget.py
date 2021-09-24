@@ -1,10 +1,12 @@
 from tkinter import *
 from tkinter import ttk
 from config import Cfg as cfg
-
+from SaveClass import Save
 
 
 class SavesWidget:
+
+    main = None
 
     mainFrame = None
     titleLabel = None
@@ -12,12 +14,16 @@ class SavesWidget:
     listBox = None
     scrollBar = None
 
+    currentSave = Save()
+
     X = 5 * cfg.SIZE_MULT
     Y = 30 * cfg.SIZE_MULT
     WIDTH = 200 * cfg.SIZE_MULT
     HEIGHT = 365 * cfg.SIZE_MULT
 
-    def __init__(self):
+    def __init__(self, main):
+
+        self.main = main
 
         self.mainFrame = ttk.Frame(style="RoundedFrame", width=self.WIDTH, height=self.HEIGHT)
         self.mainFrame.place(x=self.X, y=self.Y)
@@ -54,7 +60,20 @@ class SavesWidget:
                                )
         self.listBox.place(x=self.X+7, y=self.Y+30)
 
-        self.listBox.insert(0, "Сценарий 0", "Сценарий 1", "Сценарий 2", "Сценарий 3", "Сценарий 4", "Сценарий 5", "Сценарий 6", "Сценарий 7", "Сценарий 8", "Сценарий 9", )
+        self.listBox.bind("<<ListboxSelect>>", self.onSelected)
+        self.fillFromDict(main.savesManager.saves)
+
+    def fillFromDict(self, dict):
+        self.listBox.delete(0, END)
+        for i in dict.keys():
+            self.listBox.insert(0, i)
+
+    def onSelected(self, event):
+        selection = self.listBox.get(ACTIVE)
+        self.main.savesManager.currentSave = self.main.savesManager.saves[selection]
+        
+
+
 
 
 
