@@ -3,7 +3,6 @@ from tkinter import ttk
 from config import Cfg as cfg
 from math import *
 
-
 class TimelineWidget:
 
     root = None
@@ -17,12 +16,20 @@ class TimelineWidget:
 
     pixPerSecond = 50
 
-    scrollXLimit = (0, 2500)
+    listX = []
+    globalTag = None
+    lastGlobalTag = None
     scrollX = 0
 
-    def __init__(self, main):
+    def drawLines(self, seconds, pix_per_sec):
+        for i in range(seconds):
+            i += 1
+            self.canvas.create_line(i*pix_per_sec, 30, i*pix_per_sec, 90, width=2, fill=cfg.LINE_COLOR)
+            self.canvas.create_text(i*pix_per_sec, 10, text=str(i), fill=cfg.LINE_COLOR)
 
-        self.main = main
+    def __init__(self, root):
+
+        self.root = root
 
         self.mainLabel = ttk.Frame(style="RoundedFrame", height=self.HEIGHT, width=self.WIDTH)
         self.mainLabel.place(x=self.X, y=self.Y)
@@ -35,37 +42,59 @@ class TimelineWidget:
                              )
         self.canvas.place(x=10, y=10)
 
-        self.canvas.bind("<MouseWheel>", self.onMousewheel)
-        self.canvas.bind("<Double-Button-1>", self.onMouseDoubleclicked)
+        self.canvas.bind("<MouseWheel>", self._on_mousewheel)
+        self.canvas.bind("<Button-2>", self.create_point)
+        self.canvas.bind("<B1-Motion>", self.move_point)
+        self.root.bind("<Delete>", self.delete_point)
+        self.root.bind("<Escape>", self.escape_point)
 
         self.drawLines(60, self.pixPerSecond)
 
         self.canvas.configure(scrollregion=self.canvas.bbox("all"), xscrollincrement=ceil(self.canvas.bbox("all")[2] / 60))
 
-
-    def onMouseDoubleclicked(self, event):
-        x = (self.scrollX + (event.widget.winfo_pointerx() - event.widget.winfo_rootx()))
-        self.drawPoint(x)
-
-    def onMousewheel(self, event):
-        self.scrollX += copysign(ceil(self.canvas.bbox("all")[2] / 60), event.delta)
-
-        if self.scrollX < self.scrollXLimit[0]:
-            self.scrollX = self.scrollXLimit[0]
-        elif self.scrollX > self.scrollXLimit[1]:
-            self.scrollX = self.scrollXLimit[1]
+    def _on_mousewheel(self, event):
 
         self.canvas.xview_scroll(int(copysign(1, event.delta)), UNITS)
 
-    def drawPoint(self, x):
-        y = 60
-        self.canvas.create_polygon((x, y + 5), (x + 5, y), (x, y - 5), (x - 5, y), fill='orange')
+        self.scrollX += copysign(ceil(self.canvas.bbox("all")[2] / 60), event.delta)
 
-    def drawLines(self, seconds, pix_per_sec):
-        if seconds <= 0:
-            self.canvas.create_line(0, 0, 0, 0)
+        if self.canvas.xview()[0] == 0:
+            self.scrollX = 0
+        elif self.canvas.xview()[1] == 1:
+            self.scrollX = 2450
+
+    def create_point(self, event):
+        x = (self.scrollX + event.x)
+        y = 60
+        tag = "t"+str(x)
+
+        self.canvas.create_polygon((x, y+5), (x+5, y), (x, y-5), (x-5, y), fill='orange', tag=tag)
+        self.canvas.tag_bind(tag, "<Button-1>", lambda event: self.choose_point(tag))
+
+    def choose_point(self, tag):
+        self.globalTag = tag
+
+        self.canvas.itemconfigure(self.lastGlobalTag, fill='orange')
+
+        self.canvas.itemconfigure(self.globalTag, fill='red')
+        self.escape_point()
+
+    def escape_point(self, event=None):
+        if self.lastGlobalTag == self.globalTag:
+            self.canvas.itemconfigure(self.globalTag, fill='orange')
+            self.globalTag = None
+        self.lastGlobalTag = self.globalTag
+
+    def move_point(self, event):
+        try:
+            x = event.x + self.scrollX
+            y = 60
+
+            self.canvas.coords(self.globalTag, x, y+5, x+5, y, x, y-5, x-5, y)
+            print(self.canvas.coords(self.globalTag))
+        except TclError:
             return
-        for i in range(seconds):
-            i += 1
-            self.canvas.create_line(i*pix_per_sec, 30, i*pix_per_sec, 90, width=2, fill=cfg.LINE_COLOR)
-            self.canvas.create_text(i*pix_per_sec, 10, text=str(i), fill=cfg.LINE_COLOR)
+
+    def delete_point(self, event):
+        self.canvas.delete(self.globalTag)
+        self.canvas.tag_unbind(self.globalTag, "<Button-1>")
