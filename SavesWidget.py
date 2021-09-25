@@ -69,9 +69,10 @@ class SavesWidget:
             self.listBox.insert(0, i)
 
     def onSelected(self, event):
-        selection = self.listBox.get(ACTIVE)
+        selection = self.listBox.get(self.listBox.curselection())
         self.main.savesManager.currentSave = self.main.savesManager.saves[selection]
-        
+        self.main.timelineWidget.drawSave()
+
 
 
 

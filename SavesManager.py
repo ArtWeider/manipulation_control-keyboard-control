@@ -4,6 +4,8 @@ from SaveClass import Save
 from PointClass import Point
 import os
 import os.path
+import random
+import numpy.random as rand
 
 class SavesManager:
 
@@ -28,3 +30,22 @@ class SavesManager:
     def save(self, save):
         file = open(f'Saves/{save.name}.save', 'w')
         file.write(json.dumps(save.toDict()))
+
+
+if __name__ == "__main__":
+    _random = rand.randint(0, 500, 1000)
+    for i in range(3):
+        with open(f"Saves/Save {i}.save", 'w') as f:
+            random.seed(i)
+            save = Save()
+            save.name = f"Save {i}.save"
+            for i2 in range(_random[i*6] % 30):
+                i2 += 1
+                point = Point()
+                point.time = _random[i2*14] % 60
+                point.x = _random[i2*1]
+                point.y = _random[i2*2]
+                point.z = _random[i2*5]
+                save.points[point.time] = point
+            print(save.toDict())
+

@@ -16,3 +16,11 @@ class Save:
     def toDict(self):
         return {'name': self.name, 'points': list(map(Point.toDict, self.points.values()))}
 
+    def addPoint(self, time, x=0, y=0, z=0):
+        point = Point()
+        point.time = time
+        point.x = x
+        point.y = y
+        point.z = z
+        self.points[point.time] = point
+
