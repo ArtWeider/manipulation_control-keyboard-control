@@ -47,5 +47,5 @@ if __name__ == "__main__":
                 point.y = _random[i2*2]
                 point.z = _random[i2*5]
                 save.points[point.time] = point
-            print(save.toDict())
+            f.write(json.dumps(save.toDict()))
 
