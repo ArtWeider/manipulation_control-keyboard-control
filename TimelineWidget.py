@@ -42,7 +42,7 @@ class TimelineWidget:
                              )
         self.canvas.place(x=10, y=10)
 
-        self.canvas.bind("<MouseWheel>", self._on_mousewheel)
+        self.canvas.bind("<MouseWheel>", self.move_timeline)
         self.canvas.bind("<Button-2>", self.create_point)
         self.canvas.bind("<B1-Motion>", self.move_point)
         self.root.bind("<Delete>", self.delete_point)
@@ -50,22 +50,24 @@ class TimelineWidget:
 
         self.drawLines(60, self.pixPerSecond)
 
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"), xscrollincrement=ceil(self.canvas.bbox("all")[2] / 60))
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"), xscrollincrement=self.canvas.bbox("all")[2] / 60)
 
-    def _on_mousewheel(self, event):
+    def move_timeline(self, event):
 
         self.canvas.xview_scroll(int(copysign(1, event.delta)), UNITS)
 
-        self.scrollX += copysign(ceil(self.canvas.bbox("all")[2] / 60), event.delta)
+        self.scrollX += copysign(self.canvas.bbox("all")[2] / 60, event.delta)
 
-        if self.canvas.xview()[0] == 0:
-            self.scrollX = 0
-        elif self.canvas.xview()[1] == 1:
-            self.scrollX = 2450
+        if self.canvas.xview()[0] == 0: self.scrollX = 0
+        elif self.canvas.xview()[1] == 1: self.scrollX = 2504.716666666666
 
     def create_point(self, event):
         x = (self.scrollX + event.x)
         y = 60
+
+        if x < 0: x = 0
+        elif x > 3000: x = 3000
+
         tag = "t"+str(x)
 
         self.canvas.create_polygon((x, y+5), (x+5, y), (x, y-5), (x-5, y), fill='orange', tag=tag)
@@ -90,8 +92,10 @@ class TimelineWidget:
             x = event.x + self.scrollX
             y = 60
 
+            if x < 0: x = 0
+            elif x > 3000: x = 3000
+
             self.canvas.coords(self.globalTag, x, y+5, x+5, y, x, y-5, x-5, y)
-            print(self.canvas.coords(self.globalTag))
         except TclError:
             return
 
