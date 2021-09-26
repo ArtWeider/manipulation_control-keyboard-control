@@ -108,6 +108,7 @@ class TimelineWidget:
 
     def drawSave(self):
         self.canvas.delete(ALL)
+        self.currentPoint = ['', '']
         save = self.main.savesManager.saves[self.main.savesManager.currentSave]
         self.maxSeconds = int(max(save.points.keys()))
         self.drawLines(self.maxSeconds + 5)
@@ -151,3 +152,9 @@ class TimelineWidget:
         self.drawPoint(x)
         num = max(self.tag2time.keys())
         self.onPointSelected(f"t{num}")
+
+    def inMouseOnWidget(self, event):
+        return event.x > self.X and event.x < self.X + self.WIDTH and event.y > self.Y and event.y < self.Y + self.HEIGHT
+
+    def isSaveSelected(self):
+        return self.main.savesManager.currentSave != None
