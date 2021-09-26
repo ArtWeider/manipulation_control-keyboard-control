@@ -6,6 +6,7 @@ class Point:
     z = 0
 
     time = 0
+
     def toDict(self):
         return {'x': self.x, 'y': self.y, 'z': self.z, 'time': self.time}
 

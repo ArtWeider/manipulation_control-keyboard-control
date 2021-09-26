@@ -60,7 +60,8 @@ class SavesMenuWidget:
                                    width=16,
                                    activebackground=cfg.BUTTON_ACTIVE_COLOR,
                                    activeforeground=cfg.TEXT_COLOR,
-                                   state=DISABLED
+                                   state=DISABLED,
+                                   command=self.onDeletePressed
                                    )
         self.deleteButton.place(x=12, y=65)
 
@@ -78,21 +79,24 @@ class SavesMenuWidget:
         self.saveButton.place(x=12, y=95)
 
     def onSaveSelected(self):
-        save = self.main.savesManager.currentSave
+        save = self.main.savesManager.saves[self.main.savesManager.currentSave]
         self.deleteButton.configure(state=NORMAL)
         self.saveButton.configure(state=NORMAL)
         self.nameEntry.delete(0, END)
         self.nameEntry.insert(0, save.name)
 
     def onSavePressed(self):
-        self.main.savesManager.currentSave.name = self.nameEntry.get()
-        self.main.savesManager.save(self.main.savesManager.currentSave)
+        self.main.savesManager.saves[self.main.savesManager.currentSave].name = self.nameEntry.get()
+        self.main.savesManager.save(self.main.savesManager.saves[self.main.savesManager.currentSave])
+
+    def onDeletePressed(self):
+        self.main.savesManager.delete(self.main.savesManager.saves[self.main.savesManager.currentSave])
 
     def onCreatePressed(self):
         save = Save()
         save.fromDict({'name': self.nameEntry.get(), 'points': [{'x': 1, 'y': 1, 'z': 1, 'time': 1}]})
         self.main.savesManager.saves[self.nameEntry.get()] = save
-        self.main.savesManager.currentSave = self.main.savesManager.saves[self.nameEntry.get()]
+        self.main.savesManager.currentSave = self.nameEntry.get()
         self.main.savesWidget.fillFromDict(self.main.savesManager.saves)
 
     def onTextEdited(self, name='', index='', mode=''):

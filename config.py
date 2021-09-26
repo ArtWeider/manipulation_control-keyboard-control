@@ -11,6 +11,8 @@ class Cfg:
     BUTTON_ACTIVE_COLOR = "#606060"
     TEXT_COLOR = "#b5b5b5"
     LINE_COLOR = "#616161"
+    POINT_SELECTED_COLOR = "#ed552b"
+    POINT_COLOR = "#edb62b"
 
     class ManipulatorConfig:
 

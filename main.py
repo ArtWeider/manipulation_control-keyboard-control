@@ -14,7 +14,6 @@ from XZVisualisationWidget import XZVisualisationWidget
 from ControlPanelWidget import ControlPanelWidget
 from SavesManager import SavesManager
 
-
 class Main:
 
     root = None
@@ -33,9 +32,16 @@ class Main:
     xzVisualisationWidget = None
     controlPanelWidget = None
 
+    def quit(self):
+        self.root.destroy()
+        self.matplotlibWidget.quit()
+        exit()
+
     def __init__(self):
         self.root = Tk()
         self.style = ttk.Style()
+
+        self.root.protocol("WM_DELETE_WINDOWS", self.quit)
 
         _image = Image.open("Images/RoundedImage.png")
         borderImage = ImageTk.PhotoImage(_image)
@@ -51,7 +57,7 @@ class Main:
 
         self.root.configure(bg=cfg.MAIN_COLOR)
 
-        self.savesManager = SavesManager()
+        self.savesManager = SavesManager(self)
 
         self.upperStatusBar = UpperStatusBar()
         self.savesWidget = SavesWidget(self)

@@ -10,9 +10,10 @@ import numpy.random as rand
 class SavesManager:
 
     saves = {}
-    currentSave = ''
+    currentSave = None
 
-    def __init__(self):
+    def __init__(self, main):
+        self.main = main
         self.loadSaves()
 
     def loadSaves(self):
@@ -32,11 +33,12 @@ class SavesManager:
         file = open(f'Saves/{save.name}.save', 'w')
         file.write(json.dumps(save.toDict()))
 
+    def delete(self, save):
+        os.remove(f"Saves/{save.name}.save")
+        del self.saves[self.currentSave]
+        self.currentSave = None
+        self.main.savesWidget.fillFromDict(self.saves)
 
-if __name__ == "__main__":
-    savesManager = SavesManager()
-    for i in savesManager.saves.values():
-        print(i.points)
 
 
 

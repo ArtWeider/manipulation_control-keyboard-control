@@ -14,6 +14,10 @@ class MatplotlibWidget:
     WIDTH = 800 * Cfg.SIZE_MULT
     HEIGHT = 700 * Cfg.SIZE_MULT
 
+    def quit(self):
+        self.root.remove()
+        exit()
+
     class Create3DPlot:
         def __init__(self, root):
             self.figure, self.ax_3d = self.create_plot()  # Возвращает объект фигуры, нарисованной matplotlib
