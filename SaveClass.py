@@ -1,17 +1,21 @@
 from PointClass import Point
 import json
+import tkinter as tk
 
 class Save:
 
-    name = ""
-    points = {}
+    def __init__(self):
+        self.name = ""
+        self.points = None
 
     def fromDict(self, dict):
         self.name = dict['name']
+        self.points = {}
         for i in dict['points']:
-            point = Point().fromDict(i)
+            point = Point()
+            point.fromDict(i)
             self.points[point.time] = point
-        return self
+
 
     def toDict(self):
         return {'name': self.name, 'points': list(map(Point.toDict, self.points.values()))}

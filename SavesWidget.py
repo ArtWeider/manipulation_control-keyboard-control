@@ -72,6 +72,7 @@ class SavesWidget:
         selection = self.listBox.get(self.listBox.curselection())
         self.main.savesManager.currentSave = self.main.savesManager.saves[selection]
         self.main.timelineWidget.drawSave()
+        self.main.savesMenuWidget.onSaveSelected()
 
 
 
