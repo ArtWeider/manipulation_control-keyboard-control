@@ -18,12 +18,15 @@ class PointMenuWidget:
         self.mainLabel.place(x=self.X, y=self.Y)
 
         self.textLabel = Label(
-            text="<PointMenu>",
-            font="Arial 14",
+            master=self.mainLabel,
+            text="Текущая точка",
+            font="Arial 11",
             height=1,
             bg=cfg.SUBCOLOR,
             fg=cfg.TEXT_COLOR,
         )
-        #self.textLabel.place(x=self.X + 90, y=self.Y)
+
+        self.textLabel.place(x=43, y=7)
+
 
 

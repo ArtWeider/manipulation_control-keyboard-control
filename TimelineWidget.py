@@ -3,14 +3,6 @@ from tkinter import ttk
 from config import Cfg as cfg
 from math import *
 
-def remap(old_value, old_min, old_max, new_min, new_max):
-    out = ((old_value - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min
-    if out > new_max:
-        out = new_max
-    elif out < new_min:
-        out = new_min
-    return out
-
 class TimelineWidget:
 
     root = None
@@ -57,27 +49,30 @@ class TimelineWidget:
 
 
     def onMouseDoubleclicked(self, event):
-        x = self.canvas.canvasx(event.widget.winfo_pointerx() - event.widget.winfo_rootx())
-        self.main.savesManager.saves[self.main.savesManager.currentSave].addPoint(x/self.pixPerSecond)
-        self.addPointToTimeline(x)
+        if self.isSaveSelected():
+            x = self.canvas.canvasx(event.widget.winfo_pointerx() - event.widget.winfo_rootx())
+            self.main.savesManager.saves[self.main.savesManager.currentSave].addPoint(x/self.pixPerSecond)
+            self.addPointToTimeline(x)
 
     def onEscPressed(self, event):
-        self.deselectPoint()
+        if self.isSaveSelected() and self.isMouseOnWidget(event):
+            self.deselectPoint()
 
     def deselectPoint(self):
         self.canvas.itemconfigure(self.currentPoint[1], fill=cfg.POINT_COLOR)
         self.currentPoint = ['', '']
 
     def onMousewheel(self, event):
-        self.canvas.xview_scroll(int(copysign(1, event.delta)), UNITS)
+        if self.isSaveSelected():
+            self.canvas.xview_scroll(int(copysign(1, event.delta)), UNITS)
 
     def onDeletePressed(self, event):
-        self.deletePoint(self.currentPoint[1])
+        if self.isSaveSelected() and self.isMouseOnWidget(event):
+            self.deletePoint(self.currentPoint[1])
 
     def deletePoint(self, tag):
         time = self.tag2time[int(tag[1::])]
         del self.main.savesManager.saves[self.main.savesManager.currentSave].points[time]
-        print(self.main.savesManager.saves[self.main.savesManager.currentSave].points)
         self.currentPoint = ['', '']
         self.canvas.delete(tag)
         self.canvas.tag_unbind(tag, "<Button-1>")
@@ -94,7 +89,6 @@ class TimelineWidget:
         self.canvas.tag_bind(tag, '<Button-1>', lambda event: self.onPointSelected(tag))
 
     def drawLines(self, seconds, start_sec=0):
-        print(start_sec)
         if seconds <= 0:
             self.canvas.create_line(0, 0, 0, 0)
             return
@@ -117,8 +111,9 @@ class TimelineWidget:
         self.recalculateScrollLimits()
 
     def onLeftButtonMove(self, event):
-        x = self.canvas.canvasx(event.x)
-        self.movePoint(self.currentPoint[1], x)
+        if self.isSaveSelected():
+            x = self.canvas.canvasx(event.x)
+            self.movePoint(self.currentPoint[1], x)
 
     def movePoint(self, tag, x):
         oldTime = self.tag2time[int(tag[1::])]
@@ -147,14 +142,14 @@ class TimelineWidget:
     def addPointToTimeline(self, x):
         _sec = x // self.pixPerSecond
         if _sec > self.maxSeconds - 5:
-            print(_sec, self.maxSeconds)
             self.drawLines(int(_sec - (self.maxSeconds - 5)), self.maxSeconds)
         self.drawPoint(x)
         num = max(self.tag2time.keys())
         self.onPointSelected(f"t{num}")
 
-    def inMouseOnWidget(self, event):
-        return event.x > self.X and event.x < self.X + self.WIDTH and event.y > self.Y and event.y < self.Y + self.HEIGHT
+    def isMouseOnWidget(self, event):
+        return event.x > 364 and event.x < 911 and event.y > 481 and event.y < 575
 
     def isSaveSelected(self):
         return self.main.savesManager.currentSave != None
+
