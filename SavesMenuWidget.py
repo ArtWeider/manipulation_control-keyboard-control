@@ -27,7 +27,6 @@ class SavesMenuWidget:
         self.mainFrame.place(x=self.X, y=self.Y)
 
         self.nameEntryVar = StringVar()
-        #self.nameEntryVar.trace_add("write", self.onTextEdited)
         self.nameEntry = Entry(master=self.mainFrame,
                                width=19,
                                bg=cfg.MAIN_COLOR,
