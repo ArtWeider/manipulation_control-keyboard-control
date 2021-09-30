@@ -12,10 +12,71 @@ class PointMenuWidget:
     WIDTH = 275 * cfg.SIZE_MULT
     HEIGHT = 310 * cfg.SIZE_MULT
 
-    def __init__(self):
+    def isMouseOnWidget(self, event):
+        return event.x > 559 and event.x < 754 and event.y > -15 and event.y < 203
+
+    def onEnterPressed(self, event):
+        print('test')
+        if self.isMouseOnWidget(event):
+            tag = self.main.timelineWidget.currentPoint[1]
+            time = self.main.timelineWidget.tag2time[tag]
+            save = self.main.savesManager.currentSave
+            self.main.savesManager.saves[save].points[time].x = float(self.xEntry.get())
+            self.main.savesManager.saves[save].points[time].y = float(self.yEntry.get())
+            self.main.savesManager.saves[save].points[time].z = float(self.zEntry.get())
+            self.main.timelineWidget.movePoint(tag, float(self.timeEntry.get()) * self.main.timelineWidget.pixPerSecond)
+
+    def onPointMoved(self, time):
+        self.timeEntry.delete(0, END)
+        self.timeEntry.insert(0, time)
+
+    def onPointSelected(self, time):
+        currentSave = self.main.savesManager.saves[self.main.savesManager.currentSave]
+        point = currentSave.points[time]
+        self.setStateAll(NORMAL)
+        self.clearAll()
+        self.xEntry.insert(0, point.x)
+        self.yEntry.insert(0, point.y)
+        self.zEntry.insert(0, point.z)
+        self.qEntry.insert(0, "000")
+        self.q2Entry.insert(0, "000")
+        self.q3Entry.insert(0, "000")
+        self.timeEntry.insert(0, point.time)
+
+    def onPointDeselected(self):
+        self.clearAll()
+        self.setStateAll(DISABLED)
+
+    def clearAll(self):
+        self.xEntry.delete(0, END)
+        self.yEntry.delete(0, END)
+        self.zEntry.delete(0, END)
+        self.qEntry.delete(0, END)
+        self.q2Entry.delete(0, END)
+        self.q3Entry.delete(0, END)
+        self.timeEntry.delete(0, END)
+        self.followManipulatorCheckbutton.deselect()
+
+    def setStateAll(self, state):
+        self.xEntry.configure(state=state)
+        self.yEntry.configure(state=state)
+        self.zEntry.configure(state=state)
+        self.qEntry.configure(state=state)
+        self.q2Entry.configure(state=state)
+        self.q3Entry.configure(state=state)
+        self.timeEntry.configure(state=state)
+        self.followManipulatorCheckbutton.configure(state=state)
+        self.robotToPointButton.configure(state=state)
+        self.pointToRobotButton.configure(state=state)
+
+    def __init__(self, main):
+
+        self.main = main
 
         self.mainLabel = ttk.Frame(style="RoundedFrame", height=self.HEIGHT, width=self.WIDTH)
         self.mainLabel.place(x=self.X, y=self.Y)
+
+        self.main.root.bind('<Return>', self.onEnterPressed)
 
         self.textLabel = Label(
             master=self.mainLabel,
@@ -41,7 +102,8 @@ class PointMenuWidget:
                             font="Arial 11",
                             height=1,
                             bg=cfg.SUBCOLOR,
-                            fg=cfg.TEXT_COLOR)
+                            fg=cfg.TEXT_COLOR,
+                            )
         self.xLabel.place(x=15, y=37)
 
         self.xEntry = Entry(width=5,
@@ -52,7 +114,8 @@ class PointMenuWidget:
                             fg=cfg.TEXT_COLOR,
                             justify=LEFT,
                             state=DISABLED,
-                            disabledbackground=cfg.SUBCOLOR)
+                            disabledbackground=cfg.SUBCOLOR,
+                            )
         self.xEntry.place(x=35, y=39)
 
         self.yLabel = Label(master=self.mainLabel,

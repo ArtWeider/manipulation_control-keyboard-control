@@ -61,7 +61,7 @@ class Main:
 
         self.upperStatusBar = UpperStatusBar()
         self.savesWidget = SavesWidget(self)
-        self.pointMenuWidget = PointMenuWidget()
+        self.pointMenuWidget = PointMenuWidget(self)
         self.handVisualisationWidget = HandVisualisationWidget()
         self.savesMenuWidget = SavesMenuWidget(self)
         self.matplotlibWidget = MatplotlibWidget(self.root)

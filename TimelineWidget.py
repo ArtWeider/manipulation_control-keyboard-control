@@ -61,6 +61,7 @@ class TimelineWidget:
     def deselectPoint(self):
         self.canvas.itemconfigure(self.currentPoint[1], fill=cfg.POINT_COLOR)
         self.currentPoint = ['', '']
+        self.main.pointMenuWidget.onPointDeselected()
 
     def onMousewheel(self, event):
         if self.isSaveSelected():
@@ -124,13 +125,16 @@ class TimelineWidget:
         self.tag2time[intTag] = newTime
         y=60
         self.canvas.coords(tag, x, y+5, x+5, y, x, y-5, x-5, y)
+        self.main.pointMenuWidget.onPointMoved(newTime)
 
 
     def onPointSelected(self, tag):
-        self.currentPoint[0] = self.currentPoint[1]
-        self.currentPoint[1] = tag
-        self.canvas.itemconfigure(self.currentPoint[0], fill=cfg.POINT_COLOR)
-        self.canvas.itemconfigure(tag, fill=cfg.POINT_SELECTED_COLOR)
+        if self.currentPoint[1] != tag:
+            self.currentPoint[0] = self.currentPoint[1]
+            self.currentPoint[1] = tag
+            self.canvas.itemconfigure(self.currentPoint[0], fill=cfg.POINT_COLOR)
+            self.canvas.itemconfigure(tag, fill=cfg.POINT_SELECTED_COLOR)
+            self.main.pointMenuWidget.onPointSelected(self.tag2time[int(tag[1::])])
 
     def recalculateScrollLimits(self):
         scrollregion = list(self.canvas.bbox("all"))
