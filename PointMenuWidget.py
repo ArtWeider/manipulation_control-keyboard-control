@@ -13,18 +13,17 @@ class PointMenuWidget:
     HEIGHT = 310 * cfg.SIZE_MULT
 
     def isMouseOnWidget(self, event):
-        return event.x > 559 and event.x < 754 and event.y > -15 and event.y < 203
+        return event.x > 925 and event.x < 1120 and event.y > -30 and event.y < 190
 
     def onEnterPressed(self, event):
-        print('test')
-        if self.isMouseOnWidget(event):
-            tag = self.main.timelineWidget.currentPoint[1]
-            time = self.main.timelineWidget.tag2time[tag]
-            save = self.main.savesManager.currentSave
-            self.main.savesManager.saves[save].points[time].x = float(self.xEntry.get())
-            self.main.savesManager.saves[save].points[time].y = float(self.yEntry.get())
-            self.main.savesManager.saves[save].points[time].z = float(self.zEntry.get())
-            self.main.timelineWidget.movePoint(tag, float(self.timeEntry.get()) * self.main.timelineWidget.pixPerSecond)
+        tag = self.main.timelineWidget.currentPoint[1]
+        time = self.main.timelineWidget.tag2time[int(tag[1::])]
+        save = self.main.savesManager.currentSave
+        self.main.savesManager.saves[save].points[time].x = float(self.xEntry.get())
+        self.main.savesManager.saves[save].points[time].y = float(self.yEntry.get())
+        self.main.savesManager.saves[save].points[time].z = float(self.zEntry.get())
+        self.main.timelineWidget.movePoint(tag, float(self.timeEntry.get()) * self.main.timelineWidget.pixPerSecond)
+
 
     def onPointMoved(self, time):
         self.timeEntry.delete(0, END)
@@ -76,8 +75,6 @@ class PointMenuWidget:
         self.mainLabel = ttk.Frame(style="RoundedFrame", height=self.HEIGHT, width=self.WIDTH)
         self.mainLabel.place(x=self.X, y=self.Y)
 
-        self.main.root.bind('<Return>', self.onEnterPressed)
-
         self.textLabel = Label(
             master=self.mainLabel,
             text="Текущая точка",
@@ -104,7 +101,7 @@ class PointMenuWidget:
                             bg=cfg.SUBCOLOR,
                             fg=cfg.TEXT_COLOR,
                             )
-        self.xLabel.place(x=15, y=37)
+        self.xLabel.place(x=5, y=37)
 
         self.xEntry = Entry(width=5,
                             master=self.mainLabel,
@@ -116,7 +113,8 @@ class PointMenuWidget:
                             state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR,
                             )
-        self.xEntry.place(x=35, y=39)
+        self.xEntry.place(x=25, y=39)
+        self.xEntry.bind('<Return>', self.onEnterPressed)
 
         self.yLabel = Label(master=self.mainLabel,
                             text="Y: ",
@@ -136,6 +134,7 @@ class PointMenuWidget:
                             state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR)
         self.yEntry.place(x=90, y=39)
+        self.yEntry.bind('<Return>', self.onEnterPressed)
 
         self.zLabel = Label(master=self.mainLabel,
                             text="Z: ",
@@ -143,7 +142,7 @@ class PointMenuWidget:
                             height=1,
                             bg=cfg.SUBCOLOR,
                             fg=cfg.TEXT_COLOR)
-        self.zLabel.place(x=125, y=37)
+        self.zLabel.place(x=135, y=37)
 
         self.zEntry = Entry(width=5,
                             master=self.mainLabel,
@@ -154,7 +153,8 @@ class PointMenuWidget:
                             justify=LEFT,
                             state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR)
-        self.zEntry.place(x=145, y=39)
+        self.zEntry.place(x=155, y=39)
+        self.zEntry.bind('<Return>', self.onEnterPressed)
 
         self.qLabel = Label(master=self.mainLabel,
                             text="Q: ",
@@ -162,7 +162,7 @@ class PointMenuWidget:
                             height=1,
                             bg=cfg.SUBCOLOR,
                             fg=cfg.TEXT_COLOR)
-        self.qLabel.place(x=15, y=67)
+        self.qLabel.place(x=5, y=67)
 
         self.qEntry = Entry(width=5,
                             master=self.mainLabel,
@@ -173,7 +173,8 @@ class PointMenuWidget:
                             justify=LEFT,
                             state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR)
-        self.qEntry.place(x=35, y=69)
+        self.qEntry.place(x=25, y=69)
+        self.qEntry.bind('<Return>', self.onEnterPressed)
 
         self.q2Label = Label(master=self.mainLabel,
                             text="Q: ",
@@ -193,6 +194,7 @@ class PointMenuWidget:
                             state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR)
         self.q2Entry.place(x=90, y=69)
+        self.q2Entry.bind('<Return>', self.onEnterPressed)
 
         self.q3Label = Label(master=self.mainLabel,
                              text="Q: ",
@@ -200,7 +202,7 @@ class PointMenuWidget:
                              height=1,
                              bg=cfg.SUBCOLOR,
                              fg=cfg.TEXT_COLOR)
-        self.q3Label.place(x=125, y=67)
+        self.q3Label.place(x=135, y=67)
 
         self.q3Entry = Entry(width=5,
                              master=self.mainLabel,
@@ -211,7 +213,8 @@ class PointMenuWidget:
                              justify=LEFT,
                              state=DISABLED,
                              disabledbackground=cfg.SUBCOLOR)
-        self.q3Entry.place(x=145, y=69)
+        self.q3Entry.place(x=155, y=69)
+        self.q3Entry.bind('<Return>', self.onEnterPressed)
 
         self.timeLabel = Label(master=self.mainLabel,
                             text="Время: ",
@@ -219,7 +222,7 @@ class PointMenuWidget:
                             height=1,
                             bg=cfg.SUBCOLOR,
                             fg=cfg.TEXT_COLOR)
-        self.timeLabel.place(x=15, y=97)
+        self.timeLabel.place(x=5, y=97)
 
         self.timeEntry = Entry(width=5,
                             master=self.mainLabel,
@@ -230,7 +233,8 @@ class PointMenuWidget:
                             justify=LEFT,
                             state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR)
-        self.timeEntry.place(x=70, y=100)
+        self.timeEntry.place(x=60, y=100)
+        self.timeEntry.bind('<Return>', self.onEnterPressed)
 
         self.followManipulatorCheckbutton = Checkbutton(master=self.mainLabel,
                                                            text='Следовать',
@@ -244,7 +248,7 @@ class PointMenuWidget:
                                                            font='Arial 11',
                                                            state=DISABLED,
                                                            disabledforeground=cfg.TEXT_COLOR)
-        self.followManipulatorCheckbutton.place(x=15, y=125)
+        self.followManipulatorCheckbutton.place(x=5, y=125)
 
         self.pointToRobotButton = Button(master=self.mainLabel,
                                    text="Точку к манипулятору",
