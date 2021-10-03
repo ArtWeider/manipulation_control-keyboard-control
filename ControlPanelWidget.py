@@ -5,6 +5,8 @@ from config import Cfg as cfg
 
 class ControlPanelWidget:
 
+    main = None
+
     mainLabel = None
     textLabel = None
 
@@ -13,10 +15,18 @@ class ControlPanelWidget:
     WIDTH = 275 * cfg.SIZE_MULT
     HEIGHT = 550 * cfg.SIZE_MULT
 
-    def onEnterPressed(self, event):
-        pass
+    def onScaleChanged(self, event):
+        print('Event')
 
-    def __init__(self):
+    def onEnterPressed(self, event):
+        x = float(self.xEntry.get())
+        y = float(self.yEntry.get())
+        z = float(self.zEntry.get())
+        self.main.manipulatorController.goToPoint(x=x, y=y, z=z)
+
+    def __init__(self, main):
+
+        self.main = main
 
         self.mainLabel = ttk.Frame(style="RoundedFrame", height=self.HEIGHT, width=self.WIDTH)
         self.mainLabel.place(x=self.X, y=self.Y)
@@ -123,7 +133,8 @@ class ControlPanelWidget:
                              highlightbackground=cfg.SUBCOLOR,
                              highlightcolor=cfg.MAIN_COLOR,
                              relief=FLAT,
-                             troughcolor=cfg.MAIN_COLOR)
+                             troughcolor=cfg.MAIN_COLOR,
+                             command=self.onScaleChanged)
         self.qSlider.place(x=60, y=75)
 
         self.q2Label = Label(master=self.mainLabel,

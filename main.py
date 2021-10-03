@@ -13,6 +13,7 @@ from XYVisualisationWidget import XYVisualisationWidget
 from XZVisualisationWidget import XZVisualisationWidget
 from ControlPanelWidget import ControlPanelWidget
 from SavesManager import SavesManager
+from ManipulatorController import ManipulatorController
 
 class Main:
 
@@ -20,6 +21,7 @@ class Main:
     style = None
 
     savesManager = None
+    manipulatorController = None
 
     upperStatusBar = None
     savesWidget = None
@@ -58,6 +60,7 @@ class Main:
         self.root.configure(bg=cfg.MAIN_COLOR)
 
         self.savesManager = SavesManager(self)
+        self.manipulatorController = ManipulatorController()
 
         self.upperStatusBar = UpperStatusBar()
         self.savesWidget = SavesWidget(self)
@@ -68,7 +71,7 @@ class Main:
         self.timelineWidget = TimelineWidget(self)
         self.xyVisualisationWidget = XYVisualisationWidget()
         self.xzVisualisationWidget = XZVisualisationWidget()
-        self.controlPanelWidget = ControlPanelWidget()
+        self.controlPanelWidget = ControlPanelWidget(self)
 
         self.root.mainloop()
 
