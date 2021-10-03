@@ -77,14 +77,14 @@ class PointMenuWidget:
 
         self.textLabel = Label(
             master=self.mainLabel,
-            text="Текущая точка",
+            text="Выбраная точка",
             font="Arial 11",
             height=1,
             bg=cfg.SUBCOLOR,
             fg=cfg.TEXT_COLOR,
         )
 
-        self.textLabel.place(x=43, y=4)
+        self.textLabel.place(x=40, y=4)
 
         self.whiteLineFrame = Frame(
             master=self.mainLabel,
