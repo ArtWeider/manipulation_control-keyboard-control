@@ -23,6 +23,10 @@ class PointMenuWidget:
         self.main.savesManager.saves[save].points[time].x = float(self.xEntry.get())
         self.main.savesManager.saves[save].points[time].y = float(self.yEntry.get())
         self.main.savesManager.saves[save].points[time].z = float(self.zEntry.get())
+        
+        self.main.graphicWidget.point.params['x'] = float(self.xEntry.get())
+        self.main.graphicWidget.point.params['y'] = float(self.yEntry.get())
+        self.main.graphicWidget.point.params['z'] = float(self.zEntry.get())
 
         self.main.timelineWidget.movePoint(tag, float(self.timeEntry.get()) * self.main.timelineWidget.pixPerSecond)
 
