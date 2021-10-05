@@ -20,7 +20,6 @@ class ManipulatorController:
         for key in ['x', 'y', 'z', 'q']:
             if key in kwargs.keys():
                 mess += f'{key.upper()}{int(kwargs[key])} '
-        print(mess)
         self.tn.write(mess.encode('utf-8'))
 
     class FakeTn:

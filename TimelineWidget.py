@@ -37,6 +37,8 @@ class TimelineWidget:
                              )
         self.canvas.place(x=10, y=10)
 
+        self.point = self.main.graphicWidget.CreatePoint
+
         self.canvas.bind("<MouseWheel>", self.onMousewheel)
         self.canvas.bind("<Double-Button-1>", self.onMouseDoubleclicked)
         self.canvas.bind("<B1-Motion>", self.onLeftButtonMove)
@@ -54,6 +56,11 @@ class TimelineWidget:
             self.main.savesManager.saves[self.main.savesManager.currentSave].addPoint(x/self.pixPerSecond)
             self.addPointToTimeline(x)
 
+        self.point.setPointFlag = True
+
+        self.point.dictionaryUpdate(self.point, flag=True, values=(
+        self.tag2time[int(self.currentPoint[1][1::])], self.point.params['x'], self.point.params['y'], self.point.params['z'], 0, 0, 0, 0))
+
     def onEscPressed(self, event):
         if self.isSaveSelected() and self.isMouseOnWidget(event):
             self.deselectPoint()
@@ -62,6 +69,11 @@ class TimelineWidget:
         self.canvas.itemconfigure(self.currentPoint[1], fill=cfg.POINT_COLOR)
         self.currentPoint = ['', '']
         self.main.pointMenuWidget.onPointDeselected()
+
+        self.point.setPointFlag = False
+        self.point.CtrlFlag = False
+        self.point.cornerNum = 0
+        self.main.graphicWidget.point.selectedTime = None
 
     def onMousewheel(self, event):
         if self.isSaveSelected():
@@ -127,6 +139,7 @@ class TimelineWidget:
         self.canvas.coords(tag, x, y+5, x+5, y, x, y-5, x-5, y)
         self.main.pointMenuWidget.onPointMoved(newTime)
 
+        self.main.graphicWidget.point.selectedTime = newTime
 
     def onPointSelected(self, tag):
         if self.currentPoint[1] != tag:
@@ -135,6 +148,8 @@ class TimelineWidget:
             self.canvas.itemconfigure(self.currentPoint[0], fill=cfg.POINT_COLOR)
             self.canvas.itemconfigure(tag, fill=cfg.POINT_SELECTED_COLOR)
             self.main.pointMenuWidget.onPointSelected(self.tag2time[int(tag[1::])])
+            self.main.pointMenuWidget.onPointSelected(self.tag2time[int(tag[1::])])
+            self.main.graphicWidget.point.selectedTime = self.tag2time[int(tag[1::])]
 
     def recalculateScrollLimits(self):
         scrollregion = list(self.canvas.bbox("all"))

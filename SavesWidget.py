@@ -74,8 +74,23 @@ class SavesWidget:
             self.main.savesManager.currentSave = selection
             self.main.timelineWidget.drawSave()
             self.main.savesMenuWidget.onSaveSelected()
+
+            save = self.main.savesManager.currentSave
+
+            self.main.graphicWidget.point.points['x'] = []
+            self.main.graphicWidget.point.points['y'] = []
+            self.main.graphicWidget.point.points['z'] = []
+
+            if len(self.main.savesManager.saves[save].points) != len(self.main.graphicWidget.point.points['x']):
+                for time in self.main.savesManager.saves[save].points.keys():
+                    self.main.graphicWidget.point.points['x'].append(self.main.savesManager.saves[save].points[time].x)
+                    self.main.graphicWidget.point.points['y'].append(self.main.savesManager.saves[save].points[time].y)
+                    self.main.graphicWidget.point.points['z'].append(self.main.savesManager.saves[save].points[time].z)
+                    self.main.graphicWidget.point.points['time'].append(time)
+
         else:
             self.listBox.selection_set(self.listBox.get(0, END).index(self.main.savesManager.currentSave))
+
 
 
 

@@ -7,7 +7,7 @@ from PIL import Image, ImageTk
 from PointMenuWidget import PointMenuWidget
 from HandVisualisationWidget import HandVisualisationWidget
 from SavesMenuWidget import SavesMenuWidget
-from MatplotlibWidget import MatplotlibWidget
+from GraphicWidget import GraphicWidget
 from TimelineWidget import TimelineWidget
 from XYVisualisationWidget import XYVisualisationWidget
 from XZVisualisationWidget import XZVisualisationWidget
@@ -67,7 +67,7 @@ class Main:
         self.pointMenuWidget = PointMenuWidget(self)
         self.handVisualisationWidget = HandVisualisationWidget()
         self.savesMenuWidget = SavesMenuWidget(self)
-        self.matplotlibWidget = MatplotlibWidget(self.root)
+        self.graphicWidget = GraphicWidget(self)
         self.timelineWidget = TimelineWidget(self)
         self.xyVisualisationWidget = XYVisualisationWidget()
         self.xzVisualisationWidget = XZVisualisationWidget()
