@@ -203,6 +203,9 @@ class GraphicWidget:
                     self.placing_polygon(event)
                 else:
                     self.axes_movement(event)
+                    
+                if event.keysym == 's' or event.keysym == 'd' or event.keysym == 'w' or event.keysym == 'a' or event.keysym == 'q' or event.keysym == 'e' or event.keysym == 'z' or event.keysym == 'c':
+                    self.main.pointMenuWidget.onPointSelected(self.selectedTime)
 
                 # диапазоны
                 if self.params['x'] > self.max:
@@ -230,8 +233,6 @@ class GraphicWidget:
                 current_point.x = self.params['x']
                 self.main.savesManager.saves[save].points[self.selectedTime].y = self.params['y']
                 self.main.savesManager.saves[save].points[self.selectedTime].z = self.params['z']
-
-                self.main.pointMenuWidget.onPointSelected(self.selectedTime)
 
                 print(self.main.savesManager.saves[save].points[self.selectedTime].x)
 
