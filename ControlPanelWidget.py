@@ -15,8 +15,24 @@ class ControlPanelWidget:
     WIDTH = 275 * cfg.SIZE_MULT
     HEIGHT = 550 * cfg.SIZE_MULT
 
-    def onScaleChanged(self, event):
-        print('Event')
+    def onScaleChanged(self, event, slider):
+
+        if slider == 'q':
+            angle = (self.qSlider.get() / 100) * cfg.ManipulatorConfig.Q_LIMIT[1]
+            self.main.manipulatorController.goToPoint(q=angle)
+            self.qLabel.configure(text=f"Q: {str(int(angle))}")
+        elif slider == 'e':
+            #angle = (self.eSlider.get() / 100) * cfg.ManipulatorConfig.Q_LIMIT[1]
+            angle = self.eSlider.get()
+            #self.main.manipulatorController.goToPoint(q=angle)
+            self.eLabel.configure(text=f"E: {str(int(angle))}")
+        elif slider == 'f':
+            #angle = (self.eSlider.get() / 100) * cfg.ManipulatorConfig.Q_LIMIT[1]
+            angle = self.fSlider.get()
+            #self.main.manipulatorController.goToPoint(q=angle)
+            self.fLabel.configure(text=f"F: {str(int(angle))}")
+
+
 
     def onEnterPressed(self, event):
         x = float(self.xEntry.get())
@@ -112,7 +128,7 @@ class ControlPanelWidget:
         self.zEntry.bind('<Return>', self.onEnterPressed)
 
         self.qLabel = Label(master=self.mainLabel,
-                            text="Q: 123",
+                            text="Q: 0",
                             font="Arial 11",
                             height=1,
                             bg=cfg.SUBCOLOR,
@@ -134,18 +150,18 @@ class ControlPanelWidget:
                              highlightcolor=cfg.MAIN_COLOR,
                              relief=FLAT,
                              troughcolor=cfg.MAIN_COLOR,
-                             command=self.onScaleChanged)
+                             command=lambda event: self.onScaleChanged(event, 'q'))
         self.qSlider.place(x=60, y=75)
 
-        self.q2Label = Label(master=self.mainLabel,
-                            text="Q: 123",
+        self.eLabel = Label(master=self.mainLabel,
+                            text="E: 0",
                             font="Arial 11",
                             height=1,
                             bg=cfg.SUBCOLOR,
                             fg=cfg.TEXT_COLOR)
-        self.q2Label.place(x=5, y=97)
+        self.eLabel.place(x=5, y=97)
 
-        self.q2Slider = Scale(master=self.mainLabel,
+        self.eSlider = Scale(master=self.mainLabel,
                              orient=HORIZONTAL,
                              showvalue=False,
                              length=120,
@@ -159,18 +175,19 @@ class ControlPanelWidget:
                              highlightbackground=cfg.SUBCOLOR,
                              highlightcolor=cfg.MAIN_COLOR,
                              relief=FLAT,
-                             troughcolor=cfg.MAIN_COLOR)
-        self.q2Slider.place(x=60, y=105)
+                             troughcolor=cfg.MAIN_COLOR,
+                             command=lambda event: self.onScaleChanged(event, 'e'))
+        self.eSlider.place(x=60, y=105)
 
-        self.q3Label = Label(master=self.mainLabel,
-                             text="Q: 123",
+        self.fLabel = Label(master=self.mainLabel,
+                             text="F: 0",
                              font="Arial 11",
                              height=1,
                              bg=cfg.SUBCOLOR,
                              fg=cfg.TEXT_COLOR)
-        self.q3Label.place(x=5, y=127)
+        self.fLabel.place(x=5, y=127)
 
-        self.q3Slider = Scale(master=self.mainLabel,
+        self.fSlider = Scale(master=self.mainLabel,
                               orient=HORIZONTAL,
                               showvalue=False,
                               length=120,
@@ -184,8 +201,9 @@ class ControlPanelWidget:
                               highlightbackground=cfg.SUBCOLOR,
                               highlightcolor=cfg.MAIN_COLOR,
                               relief=FLAT,
-                              troughcolor=cfg.MAIN_COLOR)
-        self.q3Slider.place(x=60, y=135)
+                              troughcolor=cfg.MAIN_COLOR,
+                             command=lambda event: self.onScaleChanged(event, 'f'))
+        self.fSlider.place(x=60, y=135)
 
         self.IPLabel = Label(master=self.mainLabel,
                              text="Адрес: ",

@@ -22,6 +22,9 @@ class PointMenuWidget:
         self.main.savesManager.saves[save].points[time].x = float(self.xEntry.get())
         self.main.savesManager.saves[save].points[time].y = float(self.yEntry.get())
         self.main.savesManager.saves[save].points[time].z = float(self.zEntry.get())
+        self.main.savesManager.saves[save].points[time].q = float(self.qEntry.get())
+        self.main.savesManager.saves[save].points[time].e = float(self.eEntry.get())
+        self.main.savesManager.saves[save].points[time].f = float(self.fEntry.get())
         self.main.timelineWidget.movePoint(tag, float(self.timeEntry.get()) * self.main.timelineWidget.pixPerSecond)
 
 
@@ -37,9 +40,9 @@ class PointMenuWidget:
         self.xEntry.insert(0, point.x)
         self.yEntry.insert(0, point.y)
         self.zEntry.insert(0, point.z)
-        self.qEntry.insert(0, "000")
-        self.q2Entry.insert(0, "000")
-        self.q3Entry.insert(0, "000")
+        self.qEntry.insert(0, point.q)
+        self.eEntry.insert(0, point.e)
+        self.fEntry.insert(0, point.f)
         self.timeEntry.insert(0, point.time)
 
     def onPointDeselected(self):
@@ -51,8 +54,8 @@ class PointMenuWidget:
         self.yEntry.delete(0, END)
         self.zEntry.delete(0, END)
         self.qEntry.delete(0, END)
-        self.q2Entry.delete(0, END)
-        self.q3Entry.delete(0, END)
+        self.eEntry.delete(0, END)
+        self.fEntry.delete(0, END)
         self.timeEntry.delete(0, END)
         self.followManipulatorCheckbutton.deselect()
 
@@ -61,8 +64,8 @@ class PointMenuWidget:
         self.yEntry.configure(state=state)
         self.zEntry.configure(state=state)
         self.qEntry.configure(state=state)
-        self.q2Entry.configure(state=state)
-        self.q3Entry.configure(state=state)
+        self.eEntry.configure(state=state)
+        self.fEntry.configure(state=state)
         self.timeEntry.configure(state=state)
         self.followManipulatorCheckbutton.configure(state=state)
         self.robotToPointButton.configure(state=state)
@@ -176,15 +179,15 @@ class PointMenuWidget:
         self.qEntry.place(x=25, y=69)
         self.qEntry.bind('<Return>', self.onEnterPressed)
 
-        self.q2Label = Label(master=self.mainLabel,
-                            text="Q: ",
+        self.eLabel = Label(master=self.mainLabel,
+                            text="E: ",
                             font="Arial 11",
                             height=1,
                             bg=cfg.SUBCOLOR,
                             fg=cfg.TEXT_COLOR)
-        self.q2Label.place(x=70, y=67)
+        self.eLabel.place(x=70, y=67)
 
-        self.q2Entry = Entry(width=5,
+        self.eEntry = Entry(width=5,
                             master=self.mainLabel,
                             font='Arial 11',
                             bg=cfg.SUBCOLOR,
@@ -193,18 +196,18 @@ class PointMenuWidget:
                             justify=LEFT,
                             state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR)
-        self.q2Entry.place(x=90, y=69)
-        self.q2Entry.bind('<Return>', self.onEnterPressed)
+        self.eEntry.place(x=90, y=69)
+        self.eEntry.bind('<Return>', self.onEnterPressed)
 
-        self.q3Label = Label(master=self.mainLabel,
-                             text="Q: ",
+        self.fLabel = Label(master=self.mainLabel,
+                             text="F: ",
                              font="Arial 11",
                              height=1,
                              bg=cfg.SUBCOLOR,
                              fg=cfg.TEXT_COLOR)
-        self.q3Label.place(x=135, y=67)
+        self.fLabel.place(x=135, y=67)
 
-        self.q3Entry = Entry(width=5,
+        self.fEntry = Entry(width=5,
                              master=self.mainLabel,
                              font='Arial 11',
                              bg=cfg.SUBCOLOR,
@@ -213,8 +216,8 @@ class PointMenuWidget:
                              justify=LEFT,
                              state=DISABLED,
                              disabledbackground=cfg.SUBCOLOR)
-        self.q3Entry.place(x=155, y=69)
-        self.q3Entry.bind('<Return>', self.onEnterPressed)
+        self.fEntry.place(x=155, y=69)
+        self.fEntry.bind('<Return>', self.onEnterPressed)
 
         self.timeLabel = Label(master=self.mainLabel,
                             text="Время: ",

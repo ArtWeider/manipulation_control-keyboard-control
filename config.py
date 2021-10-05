@@ -19,6 +19,8 @@ class Cfg:
         LIMIT_X = (150, 600)
         Z_ANGLE_LIMIT = (0, 300)
 
+        Q_LIMIT = (0, 180)
+
 
 
 
