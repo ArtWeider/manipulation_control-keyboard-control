@@ -40,7 +40,7 @@ class TimelineWidget:
         self.point = self.main.graphicWidget.CreatePoint
 
         self.canvas.bind("<MouseWheel>", self.onMousewheel)
-        self.canvas.bind("<Double-Button-1>", self.onMouseDoubleclicked)
+        self.canvas.bind("<Double-Button-1>", self.onMouseDoubleClicked)
         self.canvas.bind("<B1-Motion>", self.onLeftButtonMove)
         self.main.root.bind("<Delete>", self.onDeletePressed)
         self.main.root.bind("<Escape>", self.onEscPressed)
@@ -49,31 +49,31 @@ class TimelineWidget:
 
         self.canvas.configure(scrollregion=(0, 0, 50, 0), xscrollincrement=50)
 
-
-    def onMouseDoubleclicked(self, event):
+    def onMouseDoubleClicked(self, event):
         if self.isSaveSelected():
             x = self.canvas.canvasx(event.widget.winfo_pointerx() - event.widget.winfo_rootx())
             self.main.savesManager.saves[self.main.savesManager.currentSave].addPoint(x/self.pixPerSecond)
             self.addPointToTimeline(x)
 
-        self.point.setPointFlag = True
-
-        self.point.dictionaryUpdate(self.point, flag=True, values=(
-        self.tag2time[int(self.currentPoint[1][1::])], self.point.params['x'], self.point.params['y'], self.point.params['z'], 0, 0, 0, 0))
+            self.main.graphicWidget.point.setPointFlag = True
+            self.main.graphicWidget.point.dictUpdate()
 
     def onEscPressed(self, event):
         if self.isSaveSelected() and self.isMouseOnWidget(event):
             self.deselectPoint()
 
     def deselectPoint(self):
-        self.canvas.itemconfigure(self.currentPoint[1], fill=cfg.POINT_COLOR)
-        self.currentPoint = ['', '']
-        self.main.pointMenuWidget.onPointDeselected()
-
-        self.point.setPointFlag = False
+        self.main.graphicWidget.point.setPointFlag = False
         self.point.CtrlFlag = False
         self.point.cornerNum = 0
         self.main.graphicWidget.point.selectedTime = None
+
+        self.canvas.itemconfigure(self.currentPoint[1], fill=cfg.POINT_COLOR)
+        self.currentPoint = ['', '']
+        self.main.pointMenuWidget.onPointDeselected()
+        self.main.graphicWidget.point.updateScreenFlag = True
+
+        print(1)
 
     def onMousewheel(self, event):
         if self.isSaveSelected():
@@ -89,6 +89,9 @@ class TimelineWidget:
         self.currentPoint = ['', '']
         self.canvas.delete(tag)
         self.canvas.tag_unbind(tag, "<Button-1>")
+
+        self.main.graphicWidget.point.dictUpdate()
+        self.deselectPoint()
 
     def drawPoint(self, x):
         y = 60
@@ -132,14 +135,18 @@ class TimelineWidget:
         oldTime = self.tag2time[int(tag[1::])]
         newTime = x / self.pixPerSecond
         intTag = int(tag[1::])
+
         self.main.savesManager.saves[self.main.savesManager.currentSave].points[oldTime].time = newTime
         self.main.savesManager.saves[self.main.savesManager.currentSave].points[newTime] = self.main.savesManager.saves[self.main.savesManager.currentSave].points.pop(oldTime)
         self.tag2time[intTag] = newTime
-        y=60
+        y = 60
         self.canvas.coords(tag, x, y+5, x+5, y, x, y-5, x-5, y)
         self.main.pointMenuWidget.onPointMoved(newTime)
 
+        self.main.savesManager.saves[self.main.savesManager.currentSave].points = dict(sorted(self.main.savesManager.saves[self.main.savesManager.currentSave].points.items(), key=lambda x: x[0]))
+
         self.main.graphicWidget.point.selectedTime = newTime
+        self.main.graphicWidget.point.dictUpdate()
 
     def onPointSelected(self, tag):
         if self.currentPoint[1] != tag:
@@ -148,8 +155,18 @@ class TimelineWidget:
             self.canvas.itemconfigure(self.currentPoint[0], fill=cfg.POINT_COLOR)
             self.canvas.itemconfigure(tag, fill=cfg.POINT_SELECTED_COLOR)
             self.main.pointMenuWidget.onPointSelected(self.tag2time[int(tag[1::])])
-            self.main.pointMenuWidget.onPointSelected(self.tag2time[int(tag[1::])])
+
             self.main.graphicWidget.point.selectedTime = self.tag2time[int(tag[1::])]
+
+            for i in range(len(self.main.graphicWidget.point.points['time'])):
+                if self.main.graphicWidget.point.points['time'][i] == self.main.graphicWidget.point.selectedTime:
+                    self.main.graphicWidget.point.params['x'] = self.main.graphicWidget.point.points['x'][i]
+                    self.main.graphicWidget.point.params['y'] = self.main.graphicWidget.point.points['y'][i]
+                    self.main.graphicWidget.point.params['z'] = self.main.graphicWidget.point.points['z'][i]
+                    break
+
+            self.main.graphicWidget.point.setPointFlag = True
+            self.main.graphicWidget.point.updateScreenFlag = True
 
     def recalculateScrollLimits(self):
         scrollregion = list(self.canvas.bbox("all"))
@@ -167,8 +184,8 @@ class TimelineWidget:
         self.onPointSelected(f"t{num}")
 
     def isMouseOnWidget(self, event):
-        return event.x > 364 and event.x < 911 and event.y > 481 and event.y < 575
+        return 364 < event.x < 911 and 481 < event.y < 575
 
     def isSaveSelected(self):
-        return self.main.savesManager.currentSave != None
+        return self.main.savesManager.currentSave is not None
 
