@@ -260,5 +260,18 @@ class ControlPanelWidget:
                                        )
         self.takeBoltButton.place(x=11, y=250)
 
+        self.playButton = Button(master=self.mainLabel,
+                                     text="Запустить",
+                                     bg=cfg.BUTTON_COLOR,
+                                     bd=0,
+                                     fg=cfg.TEXT_COLOR,
+                                     width=24,
+                                     activebackground=cfg.BUTTON_ACTIVE_COLOR,
+                                     activeforeground=cfg.TEXT_COLOR,
+                                     # state=DISABLED,
+                                     command=lambda: self.main.manipulatorController.play(self.main.savesManager.saves[self.main.savesManager.currentSave])
+                                     )
+        self.playButton.place(x=11, y=280)
+
 
 

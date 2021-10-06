@@ -20,7 +20,6 @@ class GraphicWidget:
         self.root.remove()
         exit()
 
-        print(self.main.graphicWidget.point.points)
 
     class Create3DPlot:
         def __init__(self, root):
@@ -83,7 +82,6 @@ class GraphicWidget:
                     self.points['c'].append(0)
 
             self.updateScreenFlag = True
-            print(1)
 
         def dictEdit(self, flag, values=(0, 0, 0, 0, 0, 0, 0, 0)):
             if flag:
@@ -273,7 +271,6 @@ class GraphicWidget:
     def drawObjects(self, frame):
         if self.point.updateScreenFlag:
             self.plot3d.ax_3d.clear()
-            print(self.point.setPointFlag)
 
             self.plot3d.ax_3d.plot3D(self.point.points['x'], self.point.points['y'], self.point.points['z'], color='orange', marker='o')
             self.plot3d.ax_3d.set_xlim(xmax=self.point.max, xmin=self.point.min)
