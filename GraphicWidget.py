@@ -36,6 +36,7 @@ class GraphicWidget:
             # Отображение нарисованной графики в окне tkinter
             figure.canvas.mpl_disconnect(figure.canvas.manager.key_press_handler_id)
             canvas = FigureCanvasTkAgg(figure, root)
+            self.ax_3d.view_init(45, 45)
             canvas.draw()
             canvas.get_tk_widget().place(x=GraphicWidget.X + 11, y=GraphicWidget.Y + 15)
 
@@ -70,16 +71,15 @@ class GraphicWidget:
             self.points['z'] = []
             self.points['time'] = []
 
-            if len(self.main.savesManager.saves[save].points) != len(self.points['x']):
-                for time in self.main.savesManager.saves[save].points.keys():
-                    self.points['x'].append(self.main.savesManager.saves[save].points[time].x)
-                    self.points['y'].append(self.main.savesManager.saves[save].points[time].y)
-                    self.points['z'].append(self.main.savesManager.saves[save].points[time].z)
-                    self.points['time'].append(time)
-                    self.points['rad'].append(0)
-                    self.points['a'].append(0)
-                    self.points['b'].append(0)
-                    self.points['c'].append(0)
+            for time in self.main.savesManager.saves[save].points.keys():
+                self.points['x'].append(self.main.savesManager.saves[save].points[time].x)
+                self.points['y'].append(self.main.savesManager.saves[save].points[time].y)
+                self.points['z'].append(self.main.savesManager.saves[save].points[time].z)
+                self.points['time'].append(time)
+                self.points['rad'].append(0)
+                self.points['a'].append(0)
+                self.points['b'].append(0)
+                self.points['c'].append(0)
 
             self.updateScreenFlag = True
 
@@ -180,9 +180,9 @@ class GraphicWidget:
             elif event.keysym == 's':
                 self.params['y'] -= 5
 
-            elif event.keysym == 'q':
-                self.params['z'] += 5
             elif event.keysym == 'e':
+                self.params['z'] += 5
+            elif event.keysym == 'q':
                 self.params['z'] -= 5
 
             self.points['rad'][-1] = 0
@@ -211,9 +211,24 @@ class GraphicWidget:
                     self.points['x'][-i - 1], self.points['y'][-i - 1], self.points['z'][-i - 1] = \
                         self.getSphericalCoordinates(360 / self.cornerNum * i + self.params['a'])
 
-        def place_point(self, event):
+        def assignPointCoords(self):
             save = self.main.savesManager.currentSave
 
+            # присваивание координат точке
+            for i in range(len(self.points['time'])):
+                if self.points['time'][i] == self.selectedTime:
+                    self.points['x'][i] = self.params['x']
+                    self.points['y'][i] = self.params['y']
+                    self.points['z'][i] = self.params['z']
+                    break
+
+            current_point = self.main.savesManager.saves[save].points[self.selectedTime]
+
+            current_point.x = self.params['x']
+            self.main.savesManager.saves[save].points[self.selectedTime].y = self.params['y']
+            self.main.savesManager.saves[save].points[self.selectedTime].z = self.params['z']
+
+        def place_point(self, event):
             # сделать линию параллельной оси координат
             if event.keysym == 'Shift_L':
                 self.ShiftFlag = True
@@ -252,19 +267,7 @@ class GraphicWidget:
                 elif self.params['z'] < self.min + 200:
                     self.params['z'] = self.min + 200
 
-                # присваивание координат точке
-                for i in range(len(self.points['time'])):
-                    if self.points['time'][i] == self.selectedTime:
-                        self.points['x'][i] = self.params['x']
-                        self.points['y'][i] = self.params['y']
-                        self.points['z'][i] = self.params['z']
-                        break
-
-                current_point = self.main.savesManager.saves[save].points[self.selectedTime]
-
-                current_point.x = self.params['x']
-                self.main.savesManager.saves[save].points[self.selectedTime].y = self.params['y']
-                self.main.savesManager.saves[save].points[self.selectedTime].z = self.params['z']
+                self.assignPointCoords()
 
                 self.updateScreenFlag = True
 
