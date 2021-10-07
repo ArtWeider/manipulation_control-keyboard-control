@@ -56,6 +56,13 @@ class TimelineWidget:
             self.addPointToTimeline(x)
 
             self.main.graphicWidget.point.setPointFlag = True
+
+            self.main.graphicWidget.point.params['x'] = self.main.graphicWidget.point.points['x'][-1]
+            self.main.graphicWidget.point.params['y'] = self.main.graphicWidget.point.points['y'][-1]
+            self.main.graphicWidget.point.params['z'] = self.main.graphicWidget.point.points['z'][-1]
+
+            self.main.graphicWidget.point.assignPointCoords()
+
             self.main.graphicWidget.point.dictUpdate()
 
     def onEscPressed(self, event):
@@ -72,8 +79,6 @@ class TimelineWidget:
         self.currentPoint = ['', '']
         self.main.pointMenuWidget.onPointDeselected()
         self.main.graphicWidget.point.updateScreenFlag = True
-
-        print(1)
 
     def onMousewheel(self, event):
         if self.isSaveSelected():
@@ -136,6 +141,10 @@ class TimelineWidget:
         newTime = x / self.pixPerSecond
         intTag = int(tag[1::])
 
+        for checkEqualTime in self.main.savesManager.saves[self.main.savesManager.currentSave].points.keys():
+            if checkEqualTime == newTime:
+                return
+
         self.main.savesManager.saves[self.main.savesManager.currentSave].points[oldTime].time = newTime
         self.main.savesManager.saves[self.main.savesManager.currentSave].points[newTime] = self.main.savesManager.saves[self.main.savesManager.currentSave].points.pop(oldTime)
         self.tag2time[intTag] = newTime
@@ -188,4 +197,3 @@ class TimelineWidget:
 
     def isSaveSelected(self):
         return self.main.savesManager.currentSave is not None
-
