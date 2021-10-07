@@ -138,7 +138,6 @@ class GraphicWidget:
             return x, y, z
 
         def spherical_movement(self, event):
-
             # клавиши управления
             if event.keysym == 'a':
                 self.params['a'] += 5
@@ -150,9 +149,9 @@ class GraphicWidget:
             elif event.keysym == 's':
                 self.params['rad'] -= 5
 
-            elif event.keysym == 'q':
-                self.params['b'] += 5
             elif event.keysym == 'e':
+                self.params['b'] += 5
+            elif event.keysym == 'q':
                 self.params['b'] -= 5
 
             elif event.keysym == 'z':
@@ -180,9 +179,9 @@ class GraphicWidget:
             elif event.keysym == 's':
                 self.params['y'] -= 5
 
-            elif event.keysym == 'q':
-                self.params['z'] += 5
             elif event.keysym == 'e':
+                self.params['z'] += 5
+            elif event.keysym == 'q':
                 self.params['z'] -= 5
 
             self.points['rad'][-1] = 0

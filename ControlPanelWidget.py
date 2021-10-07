@@ -15,6 +15,18 @@ class ControlPanelWidget:
     WIDTH = 275 * cfg.SIZE_MULT
     HEIGHT = 550 * cfg.SIZE_MULT
 
+    def setStateAll(self, state):
+        self.xLabel.configure(state=state)
+        self.yLabel.configure(state=state)
+        self.zLabel.configure(state=state)
+        self.qSlider.configure(state=state)
+        self.eSlider.configure(state=state)
+        self.fSlider.configure(state=state)
+        self.takeSpongeButton.configure(state=state)
+        self.takeBoltButton.configure(state=state)
+        self.takeMarkerButton.configure(state=state)
+        self.playButton.configure(state=state)
+
     def onScaleChanged(self, event, slider):
 
         if slider == 'q':
@@ -32,6 +44,13 @@ class ControlPanelWidget:
             #self.main.manipulatorController.goToPoint(q=angle)
             self.fLabel.configure(text=f"F: {str(int(angle))}")
 
+    def onIPEnterPressed(self, event):
+        self.main.manipulatorController.__init__()
+        if __name__ == '__main__':
+            if self.main.manipulatorController.connected:
+                self.setStateAll(NORMAL)
+            else:
+                self.setStateAll(DISABLED)
 
 
     def onEnterPressed(self, event):
@@ -81,7 +100,7 @@ class ControlPanelWidget:
                             bd=0,
                             fg=cfg.TEXT_COLOR,
                             justify=LEFT,
-                            #state=DISABLED,
+                            state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR,
                             )
         self.xEntry.place(x=25, y=39)
@@ -102,7 +121,7 @@ class ControlPanelWidget:
                             bd=0,
                             fg=cfg.TEXT_COLOR,
                             justify=LEFT,
-                            #state=DISABLED,
+                            state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR)
         self.yEntry.place(x=90, y=39)
         self.yEntry.bind('<Return>', self.onEnterPressed)
@@ -122,13 +141,13 @@ class ControlPanelWidget:
                             bd=0,
                             fg=cfg.TEXT_COLOR,
                             justify=LEFT,
-                            #state=DISABLED,
+                            state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR)
         self.zEntry.place(x=155, y=39)
         self.zEntry.bind('<Return>', self.onEnterPressed)
 
         self.qLabel = Label(master=self.mainLabel,
-                            text="Q: 0",
+                            text="Q: ",
                             font="Arial 11",
                             height=1,
                             bg=cfg.SUBCOLOR,
@@ -150,11 +169,12 @@ class ControlPanelWidget:
                              highlightcolor=cfg.MAIN_COLOR,
                              relief=FLAT,
                              troughcolor=cfg.MAIN_COLOR,
+                             state=DISABLED,
                              command=lambda event: self.onScaleChanged(event, 'q'))
         self.qSlider.place(x=60, y=75)
 
         self.eLabel = Label(master=self.mainLabel,
-                            text="E: 0",
+                            text="E: ",
                             font="Arial 11",
                             height=1,
                             bg=cfg.SUBCOLOR,
@@ -176,11 +196,12 @@ class ControlPanelWidget:
                              highlightcolor=cfg.MAIN_COLOR,
                              relief=FLAT,
                              troughcolor=cfg.MAIN_COLOR,
+                             state=DISABLED,
                              command=lambda event: self.onScaleChanged(event, 'e'))
         self.eSlider.place(x=60, y=105)
 
         self.fLabel = Label(master=self.mainLabel,
-                             text="F: 0",
+                             text="F: ",
                              font="Arial 11",
                              height=1,
                              bg=cfg.SUBCOLOR,
@@ -202,6 +223,7 @@ class ControlPanelWidget:
                               highlightcolor=cfg.MAIN_COLOR,
                               relief=FLAT,
                               troughcolor=cfg.MAIN_COLOR,
+                             state=DISABLED,
                              command=lambda event: self.onScaleChanged(event, 'f'))
         self.fSlider.place(x=60, y=135)
 
@@ -223,6 +245,7 @@ class ControlPanelWidget:
                             # state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR)
         self.IPEntry.place(x=60, y=160)
+        self.IPEntry.bind("<Return>", self.onIPEnterPressed)
 
         self.takeMarkerButton = Button(master=self.mainLabel,
                                          text="Взять маркер",
@@ -232,7 +255,7 @@ class ControlPanelWidget:
                                          width=24,
                                          activebackground=cfg.BUTTON_ACTIVE_COLOR,
                                          activeforeground=cfg.TEXT_COLOR,
-                                         #state=DISABLED,
+                                         state=DISABLED,
                                          )
         self.takeMarkerButton.place(x=11, y=190)
 
@@ -244,7 +267,7 @@ class ControlPanelWidget:
                                        width=24,
                                        activebackground=cfg.BUTTON_ACTIVE_COLOR,
                                        activeforeground=cfg.TEXT_COLOR,
-                                       # state=DISABLED,
+                                       state=DISABLED,
                                        )
         self.takeSpongeButton.place(x=11, y=220)
 
@@ -256,7 +279,7 @@ class ControlPanelWidget:
                                        width=24,
                                        activebackground=cfg.BUTTON_ACTIVE_COLOR,
                                        activeforeground=cfg.TEXT_COLOR,
-                                       # state=DISABLED,
+                                       state=DISABLED,
                                        )
         self.takeBoltButton.place(x=11, y=250)
 
@@ -268,7 +291,7 @@ class ControlPanelWidget:
                                      width=24,
                                      activebackground=cfg.BUTTON_ACTIVE_COLOR,
                                      activeforeground=cfg.TEXT_COLOR,
-                                     # state=DISABLED,
+                                     state=DISABLED,
                                      command=lambda: self.main.manipulatorController.play(self.main.savesManager.saves[self.main.savesManager.currentSave])
                                      )
         self.playButton.place(x=11, y=280)

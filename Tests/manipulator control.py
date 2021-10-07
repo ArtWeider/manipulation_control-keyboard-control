@@ -18,6 +18,6 @@ for i in range(0, 360, 10):
     yp.append(y)
 
 for i in enumerate(xp):
-    time.sleep(0.3)
+    tn.read_until(b'#')
     print(f'X{i[1]} Y{yp[i[0]]} Z{300} Q0')
     tn.write(f'X{i[1]} Y{yp[i[0]]} Z{300} Q0'.encode('utf-8'))

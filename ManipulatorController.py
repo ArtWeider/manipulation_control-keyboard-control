@@ -8,14 +8,18 @@ class ManipulatorController:
     tn = None
     playThread = None
 
+    connected = False
+
     def connect(self, ip, port):
         self.tn = telnet.Telnet(ip, port, 1)
+        self.connected = True
 
     def __init__(self):
         try:
             self.connect('192.168.137.198', '23')
         except:
             self.tn = self.FakeTn()
+            self.connected = False
             print("Can't connect")
 
     def goToPoint(self, **kwargs):
