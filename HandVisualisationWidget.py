@@ -1,83 +1,120 @@
 from tkinter import *
 from tkinter import ttk
 from config import Cfg as cfg
+import serial.tools.list_ports
+import threading
 from math import *
-
+from time import sleep
 
 class HandVisualisationWidget:
-
-    mainLabel = None
-    verticalLine = None
-    handCanvas = None
-    A1Label = None
-    A2Label = None
-    A3Label = None
-    A4Label = None
-    A5Label = None
-    A6Label = None
-
     X = 5 * cfg.SIZE_MULT
     Y = 600 * cfg.SIZE_MULT
     WIDTH = 505 * cfg.SIZE_MULT
     HEIGHT = 295 * cfg.SIZE_MULT
 
-    canvasSize = (WIDTH-(WIDTH/4) - 25, HEIGHT-20)
+    canvasSize = (WIDTH - (WIDTH / 2.5), HEIGHT - 20)
 
-    def DrawHand(self, a1, a2, a3, l1, l2, l3):
+    ser = serial.Serial()
+    portList = serial.tools.list_ports.comports()
+    comPort = ''
+
+    gloveData = {'sy': 0, 'sz': 0, 'X': 0, 'Y': 0, 'wy': 0, 'hy': 0, 'hx': 0, 'g': 0}
+
+    def DrawHand(self):
         point_size = 5
         width = self.canvasSize[0]
         height = self.canvasSize[1]
-        p1 = [10, height/2]
-        p2 = self.GetPointPos(p1, l1, a1)
-        p3 = self.GetPointPos(p2, l2, a2)
-        p4 = self.GetPointPos(p3, l3, a3)
 
-        self.handCanvas.create_line(p1[0],
-                                    p1[1],
-                                    p2[0],
-                                    p2[1],
-                                    width=5,
-                                    fill=cfg.MAIN_COLOR)
+        shoulder_len = 80
+        wrist_len = 70
+        hand_len = 40
 
-        self.handCanvas.create_line(p2[0],
-                                    p2[1],
-                                    p3[0],
-                                    p3[1],
-                                    width=5,
-                                    fill=cfg.MAIN_COLOR)
+        while True:
+            try:
+                start = [10, height / 2]
+                shoulder = self.GetPointPos(start, shoulder_len, self.gloveData['sy'])
+                wrist = self.GetPointPos(shoulder, wrist_len, self.gloveData['wy'])
+                hand = self.GetPointPos(wrist, hand_len, self.gloveData['hy'])
 
-        self.handCanvas.create_line(p3[0],
-                                    p3[1],
-                                    p4[0],
-                                    p4[1],
-                                    width=5,
-                                    fill=cfg.MAIN_COLOR)
+                self.handCanvas.create_line(start[0], start[1], shoulder[0], shoulder[1], width=5, fill='FireBrick')
+                self.handCanvas.create_line(shoulder[0], shoulder[1], wrist[0], wrist[1], width=5, fill='ForestGreen')
+                self.handCanvas.create_line(wrist[0], wrist[1], hand[0], hand[1], width=5, fill='Teal')
 
-        self.handCanvas.create_oval(p1[0]-point_size,
-                                    p1[1]-point_size,
-                                    p1[0]+point_size,
-                                    p1[1]+point_size,
-                                    fill=cfg.TEXT_COLOR,
-                                    outline=cfg.TEXT_COLOR)
+                self.handCanvas.create_oval(start[0] - point_size,
+                                            start[1] - point_size,
+                                            start[0] + point_size,
+                                            start[1] + point_size,
+                                            fill='SlateGray', outline='SlateGray')
+                self.handCanvas.create_oval(shoulder[0] - point_size,
+                                            shoulder[1] - point_size,
+                                            shoulder[0] + point_size,
+                                            shoulder[1] + point_size,
+                                            fill='SlateGray', outline='SlateGray')
+                self.handCanvas.create_oval(wrist[0] - point_size,
+                                            wrist[1] - point_size,
+                                            wrist[0] + point_size,
+                                            wrist[1] + point_size,
+                                            fill='SlateGray', outline='SlateGray')
 
-        self.handCanvas.create_oval(p2[0] - point_size,
-                                    p2[1] - point_size,
-                                    p2[0] + point_size,
-                                    p2[1] + point_size,
-                                    fill=cfg.TEXT_COLOR,
-                                    outline=cfg.TEXT_COLOR)
+                self.handCanvas.update()
+                sleep(0.1)
+                self.handCanvas.delete('all')
+            except UnicodeDecodeError: continue
+            except: break
 
-        self.handCanvas.create_oval(p3[0] - point_size,
-                                    p3[1] - point_size,
-                                    p3[0] + point_size,
-                                    p3[1] + point_size,
-                                    fill=cfg.TEXT_COLOR,
-                                    outline=cfg.TEXT_COLOR)
+    def GetPointPos(self, startPoint, length, angle):
 
-    def GetPointPos(self, sp, l, angle):
-
-        out = [int(sp[0] + l * cos(radians(angle))), int(sp[1] + l * sin(radians(angle)))]
+        out = [int(startPoint[0] + length * cos(radians(angle))), int(startPoint[1] + length * sin(radians(angle)))]
         return out
+
+    def connectToUART(self):
+        # поиск порта подключенного устройства
+        for i in range(0, len(self.portList)):
+            port = str(self.portList[i])
+            if 'Silicon Labs' in port:
+                self.comPort = (port.split(' ')[0])
+                break
+        if self.comPort != '':
+            self.ser.port = self.comPort
+            self.ser.baudrate = 9600
+            self.ser.timeout = 1
+            self.ser.open()
+            print("Connected to " + self.comPort)
+            return True
+        else:
+            print("Failure connection")
+            return False
+
+    def getDataFromGlove(self):
+        while True:
+            try:
+                if self.ser.in_waiting:
+                    packet = self.ser.readline().decode('utf-8').split('/')
+                    print(packet)
+
+                    if len(packet) == 9:
+                        self.gloveData['sy'] = -float(packet[0])
+                        self.gloveData['sz'] = float(packet[1])
+
+                        self.gloveData['X'] = float(packet[2])
+                        self.gloveData['Y'] = float(packet[3])
+
+                        self.gloveData['wy'] = -float(packet[4])
+
+                        self.gloveData['hy'] = -float(packet[5])
+                        self.gloveData['hx'] = float(packet[6])
+
+                        self.gloveData['g'] = float(packet[7])
+
+                        self.A1Label['text'] = "S:" + packet[0] + "°"
+                        self.A2Label['text'] = "W:" + packet[4] + "°"
+                        self.A3Label['text'] = "H:" + packet[5] + "°"
+
+                        self.A4Label['text'] = "YAW:" + packet[0] + "°"
+                        self.A5Label['text'] = "ROLL:" + packet[4] + "°"
+                        self.A6Label['text'] = "GRAB:" + packet[5] + "%"
+            except UnicodeDecodeError: continue
+            except: break
 
     def __init__(self):
         self.mainLabel = ttk.Frame(style="RoundedFrame", height=self.HEIGHT, width=self.WIDTH)
@@ -85,12 +122,10 @@ class HandVisualisationWidget:
 
         self.verticalLine = Frame(master=self.mainLabel,
                                   width=2,
-                                  height=self.HEIGHT-8,
-                                  bg=cfg.LINE_COLOR,
+                                  height=self.HEIGHT - 8,
+                                  bg=cfg.LINE_COLOR)
 
-                                  )
-
-        self.verticalLine.place(x=self.WIDTH-(self.WIDTH/4), y=4)
+        self.verticalLine.place(x=self.WIDTH - (self.WIDTH / 3) - 5, y=4)
 
         self.handCanvas = Canvas(master=self.mainLabel,
                                  width=self.canvasSize[0],
@@ -98,76 +133,63 @@ class HandVisualisationWidget:
                                  bg=cfg.SUBCOLOR,
                                  bd=0,
                                  relief=RIDGE,
-                                 highlightthickness=0
-                                 )
+                                 highlightthickness=0)
+
         self.handCanvas.place(x=10, y=10)
 
         self.A1Label = Label(
             master=self.mainLabel,
-            text="A1: 25°",
             font="Arial 14",
             height=1,
-            bg=cfg.SUBCOLOR,
-            fg=cfg.TEXT_COLOR,
-        )
-        self.A1Label.place(x=self.WIDTH-(self.WIDTH/4)+5, y=12)
+            bg='FireBrick',
+            fg=cfg.TEXT_COLOR)
+
+        self.A1Label.place(x=self.WIDTH - (self.WIDTH / 3), y=12)
 
         self.A2Label = Label(
             master=self.mainLabel,
-            text="A2: 5°",
             font="Arial 14",
             height=1,
-            bg=cfg.SUBCOLOR,
-            fg=cfg.TEXT_COLOR,
-        )
-        self.A2Label.place(x=self.WIDTH - (self.WIDTH / 4) + 5, y=44)
+            bg='ForestGreen',
+            fg=cfg.TEXT_COLOR)
+
+        self.A2Label.place(x=self.WIDTH - (self.WIDTH / 3), y=44)
 
         self.A3Label = Label(
             master=self.mainLabel,
-            text="A3: 15°",
             font="Arial 14",
             height=1,
-            bg=cfg.SUBCOLOR,
-            fg=cfg.TEXT_COLOR,
-        )
-        self.A3Label.place(x=self.WIDTH - (self.WIDTH / 4) + 5, y=76)
+            bg='Teal',
+            fg=cfg.TEXT_COLOR)
+        self.A3Label.place(x=self.WIDTH - (self.WIDTH / 3), y=76)
 
         self.A4Label = Label(
             master=self.mainLabel,
-            text="A4: 174°",
             font="Arial 14",
             height=1,
             bg=cfg.SUBCOLOR,
-            fg=cfg.TEXT_COLOR,
-        )
-        self.A4Label.place(x=self.WIDTH - (self.WIDTH / 4) + 5, y=107)
+            fg=cfg.TEXT_COLOR)
+
+        self.A4Label.place(x=self.WIDTH - (self.WIDTH / 3), y=107)
 
         self.A5Label = Label(
             master=self.mainLabel,
-            text="A5: -85°",
             font="Arial 14",
             height=1,
             bg=cfg.SUBCOLOR,
-            fg=cfg.TEXT_COLOR,
-        )
-        self.A5Label.place(x=self.WIDTH - (self.WIDTH / 4) + 5, y=139)
+            fg=cfg.TEXT_COLOR)
+
+        self.A5Label.place(x=self.WIDTH - (self.WIDTH / 3), y=139)
 
         self.A6Label = Label(
             master=self.mainLabel,
-            text="A6: 76%",
             font="Arial 14",
             height=1,
             bg=cfg.SUBCOLOR,
-            fg=cfg.TEXT_COLOR,
-        )
-        self.A6Label.place(x=self.WIDTH - (self.WIDTH / 4) + 5, y=169)
+            fg=cfg.TEXT_COLOR)
 
-        self.DrawHand(25, 5, 15, 80, 70, 40)
+        self.A6Label.place(x=self.WIDTH - (self.WIDTH / 3), y=169)
 
-
-
-
-
-
-
-
+        if self.connectToUART():
+            threading.Thread(target=self.getDataFromGlove).start()
+            threading.Thread(target=self.DrawHand).start()
