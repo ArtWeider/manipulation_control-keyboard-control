@@ -6,6 +6,7 @@ import threading
 from math import *
 from time import sleep
 
+
 class HandVisualisationWidget:
     X = 5 * cfg.SIZE_MULT
     Y = 600 * cfg.SIZE_MULT
@@ -56,6 +57,10 @@ class HandVisualisationWidget:
                                             wrist[1] + point_size,
                                             fill='SlateGray', outline='SlateGray')
 
+                self.handCanvas.create_arc(200-10, 107-10+5, 200+10, 107+10+5, start=90, extent=self.gloveData['sz']*2, style=ARC, outline='FireBrick', width=3)
+                self.handCanvas.create_arc(200-10, 139-10+5, 200+10, 139+10+5, start=90, extent=self.gloveData['hx']*2, style=ARC, outline='Teal', width=3)
+                self.handCanvas.create_arc(200-10, 169-10+5, 200+10, 169+10+5, start=90, extent=self.gloveData['g']*3.6, style=ARC, outline='SlateGray', width=3)
+
                 self.handCanvas.update()
                 sleep(0.1)
                 self.handCanvas.delete('all')
@@ -90,8 +95,7 @@ class HandVisualisationWidget:
             try:
                 if self.ser.in_waiting:
                     packet = self.ser.readline().decode('utf-8').split('/')
-                    print(packet)
-
+                    
                     if len(packet) == 9:
                         self.gloveData['sy'] = -float(packet[0])
                         self.gloveData['sz'] = float(packet[1])
@@ -110,9 +114,9 @@ class HandVisualisationWidget:
                         self.A2Label['text'] = "W:" + packet[4] + "°"
                         self.A3Label['text'] = "H:" + packet[5] + "°"
 
-                        self.A4Label['text'] = "YAW:" + packet[0] + "°"
-                        self.A5Label['text'] = "ROLL:" + packet[4] + "°"
-                        self.A6Label['text'] = "GRAB:" + packet[5] + "%"
+                        self.A4Label['text'] = "YAW:" + packet[1] + "°"
+                        self.A5Label['text'] = "ROLL:" + packet[6] + "°"
+                        self.A6Label['text'] = "GRAB:" + packet[7] + "%"
             except UnicodeDecodeError: continue
             except: break
 
