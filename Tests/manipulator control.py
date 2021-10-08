@@ -1,7 +1,7 @@
 import telnetlib as telnet
 from math import *
 import time
-import matplotlib.pyplot as plt
+
 
 radius = 100
 

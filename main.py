@@ -60,7 +60,7 @@ class Main:
         self.root.configure(bg=cfg.MAIN_COLOR)
 
         self.savesManager = SavesManager(self)
-        self.manipulatorController = ManipulatorController()
+        self.manipulatorController = ManipulatorController(self)
 
         self.upperStatusBar = UpperStatusBar()
         self.savesWidget = SavesWidget(self)
@@ -69,7 +69,7 @@ class Main:
         self.savesMenuWidget = SavesMenuWidget(self)
         self.graphicWidget = GraphicWidget(self)
         self.timelineWidget = TimelineWidget(self)
-        self.xyVisualisationWidget = XYVisualisationWidget()
+        self.xyVisualisationWidget = XYVisualisationWidget(self)
         self.xzVisualisationWidget = XZVisualisationWidget()
         self.controlPanelWidget = ControlPanelWidget(self)
 

@@ -192,7 +192,7 @@ class PointMenuWidget:
         self.qEntry.bind('<Return>', self.onEnterPressed)
 
         self.eLabel = Label(master=self.mainLabel,
-                            text="Q: ",
+                            text="E: ",
                             font="Arial 11",
                             height=1,
                             bg=cfg.SUBCOLOR,
@@ -212,7 +212,7 @@ class PointMenuWidget:
         self.eEntry.bind('<Return>', self.onEnterPressed)
 
         self.fLabel = Label(master=self.mainLabel,
-                             text="Q: ",
+                             text="F: ",
                              font="Arial 11",
                              height=1,
                              bg=cfg.SUBCOLOR,
