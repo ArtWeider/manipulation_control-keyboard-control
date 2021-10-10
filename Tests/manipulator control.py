@@ -18,47 +18,18 @@ yp = []
     xp.append(x)
     yp.append(y)'''
 
-points = [[150, 150, 420], [250, 150, 420], [250, 150, 520], [150, 150, 520]]
-
-tn.write(f'X{200} Y{200} Z{300} Q0'.encode('utf-8'))
-
+points = [[150, 150, 420], [350, 150, 420], [350, 150, 620], [150, 150, 620]]
+tn.write(f'P'.encode('utf-8'))
+exit()
+completed = True
 while True:
     for i in points:
-        if True:
+        while not completed:
             data = tn.read_very_eager()
             if data != b'':
                 print(data)
             if '#' in list(data.decode('utf-8')):
-                tn.write(f'X{i[0]} Y{i[1]} Z{i[2]} Q0'.encode('utf-8'))
+                completed = True
+        completed = False
+        tn.write(f'X{i[0]} Y{i[1]} Z{i[2]} Q0'.encode('utf-8'))
 
-
-i = random.randint(0, len(xp))
-
-tn.write(f'X{xp[i]} Y{200} Z{yp[i]} Q0'.encode('utf-8'))
-i = 0
-while True:
-    data = tn.read_very_eager()
-    if data != b'':
-        print(data)
-    if '#' in list(data.decode('utf-8')):
-        i = random.randint(0, len(xp))
-        tn.write(f'X{xp[i]} Y{200} Z{yp[i]} Q0'.encode('utf-8'))
-
-
-
-i = 0
-while True:
-    tn.write(f'X{xp[i]} Y{yp[i]} Z{300} Q0'.encode('utf-8'))
-    print('send')
-    i += 1
-    while True:
-        data = tn.read_very_eager()
-        print(data)
-        if data != b'':
-            print(data)
-        if '#' in list(data.decode('utf-8')):
-            print('break')
-            break
-
-
-#tn.write(f'X{xp[i]} Y{yp[i]} Z{300} Q0'.encode('utf-8'))
