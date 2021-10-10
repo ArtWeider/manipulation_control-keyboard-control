@@ -6,7 +6,7 @@ import random
 
 radius = 100
 
-tn = telnet.Telnet('192.168.137.179', '23')
+tn = telnet.Telnet('127.0.0.1', '23')
 print("CONNECTED")
 
 points = []
@@ -16,16 +16,20 @@ for i in range(0, 360, 40):
     z = 300
     points.append([x, y, z])
 
-
+old_num = -5
 completed = True
 while True:
     for i in points:
         while not completed:
-            data = tn.read_very_eager()
+            data = tn.read_eager()
             if data != b'':
                 print(data)
-            if '#' in list(data.decode('utf-8')):
-                completed = True
+            data = data.decode('utf-8')
+            if '#' in list(data):
+                num = int(data[1::])
+                if num > old_num:
+                    completed = True
+                    old_num = num
         completed = False
         tn.write(f'X{i[0]} Y{i[1]} Z{i[2]} Q0'.encode('utf-8'))
 
