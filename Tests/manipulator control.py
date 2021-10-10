@@ -9,18 +9,14 @@ radius = 100
 tn = telnet.Telnet('192.168.137.179', '23')
 print("CONNECTED")
 
-xp = []
-yp = []
-
-'''for i in range(0, 360, 40):
+points = []
+for i in range(0, 360, 40):
     x = 200 + int(radius * cos(radians(i)))
     y = 300 + int(radius * sin(radians(i)))
-    xp.append(x)
-    yp.append(y)'''
+    z = 300
+    points.append([x, y, z])
 
-points = [[150, 150, 420], [350, 150, 420], [350, 150, 620], [150, 150, 620]]
-tn.write(f'P'.encode('utf-8'))
-exit()
+
 completed = True
 while True:
     for i in points:
