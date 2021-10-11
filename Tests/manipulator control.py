@@ -71,13 +71,13 @@ while True:
                 if ser.in_waiting:
                     packet = ser.readline().decode('utf-8')
                     print('RECIEVE - ' + packet)
-                    if "#" in packet:
+                    if "#" in list(packet):
                         completed = True
                         ''' num = int(packet[1::])
                         if num > old_num:
                             completed = True
                             old_num = num'''
-                    
+
             except UnicodeDecodeError:
                 continue
             except:
