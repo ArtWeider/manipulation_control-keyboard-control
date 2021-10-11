@@ -19,7 +19,7 @@ class HandVisualisationWidget:
     portList = serial.tools.list_ports.comports()
     comPort = ''
 
-    gloveData = {'sy': 0, 'sz': 0, 'X': 0, 'Y': 0, 'wy': 0, 'hy': 0, 'hx': 0, 'g': 0}
+    gloveData = {'sy': 0, 'sz': 0, 'X': 0, 'Y': 0, 'Z': 0, 'wy': 0, 'hy': 0, 'hx': 0, 'g': 0}
 
     def DrawHand(self):
         point_size = 5
@@ -32,7 +32,7 @@ class HandVisualisationWidget:
 
         while True:
             try:
-                start = [10, height / 2]
+                start = [0, 0] #[10, height / 2]
                 shoulder = self.GetPointPos(start, shoulder_len, self.gloveData['sy'])
                 wrist = self.GetPointPos(shoulder, wrist_len, self.gloveData['wy'])
                 hand = self.GetPointPos(wrist, hand_len, self.gloveData['hy'])
@@ -57,8 +57,14 @@ class HandVisualisationWidget:
                                             wrist[1] + point_size,
                                             fill='SlateGray', outline='SlateGray')
 
-                self.handCanvas.create_arc(200-10, 107-10+5, 200+10, 107+10+5, start=90, extent=self.gloveData['sz']*2, style=ARC, outline='FireBrick', width=3)
-                self.handCanvas.create_arc(200-10, 139-10+5, 200+10, 139+10+5, start=90, extent=self.gloveData['hx']*2, style=ARC, outline='Teal', width=3)
+                self.handCanvas.create_oval(self.gloveData['X'] - point_size,
+                                            self.gloveData['Y'] - point_size,
+                                            self.gloveData['X'] + point_size,
+                                            self.gloveData['Y'] + point_size,
+                                            fill='white', outline='white')
+
+                self.handCanvas.create_arc(200-10, 107-10+5, 200+10, 107+10+5, start=90, extent=self.gloveData['sz']*3 - 90, style=ARC, outline='FireBrick', width=3)
+                self.handCanvas.create_arc(200-10, 139-10+5, 200+10, 139+10+5, start=90, extent=self.gloveData['hx'], style=ARC, outline='Teal', width=3)
                 self.handCanvas.create_arc(200-10, 169-10+5, 200+10, 169+10+5, start=90, extent=self.gloveData['g']*3.6, style=ARC, outline='SlateGray', width=3)
 
                 self.handCanvas.update()
@@ -87,7 +93,7 @@ class HandVisualisationWidget:
             print("Connected to " + self.comPort)
             return True
         else:
-            print("Failure connection")
+            print("Can't connect")
             return False
 
     def getDataFromGlove(self):
@@ -95,30 +101,33 @@ class HandVisualisationWidget:
             try:
                 if self.ser.in_waiting:
                     packet = self.ser.readline().decode('utf-8').split('/')
-                    
-                    if len(packet) == 9:
-                        self.gloveData['sy'] = -float(packet[0])
-                        self.gloveData['sz'] = float(packet[1])
 
-                        self.gloveData['X'] = float(packet[2])
-                        self.gloveData['Y'] = float(packet[3])
+                    self.A1Label['text'] = "S:" + packet[0] + "°"
+                    self.A2Label['text'] = "W:" + packet[2] + "°"
+                    self.A3Label['text'] = "H:" + packet[6] + "°"
+                    self.A4Label['text'] = "YAW:" + packet[1] + "°"
+                    self.A5Label['text'] = "ROLL:" + packet[7] + "°"
+                    self.A6Label['text'] = "GRAB:" + packet[8] + "%"
 
-                        self.gloveData['wy'] = -float(packet[4])
+                    print(packet)
 
-                        self.gloveData['hy'] = -float(packet[5])
-                        self.gloveData['hx'] = float(packet[6])
+                    self.gloveData['sy'] = float(packet[0])
+                    self.gloveData['sz'] = float(packet[1])
 
-                        self.gloveData['g'] = float(packet[7])
+                    self.gloveData['wy'] = float(packet[2])
 
-                        self.A1Label['text'] = "S:" + packet[0] + "°"
-                        self.A2Label['text'] = "W:" + packet[4] + "°"
-                        self.A3Label['text'] = "H:" + packet[5] + "°"
+                    self.gloveData['X'] = float(packet[3])
+                    self.gloveData['Y'] = float(packet[4])
+                    self.gloveData['Z'] = float(packet[5])
 
-                        self.A4Label['text'] = "YAW:" + packet[1] + "°"
-                        self.A5Label['text'] = "ROLL:" + packet[6] + "°"
-                        self.A6Label['text'] = "GRAB:" + packet[7] + "%"
+                    self.gloveData['hy'] = float(packet[6])
+                    self.gloveData['hx'] = float(packet[7])
+
+                    self.gloveData['g'] = float(packet[8])
+
             except UnicodeDecodeError: continue
-            except: break
+            except ValueError: continue
+            except IndexError: continue
 
     def __init__(self):
         self.mainLabel = ttk.Frame(style="RoundedFrame", height=self.HEIGHT, width=self.WIDTH)
