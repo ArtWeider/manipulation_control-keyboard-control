@@ -63,13 +63,13 @@ old_num = -5
 '''
 
 
-
+ser.write(f'X{points[0][0]} Y{points[0][1]} Z{points[0][2]} Q0\n'.encode('ascii'))
 while True:
     for i in points:
-        while completed:
+        while not completed:
             try:
                 if ser.in_waiting:
-                    packet = ser.readline().decode('utf-8')
+                    packet = ser.readline().decode('ascii')
                     print('RECIEVE - ' + packet)
                     if "#" in list(packet):
                         completed = True
