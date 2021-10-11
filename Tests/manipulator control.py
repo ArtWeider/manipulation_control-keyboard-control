@@ -63,7 +63,7 @@ old_num = -5
 '''
 
 
-ser.write(f'X{points[0][0]} Y{points[0][1]} Z{points[0][2]} Q0\n'.encode('ascii'))
+ser.write(f'X{points[0][0]} Y{points[0][1]} Z{points[0][2]} Q0\r\n'.encode('ascii'))
 while True:
     for i in points:
         while not completed:
@@ -84,6 +84,6 @@ while True:
                 break
 
         completed = False  # нужно чтобы в следующий раз цикл снова начался
-        ser.write(f'X{i[0]} Y{i[1]} Z{i[2]} Q0\n'.encode('ascii'))  # отправляет данные на манипулятор
+        ser.write(f'X{i[0]} Y{i[1]} Z{i[2]} Q0\r\n'.encode('ascii'))  # отправляет данные на манипулятор
         print('SEND - ' + f'X{i[0]} Y{i[1]} Z{i[2]} Q0')
         time.sleep(1)
