@@ -12,6 +12,7 @@ ser = serial.Serial()
 portList = serial.tools.list_ports.comports()
 comPort = ''
 
+print(str(portList[0]))
 for i in range(0, len(portList)):
     port = str(portList[i])
     if 'Silicon Labs' in port:
@@ -25,6 +26,7 @@ if comPort != '':
     print("Connected to " + comPort)
 else:
     print("Failure connection")
+    exit()
 
 
 '''tn = telnet.Telnet('127.0.0.1', '23')  # подключение, сюда нужный адрес вставить
@@ -64,7 +66,7 @@ old_num = -5
 
 while True:
     for i in points:
-        while completed:
+        '''while completed:
             try:
                 if ser.in_waiting:
                     packet = ser.readline().decode('utf-8')
@@ -77,8 +79,9 @@ while True:
             except UnicodeDecodeError:
                 continue
             except:
-                break
+                break'''
 
         completed = False  # нужно чтобы в следующий раз цикл снова начался
         ser.writelines(f'X{i[0]} Y{i[1]} Z{i[2]} Q0'.encode('utf-8'))  # отправляет данные на манипулятор
         print('SEND - ' + f'X{i[0]} Y{i[1]} Z{i[2]} Q0')
+        time.sleep(1)
