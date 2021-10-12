@@ -57,7 +57,8 @@ class ControlPanelWidget:
         x = float(self.xEntry.get())
         y = float(self.yEntry.get())
         z = float(self.zEntry.get())
-        self.main.manipulatorController.goToPoint(x=x, y=y, z=z)
+        q = (float(self.qSlider.get()) / 100) * cfg.ManipulatorConfig.Q_LIMIT[1]
+        self.main.manipulatorController.goToPoint(False, x=x, y=y, z=z, q=q)
         self.main.xyVisualisationWidget.update()
 
     def __init__(self, main):

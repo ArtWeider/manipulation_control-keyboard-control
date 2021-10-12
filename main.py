@@ -14,6 +14,7 @@ from XZVisualisationWidget import XZVisualisationWidget
 from ControlPanelWidget import ControlPanelWidget
 from SavesManager import SavesManager
 from ManipulatorController import ManipulatorController
+import Tests.VoiceTest as Voice
 
 class Main:
 
@@ -42,6 +43,7 @@ class Main:
     def __init__(self):
         self.root = Tk()
         self.style = ttk.Style()
+
 
         self.root.protocol("WM_DELETE_WINDOWS", self.quit)
 
@@ -72,6 +74,7 @@ class Main:
         self.xyVisualisationWidget = XYVisualisationWidget(self)
         self.xzVisualisationWidget = XZVisualisationWidget()
         self.controlPanelWidget = ControlPanelWidget(self)
+        Voice.main = self
 
         self.root.mainloop()
 

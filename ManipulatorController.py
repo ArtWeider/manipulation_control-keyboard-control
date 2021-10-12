@@ -2,12 +2,14 @@ import telnetlib as telnet
 import asyncio
 import threading
 import time
+import serial.tools.list_ports
+from config import Cfg as cfg
 
 class ManipulatorController:
 
     main = None
 
-    tn = None
+    ser = None
     playThread = None
 
     connected = False
@@ -19,33 +21,44 @@ class ManipulatorController:
     toSend = ''
     completed = True
 
-    def connect(self, ip, port):
-        self.tn = telnet.Telnet(ip, port, 10)
-        self.connected = True
+    def connect(self, name):
+        self.ser = serial.Serial()
+        portList = serial.tools.list_ports.comports()
+        comPort = ''
+
+        for i in range(0, len(portList)):
+            port = str(portList[i])
+            if name in port:
+                comPort = (port.split(' ')[0])
+                break
+        if comPort != '':
+            try:
+                self.ser.port = comPort
+                self.ser.baudrate = 9600
+                self.ser.timeout = 1
+                self.ser.open()
+                self.connected = True
+            except:
+                self.connected = False
+        else:
+            self.connected = False
+
 
     def __init__(self, main):
         self.main = main
-        self.tn = self.FakeTn()
+        self.connect(cfg.ManipulatorConfig.DEFAULT_NAME)
         self.connected = True
         self.listenerFunc()
 
     def listenerFunc(self):
-        data = ''
-        try:
-            data = self.tn.read_eager().decode('utf-8')
-            if data != '':
-                print(data)
-            if '#' in list(data):
-                self.completed = True
-        except:
-            pass
-        self.main.root.after(100, self.listenerFunc)
+        pass
 
 
     def send(self, wait=True):
-        if not wait or not self.completed:
+        if not wait:
             self.completed = False
-            self.tn.write(self.toSend.encode('utf-8'))
+            self.ser.write(self.toSend.encode('ascii'))
+            print('SEND - ' + self.toSend)
 
     def goToPoint(self, wait=True, **kwargs):
         mess = ''
@@ -83,11 +96,7 @@ class ManipulatorController:
                            e=pointsVar[i].e,
                            f=pointsVar[i].f)
             self.main.xyVisualisationWidget.update(pointsVar[i].x, pointsVar[i].y)
-
-    class FakeTn:
-
-        def write(self, *args):
-            pass
-
-        def read_eager(self, *args):
-            return b''
+        time.sleep(5)
+        self.toSend = 'P'
+        self.send(False)
+        self.toSend = ''

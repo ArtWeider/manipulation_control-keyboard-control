@@ -15,11 +15,12 @@ from fuzzywuzzy import fuzz
 import pyttsx3
 import datetime
 
+main = None
+
 opts = {
-    "alias": ('кеша', 'кеш', 'инокентий', 'иннокентий', 'кишун'),
-    "tbr": ('скажи', 'расскажи', 'покажи', 'сколько', 'произнеси'),
+    "tbr": ('скажи'),
     "cmds": {
-        'ctime': ('текущее время', 'сейчас времени', 'который час'),
+        'park': ('парковка', 'вернуться'),
         'radio': ('включи музыку', 'воспроизведи радио', 'включи радио'),
         'stupid1': ('расскажи анекдот', 'рассмеши меня', 'ты знаешь анекдоты')
     }
@@ -36,8 +37,6 @@ def callback(recognizer, audio):
 
         cmd = voice
 
-        for x in opts['alias']:
-            cmd.replace(x, '').strip()
 
         for x in opts['tbr']:
             cmd.replace(x, '').strip()
@@ -52,20 +51,22 @@ def callback(recognizer, audio):
 
 def recognize_cmd(cmd):
     RC = {'cmd': '', 'percent': 0}
-    for c,v in opts['cmds'].items():
+    cmd = cmd.split(' ')
+    for key, value in opts['cmds'].items():
+        for word in cmd:
+            for x in value:
+                vrt = fuzz.ratio(word, x)
+                if vrt > RC['percent'] and vrt > 50:
+                    RC['cmd'] = key
+                    RC['percent'] = vrt
 
-        for x in v:
-            vrt = fuzz.ratio(cmd, x)
-            if vrt > RC['percent']:
-                RC['cmd'] = c
-                RC['percent'] = vrt
 
-        return RC
+    return RC
 
 def execute_cmd(cmd):
-    if cmd == 'ctime':
-        now = datetime.datetime.now()
-        print(now)
+    if cmd == 'park':
+        main.manipulatorController.toSend = 'P'
+        main.manipulatorController.send(False)
 
     elif cmd == 'radio':
         print('radio')
@@ -81,5 +82,5 @@ with m as source:
     r.adjust_for_ambient_noise(source)
 
 stop_listening = r.listen_in_background(m, callback)
-while True: time.sleep(0.1)
+
 

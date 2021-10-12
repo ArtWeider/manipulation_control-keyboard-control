@@ -81,8 +81,8 @@ class XYVisualisationWidget:
 
     def update(self, x=None, y=None):
         if x == None or y == None:
-            x = int(self.main.controlPanelWidget.xEntry.get())
-            y = int(self.main.controlPanelWidget.yEntry.get())
+            x = float(self.main.controlPanelWidget.xEntry.get())
+            y = float(self.main.controlPanelWidget.yEntry.get())
         x, y = self.toLocal(x, y)
         print(x, y)
         self.canvas.moveto('point', x-self.point_size, y-self.point_size)

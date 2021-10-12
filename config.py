@@ -22,6 +22,8 @@ class Cfg:
 
         Q_LIMIT = (0, 180)
 
+        DEFAULT_NAME = 'COM5'
+
 
 
 

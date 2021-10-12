@@ -23,6 +23,9 @@ class PointMenuWidget:
         self.main.savesManager.saves[save].points[time].x = float(self.xEntry.get())
         self.main.savesManager.saves[save].points[time].y = float(self.yEntry.get())
         self.main.savesManager.saves[save].points[time].z = float(self.zEntry.get())
+        self.main.savesManager.saves[save].points[time].q = float(self.qEntry.get())
+        self.main.savesManager.saves[save].points[time].e = float(self.eEntry.get())
+        self.main.savesManager.saves[save].points[time].f = float(self.fEntry.get())
 
         self.main.graphicWidget.point.params['x'] = float(self.xEntry.get())
         self.main.graphicWidget.point.params['y'] = float(self.yEntry.get())
@@ -39,6 +42,17 @@ class PointMenuWidget:
         self.qEntry.insert(0, (controlPanel.qSlider.get() / 100) * cfg.ManipulatorConfig.Q_LIMIT[1])
         self.eEntry.insert(0, controlPanel.eSlider.get())
         self.fEntry.insert(0, controlPanel.fSlider.get())
+
+    def onRobotToPoint(self):
+        self.main.controlPanelWidget.xEntry.delete(0, END)
+        self.main.controlPanelWidget.yEntry.delete(0, END)
+        self.main.controlPanelWidget.zEntry.delete(0, END)
+        self.main.controlPanelWidget.xEntry.insert(0, self.xEntry.get())
+        self.main.controlPanelWidget.yEntry.insert(0, self.yEntry.get())
+        self.main.controlPanelWidget.zEntry.insert(0, self.zEntry.get())
+        self.main.controlPanelWidget.qSlider.set((float(self.qEntry.get()) / cfg.ManipulatorConfig.Q_LIMIT[1]) * 100)
+        self.main.controlPanelWidget.onEnterPressed(None)
+
 
     def onPointMoved(self, time):
         self.timeEntry.delete(0, END)
@@ -287,5 +301,7 @@ class PointMenuWidget:
                                          activebackground=cfg.BUTTON_ACTIVE_COLOR,
                                          activeforeground=cfg.TEXT_COLOR,
                                          state=DISABLED,
+                                         command=self.onRobotToPoint
                                          )
         self.robotToPointButton.place(x=15, y=185)
+

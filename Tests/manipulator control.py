@@ -15,7 +15,7 @@ comPort = ''
 print(str(portList[0]))
 for i in range(0, len(portList)):
     port = str(portList[i])
-    if 'Silicon Labs' in port:
+    if 'COM5' in port:
         comPort = (port.split(' ')[0])
         break
 if comPort != '':
@@ -65,25 +65,30 @@ old_num = -5
 
 ser.write(f'X{points[0][0]} Y{points[0][1]} Z{points[0][2]} Q0\r\n'.encode('ascii'))
 while True:
-    for i in points:
-        while not completed:
-            try:
-                if ser.in_waiting:
-                    packet = ser.readline().decode('ascii')
-                    print('RECIEVE - ' + packet)
-                    if "#" in list(packet):
-                        completed = True
-                        ''' num = int(packet[1::])
-                        if num > old_num:
+    try:
+        for i in points:
+            while not completed:
+                try:
+                    if ser.in_waiting:
+                        packet = ser.readline().decode('ascii')
+                        print('RECIEVE - ' + packet)
+                        if "#" in list(packet):
                             completed = True
-                            old_num = num'''
+                            ''' num = int(packet[1::])
+                            if num > old_num:
+                                completed = True
+                                old_num = num'''
 
-            except UnicodeDecodeError:
-                continue
-            except:
-                break
+                except UnicodeDecodeError:
+                    continue
+                except:
+                    break
 
-        completed = False  # нужно чтобы в следующий раз цикл снова начался
-        ser.write(f'X{i[0]} Y{i[1]} Z{i[2]} Q0\r\n'.encode('ascii'))  # отправляет данные на манипулятор
-        print('SEND - ' + f'X{i[0]} Y{i[1]} Z{i[2]} Q0')
-        time.sleep(1)
+            completed = False  # нужно чтобы в следующий раз цикл снова начался
+            ser.write(f'X{i[0]} Y{i[1]} Z{i[2]} Q0\r\n'.encode('ascii'))  # отправляет данные на манипулятор
+            print('SEND - ' + f'X{i[0]} Y{i[1]} Z{i[2]} Q0')
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print('STOP')
+        ser.write(f'P'.encode('ascii'))
+        exit()
