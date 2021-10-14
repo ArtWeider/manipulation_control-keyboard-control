@@ -47,18 +47,13 @@ class ManipulatorController:
     def __init__(self, main):
         self.main = main
         self.connect(cfg.ManipulatorConfig.DEFAULT_NAME)
-        self.connected = True
-        self.listenerFunc()
-
-    def listenerFunc(self):
-        pass
-
 
     def send(self, wait=True):
-        if not wait:
-            self.completed = False
-            self.ser.write(self.toSend.encode('ascii'))
-            print('SEND - ' + self.toSend)
+        if self.connected:
+            if not wait:
+                self.completed = False
+                self.ser.write(self.toSend.encode('ascii'))
+                print('SEND - ' + self.toSend)
 
     def goToPoint(self, wait=True, **kwargs):
         mess = ''
