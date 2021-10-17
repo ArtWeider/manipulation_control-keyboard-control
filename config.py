@@ -16,13 +16,18 @@ class Cfg:
 
     class ManipulatorConfig:
 
+        SEND_LIMIT = 0.3
+
+        START_POS ={'x': 200, 'y': 200, 'z': 300, 'q': 0, 'e': 50, 'f': 50}
+
         LIMIT_X = (150, 600)
         LIMIT_Y = (150, 600)
+        LIMIT_Z = (0, 600)
         Z_ANGLE_LIMIT = (0, 300)
 
         Q_LIMIT = (0, 180)
 
-        DEFAULT_NAME = 'COM5'
+        DEFAULT_NAME = 'COM12'
 
 
 

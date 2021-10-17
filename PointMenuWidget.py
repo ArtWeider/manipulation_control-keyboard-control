@@ -35,7 +35,7 @@ class PointMenuWidget:
 
     def onPointToRobotPressed(self):
         controlPanel = self.main.controlPanelWidget
-        self.clearAll()
+        self.clearAll(True, True)
         self.xEntry.insert(0, controlPanel.xEntry.get())
         self.yEntry.insert(0, controlPanel.yEntry.get())
         self.zEntry.insert(0, controlPanel.zEntry.get())
@@ -53,6 +53,11 @@ class PointMenuWidget:
         self.main.controlPanelWidget.qSlider.set((float(self.qEntry.get()) / cfg.ManipulatorConfig.Q_LIMIT[1]) * 100)
         self.main.controlPanelWidget.onEnterPressed(None)
 
+    def onFollowCheckbuttonChanged(self):
+        if self.followManipulatorVar.get():
+            self.setStateAll(DISABLED, True)
+        else:
+            self.setStateAll(NORMAL, True)
 
     def onPointMoved(self, time):
         self.timeEntry.delete(0, END)
@@ -75,25 +80,35 @@ class PointMenuWidget:
         self.clearAll()
         self.setStateAll(DISABLED)
 
-    def clearAll(self):
+    def clearAll(self, ignoreCheckbutton=False, ignoreTime=False):
         self.xEntry.delete(0, END)
         self.yEntry.delete(0, END)
         self.zEntry.delete(0, END)
         self.qEntry.delete(0, END)
         self.eEntry.delete(0, END)
         self.fEntry.delete(0, END)
-        self.timeEntry.delete(0, END)
-        self.followManipulatorCheckbutton.deselect()
+        if not ignoreTime:
+            self.timeEntry.delete(0, END)
+        if not ignoreCheckbutton:
+            self.followManipulatorCheckbutton.deselect()
 
-    def setStateAll(self, state):
+    def setStateAll(self, state, ignoreCheckbutton=False):
         self.xEntry.configure(state=state)
         self.yEntry.configure(state=state)
         self.zEntry.configure(state=state)
         self.qEntry.configure(state=state)
         self.eEntry.configure(state=state)
         self.fEntry.configure(state=state)
+        self.xLabel.configure(state=state)
+        self.yLabel.configure(state=state)
+        self.zLabel.configure(state=state)
+        self.qLabel.configure(state=state)
+        self.eLabel.configure(state=state)
+        self.fLabel.configure(state=state)
         self.timeEntry.configure(state=state)
-        self.followManipulatorCheckbutton.configure(state=state)
+        self.timeLabel.configure(state=state)
+        if not ignoreCheckbutton:
+            self.followManipulatorCheckbutton.configure(state=state)
         self.robotToPointButton.configure(state=state)
         self.pointToRobotButton.configure(state=state)
 
@@ -265,6 +280,7 @@ class PointMenuWidget:
         self.timeEntry.place(x=60, y=100)
         self.timeEntry.bind('<Return>', self.onEnterPressed)
 
+        self.followManipulatorVar = BooleanVar()
         self.followManipulatorCheckbutton = Checkbutton(master=self.mainLabel,
                                                            text='Следовать',
                                                            bg=cfg.SUBCOLOR,
@@ -276,6 +292,11 @@ class PointMenuWidget:
                                                            fg=cfg.TEXT_COLOR,
                                                            font='Arial 11',
                                                            state=DISABLED,
+
+                                                        onvalue=True,
+                                                        offvalue=False,
+                                                        variable=self.followManipulatorVar,
+                                                        command=self.onFollowCheckbuttonChanged,
                                                            disabledforeground=cfg.TEXT_COLOR)
         self.followManipulatorCheckbutton.place(x=5, y=125)
 

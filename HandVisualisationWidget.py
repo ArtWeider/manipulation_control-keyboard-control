@@ -93,7 +93,6 @@ class HandVisualisationWidget:
             print("Connected to " + self.comPort)
             return True
         else:
-            print("Can't connect")
             return False
 
     def getDataFromGlove(self):

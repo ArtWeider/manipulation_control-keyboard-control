@@ -20,7 +20,7 @@ main = None
 opts = {
     "tbr": ('скажи'),
     "cmds": {
-        'park': ('парковка', 'вернуться'),
+        'park': ('парковка', 'вернуться', 'припарковаться'),
     }
 }
 
@@ -30,22 +30,15 @@ m = sr.Microphone(device_index=1)
 def callback(recognizer, audio):
     try:
         voice = recognizer.recognize_google(audio, language='ru-RU').lower()
-        print("[log] Разпознано: " + voice)
-
 
         cmd = voice
-
-
-        for x in opts['tbr']:
-            cmd.replace(x, '').strip()
 
         cmd = recognize_cmd(cmd)
         execute_cmd(cmd['cmd'])
 
-    except sr.UnknownValueError:
-        print('[log] Голос не распознан!')
-    except sr.RequestError as e:
-        print("[log] Неизвестная ошибка, проверьте интернет!")
+    except sr.UnknownValueError: pass
+    except sr.RequestError as e: pass
+
 
 def recognize_cmd(cmd):
     RC = {'cmd': '', 'percent': 0}
@@ -72,8 +65,6 @@ def execute_cmd(cmd):
     elif cmd == 'stupid1':
         print('i am stupid')
 
-    else:
-        print('unknown command')
 
 
 with m as source:

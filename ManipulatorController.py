@@ -11,6 +11,7 @@ class ManipulatorController:
 
     ser = None
     playThread = None
+    sendThread = None
 
     connected = False
     paused = False
@@ -19,10 +20,10 @@ class ManipulatorController:
     listener2 = None
 
     toSend = ''
-    completed = True
+    lastSend = None
 
     def connect(self, name):
-        self.ser = serial.Serial()
+        self.ser = serial.Serial(timeout=1)
         portList = serial.tools.list_ports.comports()
         comPort = ''
 
@@ -44,24 +45,28 @@ class ManipulatorController:
             self.connected = False
 
 
+
+
     def __init__(self, main):
         self.main = main
         self.connect(cfg.ManipulatorConfig.DEFAULT_NAME)
+        self.sendThread = threading.Thread(target=self.sendAsync)
+        self.sendThread.start()
 
-    def send(self, wait=True):
-        if self.connected:
-            if not wait:
-                self.completed = False
-                self.ser.write(self.toSend.encode('ascii'))
-                print('SEND - ' + self.toSend)
-
-    def goToPoint(self, wait=True, **kwargs):
+    def goToPoint(self, _=False, **kwargs):
         mess = ''
         for key in ['x', 'y', 'z', 'q']:
             if key in kwargs.keys():
                 mess += f'{key.upper()}{int(kwargs[key])} '
         self.toSend = mess
-        self.send(wait)
+        if self.main.pointMenuWidget.followManipulatorVar.get():
+            self.main.pointMenuWidget.setStateAll('normal')
+            self.main.pointMenuWidget.onPointToRobotPressed()
+            self.main.pointMenuWidget.setStateAll('disabled')
+        if 'x' in kwargs.keys() and 'y' in kwargs.keys():
+            self.main.xyVisualisationWidget.update(x=int(kwargs['x']), y=int(kwargs['y']))
+        if 'x' in kwargs.keys() and 'z' in kwargs.keys():
+            self.main.xzVisualisationWidget.update(int(kwargs['x']), int(kwargs['z']))
 
     def play(self, save):
         self.playThread = threading.Thread(target=self.playAsync, args=[save])
@@ -73,6 +78,20 @@ class ManipulatorController:
         else:
             self.paused = status
 
+    def sendAsync(self):
+        old_send = ''
+        while True:
+            time.sleep(cfg.ManipulatorConfig.SEND_LIMIT)
+
+            try:
+                if self.connected:
+                    if old_send != self.toSend:
+                        toSend = self.toSend + '\r\n'
+                        self.ser.write(toSend.encode('ascii'))
+                        old_send = self.toSend
+                        print('SEND - ' + toSend)
+            except:
+                continue
 
     def playAsync(self, save):
         points = sorted(save.points.keys())
@@ -90,8 +109,6 @@ class ManipulatorController:
                            q=pointsVar[i].q,
                            e=pointsVar[i].e,
                            f=pointsVar[i].f)
-            self.main.xyVisualisationWidget.update(pointsVar[i].x, pointsVar[i].y)
         time.sleep(5)
         self.toSend = 'P'
-        self.send(False)
-        self.toSend = ''
+

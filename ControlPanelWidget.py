@@ -19,6 +19,9 @@ class ControlPanelWidget:
         self.xLabel.configure(state=state)
         self.yLabel.configure(state=state)
         self.zLabel.configure(state=state)
+        self.qLabel.configure(state=state)
+        self.eLabel.configure(state=state)
+        self.fLabel.configure(state=state)
         self.qSlider.configure(state=state)
         self.eSlider.configure(state=state)
         self.fSlider.configure(state=state)
@@ -26,6 +29,7 @@ class ControlPanelWidget:
         self.takeBoltButton.configure(state=state)
         self.takeMarkerButton.configure(state=state)
         self.playButton.configure(state=state)
+        self.pauseButton.configure(state=state)
 
     def onScaleChanged(self, event, slider):
 
@@ -45,12 +49,11 @@ class ControlPanelWidget:
             self.fLabel.configure(text=f"F: {str(int(angle))}")
 
     def onIPEnterPressed(self, event):
-        self.main.manipulatorController.__init__(self.main)
-        if __name__ == '__main__':
-            if self.main.manipulatorController.connected:
-                self.setStateAll(NORMAL)
-            else:
-                self.setStateAll(DISABLED)
+        self.main.manipulatorController.connect(self.IPEntry.get())
+        if self.main.manipulatorController.connected:
+            self.setStateAll(NORMAL)
+        else:
+            self.setStateAll(DISABLED)
 
 
     def onEnterPressed(self, event):
@@ -58,8 +61,8 @@ class ControlPanelWidget:
         y = float(self.yEntry.get())
         z = float(self.zEntry.get())
         q = (float(self.qSlider.get()) / 100) * cfg.ManipulatorConfig.Q_LIMIT[1]
+        print('debug 3')
         self.main.manipulatorController.goToPoint(False, x=x, y=y, z=z, q=q)
-        self.main.xyVisualisationWidget.update()
 
     def __init__(self, main):
 
@@ -241,6 +244,7 @@ class ControlPanelWidget:
                             disabledbackground=cfg.SUBCOLOR)
         self.IPEntry.place(x=60, y=160)
         self.IPEntry.bind("<Return>", self.onIPEnterPressed)
+        self.IPEntry.insert(0, cfg.ManipulatorConfig.DEFAULT_NAME)
 
         self.takeMarkerButton = Button(master=self.mainLabel,
                                          text="Взять маркер",
@@ -295,7 +299,7 @@ class ControlPanelWidget:
                                  width=24,
                                  activebackground=cfg.BUTTON_ACTIVE_COLOR,
                                  activeforeground=cfg.TEXT_COLOR,
-                                 command=self.main.manipulatorController.pause
+                                 command=self.main.manipulatorController.pause,
                                  )
         self.pauseButton.place(x=11, y=310)
 

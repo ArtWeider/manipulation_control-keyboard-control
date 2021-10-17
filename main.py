@@ -72,7 +72,7 @@ class Main:
         self.graphicWidget = GraphicWidget(self)
         self.timelineWidget = TimelineWidget(self)
         self.xyVisualisationWidget = XYVisualisationWidget(self)
-        self.xzVisualisationWidget = XZVisualisationWidget()
+        self.xzVisualisationWidget = XZVisualisationWidget(self)
         self.controlPanelWidget = ControlPanelWidget(self)
         Voice.main = self
 
