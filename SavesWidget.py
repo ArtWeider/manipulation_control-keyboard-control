@@ -79,4 +79,3 @@ class SavesWidget:
             self.main.graphicWidget.point.dictUpdate()
         else:
             self.listBox.selection_set(self.listBox.get(0, END).index(self.main.savesManager.currentSave))
-
