@@ -1,11 +1,8 @@
 import json
 
 from SaveClass import Save
-from PointClass import Point
 import os
 import os.path
-import random
-import numpy.random as rand
 
 class SavesManager:
 
@@ -38,8 +35,3 @@ class SavesManager:
         del self.saves[self.currentSave]
         self.currentSave = None
         self.main.savesWidget.fillFromDict(self.saves)
-
-
-
-
-
