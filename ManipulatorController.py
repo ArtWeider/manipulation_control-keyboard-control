@@ -44,6 +44,29 @@ class ManipulatorController:
         else:
             self.connected = False
 
+        if self.connected:
+            self.main.controlPanelWidget.xEntry.delete(0, 'end')
+            self.main.controlPanelWidget.yEntry.delete(0, 'end')
+            self.main.controlPanelWidget.zEntry.delete(0, 'end')
+
+            self.main.controlPanelWidget.xEntry.insert(0, int(cfg.ManipulatorConfig.START_POS['x']))
+            self.main.controlPanelWidget.yEntry.insert(0, int(cfg.ManipulatorConfig.START_POS['y']))
+            self.main.controlPanelWidget.zEntry.insert(0, int(cfg.ManipulatorConfig.START_POS['z']))
+
+            self.main.controlPanelWidget.qSlider.set((float(cfg.ManipulatorConfig.START_POS['q']) / cfg.ManipulatorConfig.Q_LIMIT[1]) * 100)
+            self.main.controlPanelWidget.eSlider.set((float(cfg.ManipulatorConfig.START_POS['e']) / cfg.ManipulatorConfig.E_LIMIT[1]) * 100)
+            self.main.controlPanelWidget.fSlider.set((float(cfg.ManipulatorConfig.START_POS['f']) / cfg.ManipulatorConfig.F_LIMIT[1]) * 100)
+
+            self.main.controlPanelWidget.qLabel.configure(text=f"Q: {cfg.ManipulatorConfig.START_POS['q']}")
+            self.main.controlPanelWidget.eLabel.configure(text=f"E: {cfg.ManipulatorConfig.START_POS['e']}")
+            self.main.controlPanelWidget.fLabel.configure(text=f"F: {cfg.ManipulatorConfig.START_POS['f']}")
+
+            self.goToPoint(x=cfg.ManipulatorConfig.START_POS['x'],
+                           y=cfg.ManipulatorConfig.START_POS['y'],
+                           z=cfg.ManipulatorConfig.START_POS['z'],
+                           q=cfg.ManipulatorConfig.START_POS['q'],
+                           e=cfg.ManipulatorConfig.START_POS['e'],
+                           f=cfg.ManipulatorConfig.START_POS['f'])
 
 
 

@@ -18,7 +18,7 @@ class Cfg:
 
         SEND_LIMIT = 0.3
 
-        START_POS ={'x': 200, 'y': 200, 'z': 300, 'q': 0, 'e': 50, 'f': 50}
+        START_POS ={'x': 200, 'y': 200, 'z': 300, 'q': 0, 'e': 90, 'f': 90}
 
         LIMIT_X = (150, 600)
         LIMIT_Y = (150, 600)
@@ -26,6 +26,8 @@ class Cfg:
         Z_ANGLE_LIMIT = (0, 300)
 
         Q_LIMIT = (0, 180)
+        E_LIMIT = (0, 180)
+        F_LIMIT = (0, 180)
 
         DEFAULT_NAME = 'COM12'
 

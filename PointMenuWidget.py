@@ -20,54 +20,46 @@ class PointMenuWidget:
         time = self.main.timelineWidget.tag2time[int(tag[1::])]
         save = self.main.savesManager.currentSave
 
-        if str(event.widget) == ".!frame3.!entry":
-            self.main.savesManager.saves[save].points[time].x = float(self.xEntry.get())
-            self.main.graphicWidget.point.params['x'] = float(self.xEntry.get())
-            self.main.graphicWidget.point.getAngles()
+        self.main.savesManager.saves[save].points[time].x = int(self.xEntry.get())
+        self.main.graphicWidget.point.params['x'] = int(self.xEntry.get())
 
-        elif str(event.widget) == ".!frame3.!entry2":
-            self.main.savesManager.saves[save].points[time].y = float(self.yEntry.get())
-            self.main.graphicWidget.point.params['y'] = float(self.yEntry.get())
-            self.main.graphicWidget.point.getAngles()
+        self.main.savesManager.saves[save].points[time].y = int(self.yEntry.get())
+        self.main.graphicWidget.point.params['y'] = int(self.yEntry.get())
 
-        elif str(event.widget) == ".!frame3.!entry3":
-            self.main.savesManager.saves[save].points[time].z = float(self.zEntry.get())
-            self.main.graphicWidget.point.params['z'] = float(self.zEntry.get())
-            self.main.graphicWidget.point.getAngles()
+        self.main.savesManager.saves[save].points[time].z = int(self.zEntry.get())
+        self.main.graphicWidget.point.params['z'] = int(self.zEntry.get())
 
-        elif str(event.widget) == ".!frame3.!entry4":
-            self.main.savesManager.saves[save].points[time].rad = float(self.radEntry.get())
-            self.main.graphicWidget.point.params['rad'] = float(self.radEntry.get())
-            self.main.graphicWidget.point.getCoordinates()
+        self.main.savesManager.saves[save].points[time].q = int(self.qEntry.get())
+        self.main.savesManager.saves[save].points[time].e = int(self.eEntry.get())
+        self.main.savesManager.saves[save].points[time].f = int(self.fEntry.get())
 
-        elif str(event.widget) == ".!frame3.!entry5":
-            self.main.savesManager.saves[save].points[time].a = float(self.aEntry.get())
-            self.main.graphicWidget.point.params['a'] = float(self.aEntry.get())
-            self.main.graphicWidget.point.getCoordinates()
+        self.main.savesManager.saves[save].points[time].rad = int(self.radEntry.get())
+        self.main.graphicWidget.point.params['rad'] = int(self.radEntry.get())
 
-        elif str(event.widget) == ".!frame3.!entry6":
-            self.main.savesManager.saves[save].points[time].b = float(self.bEntry.get())
-            self.main.graphicWidget.point.params['b'] = float(self.bEntry.get())
-            self.main.graphicWidget.point.getCoordinates()
+        self.main.savesManager.saves[save].points[time].a = int(self.aEntry.get())
+        self.main.graphicWidget.point.params['a'] = int(self.aEntry.get())
 
-        elif str(event.widget) == ".!frame3.!entry7":
-            self.main.savesManager.saves[save].points[time].c = float(self.cEntry.get())
-            self.main.graphicWidget.point.params['c'] = float(self.cEntry.get())
-            self.main.graphicWidget.point.getCoordinates()
+        self.main.savesManager.saves[save].points[time].b = int(self.bEntry.get())
+        self.main.graphicWidget.point.params['b'] = int(self.bEntry.get())
 
-        elif str(event.widget) == ".!frame3.!entry11":
-            self.main.timelineWidget.movePoint(tag, float(self.timeEntry.get()) * self.main.timelineWidget.pixPerSecond)
+        self.main.savesManager.saves[save].points[time].c = int(self.cEntry.get())
+        self.main.graphicWidget.point.params['c'] = int(self.cEntry.get())
+
+        self.main.timelineWidget.movePoint(tag, int(self.timeEntry.get()) * self.main.timelineWidget.pixPerSecond)
+
+        self.main.graphicWidget.point.getCoordinates()
+        self.main.graphicWidget.point.getAngles()
 
         self.main.graphicWidget.point.assignPointCoords()
         self.onPointSelected(self.main.graphicWidget.point.selectedTime)
 
     def onPointToRobotPressed(self):
         controlPanel = self.main.controlPanelWidget
-        self.clearAll()
+        self.clearAll(True, True)
         self.xEntry.insert(0, controlPanel.xEntry.get())
         self.yEntry.insert(0, controlPanel.yEntry.get())
         self.zEntry.insert(0, controlPanel.zEntry.get())
-        self.qEntry.insert(0, (controlPanel.qSlider.get() / 100) * cfg.ManipulatorConfig.Q_LIMIT[1])
+        self.qEntry.insert(0, int((controlPanel.qSlider.get() / 100) * cfg.ManipulatorConfig.Q_LIMIT[1]))
         self.eEntry.insert(0, controlPanel.eSlider.get())
         self.fEntry.insert(0, controlPanel.fSlider.get())
 
@@ -75,11 +67,26 @@ class PointMenuWidget:
         self.main.controlPanelWidget.xEntry.delete(0, END)
         self.main.controlPanelWidget.yEntry.delete(0, END)
         self.main.controlPanelWidget.zEntry.delete(0, END)
+
         self.main.controlPanelWidget.xEntry.insert(0, self.xEntry.get())
         self.main.controlPanelWidget.yEntry.insert(0, self.yEntry.get())
         self.main.controlPanelWidget.zEntry.insert(0, self.zEntry.get())
+
         self.main.controlPanelWidget.qSlider.set((float(self.qEntry.get()) / cfg.ManipulatorConfig.Q_LIMIT[1]) * 100)
+        self.main.controlPanelWidget.eSlider.set((float(self.eEntry.get()) / cfg.ManipulatorConfig.E_LIMIT[1]) * 100)
+        self.main.controlPanelWidget.fSlider.set((float(self.fEntry.get()) / cfg.ManipulatorConfig.F_LIMIT[1]) * 100)
+
+        self.main.controlPanelWidget.qLabel.configure(text=str(int((float(self.qEntry.get()) / cfg.ManipulatorConfig.Q_LIMIT[1]) * 100)))
+        self.main.controlPanelWidget.eLabel.configure(text=str(int((float(self.eEntry.get()) / cfg.ManipulatorConfig.E_LIMIT[1]) * 100)))
+        self.main.controlPanelWidget.fLabel.configure(text=str(int((float(self.fEntry.get()) / cfg.ManipulatorConfig.F_LIMIT[1]) * 100)))
+
         self.main.controlPanelWidget.onEnterPressed(None)
+
+    def onFollowCheckbuttonChanged(self):
+        if self.followManipulatorVar.get():
+            self.setStateAll(DISABLED, True)
+        else:
+            self.setStateAll(NORMAL, True)
 
     def onPointMoved(self, time):
         self.timeEntry.delete(0, END)
@@ -93,20 +100,20 @@ class PointMenuWidget:
         self.xEntry.insert(0, point.x)
         self.yEntry.insert(0, point.y)
         self.zEntry.insert(0, point.z)
+        self.qEntry.insert(0, point.q)
+        self.eEntry.insert(0, point.e)
+        self.fEntry.insert(0, point.f)
         self.radEntry.insert(0, point.rad)
         self.aEntry.insert(0, point.a)
         self.bEntry.insert(0, point.b)
         self.cEntry.insert(0, point.c)
-        self.qEntry.insert(0, point.a)
-        self.eEntry.insert(0, point.b)
-        self.fEntry.insert(0, point.c)
         self.timeEntry.insert(0, point.time)
 
     def onPointDeselected(self):
         self.clearAll()
         self.setStateAll(DISABLED)
 
-    def clearAll(self):
+    def clearAll(self, ignoreCheckbutton=False, ignoreTime=False):
         self.xEntry.delete(0, END)
         self.yEntry.delete(0, END)
         self.zEntry.delete(0, END)
@@ -117,10 +124,12 @@ class PointMenuWidget:
         self.qEntry.delete(0, END)
         self.eEntry.delete(0, END)
         self.fEntry.delete(0, END)
-        self.timeEntry.delete(0, END)
-        self.followManipulatorCheckbutton.deselect()
+        if not ignoreTime:
+            self.timeEntry.delete(0, END)
+        if not ignoreCheckbutton:
+            self.followManipulatorCheckbutton.deselect()
 
-    def setStateAll(self, state):
+    def setStateAll(self, state, ignoreCheckbutton=False):
         self.xEntry.configure(state=state)
         self.yEntry.configure(state=state)
         self.zEntry.configure(state=state)
@@ -129,7 +138,11 @@ class PointMenuWidget:
         self.bEntry.configure(state=state)
         self.cEntry.configure(state=state)
         self.timeEntry.configure(state=state)
-        self.followManipulatorCheckbutton.configure(state=state)
+        self.qEntry.configure(state=state)
+        self.eEntry.configure(state=state)
+        self.fEntry.configure(state=state)
+        if not ignoreCheckbutton:
+            self.followManipulatorCheckbutton.configure(state=state)
         self.robotToPointButton.configure(state=state)
         self.pointToRobotButton.configure(state=state)
 
@@ -227,7 +240,7 @@ class PointMenuWidget:
                             height=1,
                             bg=cfg.SUBCOLOR,
                             fg=cfg.TEXT_COLOR)
-        self.radLabel.place(x=5, y=67)
+        self.radLabel.place(x=5, y=95)
 
         self.radEntry = Entry(width=3,
                             master=self.mainLabel,
@@ -238,7 +251,7 @@ class PointMenuWidget:
                             justify=LEFT,
                             state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR)
-        self.radEntry.place(x=22, y=69)
+        self.radEntry.place(x=22, y=97)
         self.radEntry.bind('<Return>', self.onEnterPressed)
 
         self.aLabel = Label(master=self.mainLabel,
@@ -247,7 +260,7 @@ class PointMenuWidget:
                             height=1,
                             bg=cfg.SUBCOLOR,
                             fg=cfg.TEXT_COLOR)
-        self.aLabel.place(x=50, y=67)
+        self.aLabel.place(x=50, y=95)
 
         self.aEntry = Entry(width=3,
                             master=self.mainLabel,
@@ -258,7 +271,7 @@ class PointMenuWidget:
                             justify=LEFT,
                             state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR)
-        self.aEntry.place(x=65, y=69)
+        self.aEntry.place(x=65, y=97)
         self.aEntry.bind('<Return>', self.onEnterPressed)
 
         self.bLabel = Label(master=self.mainLabel,
@@ -267,7 +280,7 @@ class PointMenuWidget:
                             height=1,
                             bg=cfg.SUBCOLOR,
                             fg=cfg.TEXT_COLOR)
-        self.bLabel.place(x=100, y=67)
+        self.bLabel.place(x=100, y=95)
 
         self.bEntry = Entry(width=3,
                             master=self.mainLabel,
@@ -278,7 +291,7 @@ class PointMenuWidget:
                             justify=LEFT,
                             state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR)
-        self.bEntry.place(x=115, y=69)
+        self.bEntry.place(x=115, y=97)
         self.bEntry.bind('<Return>', self.onEnterPressed)
 
         self.cLabel = Label(master=self.mainLabel,
@@ -287,7 +300,7 @@ class PointMenuWidget:
                              height=1,
                              bg=cfg.SUBCOLOR,
                              fg=cfg.TEXT_COLOR)
-        self.cLabel.place(x=145, y=67)
+        self.cLabel.place(x=145, y=95)
 
         self.cEntry = Entry(width=3,
                              master=self.mainLabel,
@@ -298,7 +311,7 @@ class PointMenuWidget:
                              justify=LEFT,
                              state=DISABLED,
                              disabledbackground=cfg.SUBCOLOR)
-        self.cEntry.place(x=160, y=69)
+        self.cEntry.place(x=160, y=97)
         self.cEntry.bind('<Return>', self.onEnterPressed)
 
         self.qLabel = Label(master=self.mainLabel,
@@ -308,7 +321,7 @@ class PointMenuWidget:
                             bg=cfg.SUBCOLOR,
                             fg=cfg.TEXT_COLOR,
                             )
-        self.qLabel.place(x=5, y=95)
+        self.qLabel.place(x=5, y=67)
 
         self.qEntry = Entry(width=5,
                             master=self.mainLabel,
@@ -320,7 +333,7 @@ class PointMenuWidget:
                             state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR,
                             )
-        self.qEntry.place(x=25, y=97)
+        self.qEntry.place(x=25, y=69)
         self.qEntry.bind('<Return>', self.onEnterPressed)
 
         self.eLabel = Label(master=self.mainLabel,
@@ -329,7 +342,7 @@ class PointMenuWidget:
                             height=1,
                             bg=cfg.SUBCOLOR,
                             fg=cfg.TEXT_COLOR)
-        self.eLabel.place(x=70, y=95)
+        self.eLabel.place(x=70, y=67)
 
         self.eEntry = Entry(width=5,
                             master=self.mainLabel,
@@ -340,7 +353,7 @@ class PointMenuWidget:
                             justify=LEFT,
                             state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR)
-        self.eEntry.place(x=90, y=97)
+        self.eEntry.place(x=90, y=69)
         self.eEntry.bind('<Return>', self.onEnterPressed)
 
         self.fLabel = Label(master=self.mainLabel,
@@ -349,7 +362,7 @@ class PointMenuWidget:
                             height=1,
                             bg=cfg.SUBCOLOR,
                             fg=cfg.TEXT_COLOR)
-        self.fLabel.place(x=135, y=95)
+        self.fLabel.place(x=135, y=67)
 
         self.fEntry = Entry(width=5,
                             master=self.mainLabel,
@@ -360,7 +373,7 @@ class PointMenuWidget:
                             justify=LEFT,
                             state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR)
-        self.fEntry.place(x=155, y=97)
+        self.fEntry.place(x=155, y=69)
         self.fEntry.bind('<Return>', self.onEnterPressed)
 
         self.timeLabel = Label(master=self.mainLabel,
@@ -383,6 +396,7 @@ class PointMenuWidget:
         self.timeEntry.place(x=60, y=130)
         self.timeEntry.bind('<Return>', self.onEnterPressed)
 
+        self.followManipulatorVar = BooleanVar()
         self.followManipulatorCheckbutton = Checkbutton(master=self.mainLabel,
                                                            text='Следовать',
                                                            bg=cfg.SUBCOLOR,
@@ -394,7 +408,12 @@ class PointMenuWidget:
                                                            fg=cfg.TEXT_COLOR,
                                                            font='Arial 11',
                                                            state=DISABLED,
-                                                           disabledforeground=cfg.TEXT_COLOR)
+                                                           disabledforeground=cfg.TEXT_COLOR,
+                                                        onvalue=True,
+                                                        offvalue=False,
+                                                        variable=self.followManipulatorVar,
+                                                        command=self.onFollowCheckbuttonChanged,
+                                                        )
         self.followManipulatorCheckbutton.place(x=5, y=155)
 
         self.pointToRobotButton = Button(master=self.mainLabel,

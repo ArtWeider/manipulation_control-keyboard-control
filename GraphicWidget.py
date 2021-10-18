@@ -34,7 +34,7 @@ class GraphicWidget:
             # Отображение нарисованной графики в окне tkinter
             figure.canvas.mpl_disconnect(figure.canvas.manager.key_press_handler_id)
             canvas = FigureCanvasTkAgg(figure, root)
-            self.ax_3d.view_init(45, 45)
+            self.ax_3d.view_init(45, 90)
             canvas.draw()
             canvas.get_tk_widget().place(x=GraphicWidget.X + 11, y=GraphicWidget.Y + 15)
 

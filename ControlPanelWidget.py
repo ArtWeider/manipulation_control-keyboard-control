@@ -22,10 +22,14 @@ class ControlPanelWidget:
         self.qSlider.configure(state=state)
         self.eSlider.configure(state=state)
         self.fSlider.configure(state=state)
+        self.qLabel.configure(state=state)
+        self.eLabel.configure(state=state)
+        self.fLabel.configure(state=state)
         self.takeSpongeButton.configure(state=state)
         self.takeBoltButton.configure(state=state)
         self.takeMarkerButton.configure(state=state)
         self.playButton.configure(state=state)
+        self.pauseButton.configure(state=state)
 
     def onScaleChanged(self, event, slider):
 
@@ -34,23 +38,21 @@ class ControlPanelWidget:
             self.main.manipulatorController.goToPoint(q=angle)
             self.qLabel.configure(text=f"Q: {str(int(angle))}")
         elif slider == 'e':
-            #angle = (self.eSlider.get() / 100) * cfg.ManipulatorConfig.Q_LIMIT[1]
-            angle = self.eSlider.get()
-            #self.main.manipulatorController.goToPoint(q=angle)
+            angle = (self.eSlider.get() / 100) * cfg.ManipulatorConfig.E_LIMIT[1]
+            self.main.manipulatorController.goToPoint(e=angle)
             self.eLabel.configure(text=f"E: {str(int(angle))}")
         elif slider == 'f':
-            #angle = (self.eSlider.get() / 100) * cfg.ManipulatorConfig.Q_LIMIT[1]
-            angle = self.fSlider.get()
-            #self.main.manipulatorController.goToPoint(q=angle)
+            angle = (self.fSlider.get() / 100) * cfg.ManipulatorConfig.F_LIMIT[1]
+            self.main.manipulatorController.goToPoint(f=angle)
             self.fLabel.configure(text=f"F: {str(int(angle))}")
 
     def onIPEnterPressed(self, event):
-        self.main.manipulatorController.__init__(self.main)
-        if __name__ == '__main__':
-            if self.main.manipulatorController.connected:
-                self.setStateAll(NORMAL)
-            else:
-                self.setStateAll(DISABLED)
+        self.setStateAll(NORMAL)
+        self.main.manipulatorController.connect(self.IPEntry.get())
+        if self.main.manipulatorController.connected:
+            self.setStateAll(NORMAL)
+        else:
+            self.setStateAll(DISABLED)
 
 
     def onEnterPressed(self, event):
@@ -58,7 +60,9 @@ class ControlPanelWidget:
         y = float(self.yEntry.get())
         z = float(self.zEntry.get())
         q = (float(self.qSlider.get()) / 100) * cfg.ManipulatorConfig.Q_LIMIT[1]
-        self.main.manipulatorController.goToPoint(False, x=x, y=y, z=z, q=q)
+        e = (float(self.eSlider.get()) / 100) * cfg.ManipulatorConfig.E_LIMIT[1]
+        f = (float(self.fSlider.get()) / 100) * cfg.ManipulatorConfig.F_LIMIT[1]
+        self.main.manipulatorController.goToPoint(False, x=x, y=y, z=z, q=q, e=e, f=f)
         self.main.xyVisualisationWidget.update()
 
     def __init__(self, main):
@@ -241,6 +245,7 @@ class ControlPanelWidget:
                             disabledbackground=cfg.SUBCOLOR)
         self.IPEntry.place(x=60, y=160)
         self.IPEntry.bind("<Return>", self.onIPEnterPressed)
+        self.IPEntry.insert(0, cfg.ManipulatorConfig.DEFAULT_NAME)
 
         self.takeMarkerButton = Button(master=self.mainLabel,
                                          text="Взять маркер",

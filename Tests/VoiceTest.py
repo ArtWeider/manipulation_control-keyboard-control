@@ -57,7 +57,6 @@ def recognize_cmd(cmd):
 def execute_cmd(cmd):
     if cmd == 'park':
         main.manipulatorController.toSend = 'P'
-        main.manipulatorController.send(False)
 
     elif cmd == 'radio':
         print('radio')
