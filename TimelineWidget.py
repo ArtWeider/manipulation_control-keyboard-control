@@ -61,6 +61,11 @@ class TimelineWidget:
             self.main.graphicWidget.point.params['y'] = self.main.graphicWidget.point.points['y'][-1]
             self.main.graphicWidget.point.params['z'] = self.main.graphicWidget.point.points['z'][-1]
 
+            self.main.graphicWidget.point.params['rad'] = self.main.graphicWidget.point.points['rad'][-1]
+            self.main.graphicWidget.point.params['a'] = self.main.graphicWidget.point.points['a'][-1]
+            self.main.graphicWidget.point.params['b'] = self.main.graphicWidget.point.points['b'][-1]
+            self.main.graphicWidget.point.params['c'] = self.main.graphicWidget.point.points['c'][-1]
+
             self.main.graphicWidget.point.assignPointCoords()
 
             self.main.graphicWidget.point.dictUpdate()
