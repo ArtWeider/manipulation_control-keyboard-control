@@ -6,10 +6,6 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 
-def cm2inch(sm):
-    return sm * 0.39
-
-
 class GraphicWidget:
     X = 515 * Cfg.SIZE_MULT
     Y = 30 * Cfg.SIZE_MULT
@@ -20,13 +16,15 @@ class GraphicWidget:
         self.root.remove()
         exit()
 
-
     class Create3DPlot:
         def __init__(self, root):
             self.figure, self.ax_3d = self.create_plot()  # Возвращает объект фигуры, нарисованной matplotlib
             self.create_form(self.figure, root)  # Отображение рисунка над формой tkinter
 
         def create_plot(self):
+            def cm2inch(sm):
+                return sm * 0.39
+
             fig = plt.figure(figsize=(cm2inch(14), cm2inch(12)))
             ax_3d = fig.add_subplot(111, projection="3d")
 
@@ -36,7 +34,7 @@ class GraphicWidget:
             # Отображение нарисованной графики в окне tkinter
             figure.canvas.mpl_disconnect(figure.canvas.manager.key_press_handler_id)
             canvas = FigureCanvasTkAgg(figure, root)
-            self.ax_3d.view_init(45, 90)
+            self.ax_3d.view_init(45, 45)
             canvas.draw()
             canvas.get_tk_widget().place(x=GraphicWidget.X + 11, y=GraphicWidget.Y + 15)
 
@@ -48,8 +46,8 @@ class GraphicWidget:
         ShiftFlag = False
         CtrlFlag = False
 
-        max = 700
-        min = -700
+        max = 200
+        min = -200
 
         points = {'time': [], 'x': [], 'y': [], 'z': [], 'rad': [], 'a': [], 'b': [], 'c': []}
         params = {'x': 0, 'y': 0, 'z': 0, 'rad': 0, 'a': 0, 'b': 0, 'c': 0}
@@ -70,16 +68,20 @@ class GraphicWidget:
             self.points['y'] = []
             self.points['z'] = []
             self.points['time'] = []
+            self.points['rad'] = []
+            self.points['a'] = []
+            self.points['b'] = []
+            self.points['c'] = []
 
             for time in self.main.savesManager.saves[save].points.keys():
                 self.points['x'].append(self.main.savesManager.saves[save].points[time].x)
                 self.points['y'].append(self.main.savesManager.saves[save].points[time].y)
                 self.points['z'].append(self.main.savesManager.saves[save].points[time].z)
                 self.points['time'].append(time)
-                self.points['rad'].append(0)
-                self.points['a'].append(0)
-                self.points['b'].append(0)
-                self.points['c'].append(0)
+                self.points['rad'].append(self.main.savesManager.saves[save].points[time].rad)
+                self.points['a'].append(self.main.savesManager.saves[save].points[time].a)
+                self.points['b'].append(self.main.savesManager.saves[save].points[time].b)
+                self.points['c'].append(self.main.savesManager.saves[save].points[time].c)
 
             self.updateScreenFlag = True
 
@@ -97,7 +99,7 @@ class GraphicWidget:
                 for key in self.points.keys():
                     self.points[key].pop()
 
-            self.main.graphicWidget.updateScreenFlag = True
+            self.updateScreenFlag = True
 
         def changing_flags(self, event):
             if event.keysym == 'r':
@@ -111,9 +113,9 @@ class GraphicWidget:
                         self.dictEdit(False)
                     self.cornerNum = 0
 
-            self.main.graphicWidget.updateScreenFlag = True
+            self.updateScreenFlag = True
 
-        def getSphericalCoordinates(self, a):
+        def getCoordinates(self, a = params['a']):
             try:
                 posX = self.points['x'][-2 - self.cornerNum]
                 posY = self.points['y'][-2 - self.cornerNum]
@@ -137,17 +139,30 @@ class GraphicWidget:
 
             return x, y, z
 
+        def getAngles(self):
+            def relCoords(posKey):
+                return self.params[posKey] - self.points[posKey][-2]
+
+            try:
+                self.params['rad'] = round(np.sqrt(relCoords('x') ** 2 + relCoords('y') ** 2 + relCoords('z') ** 2))
+                self.params['a'] = 0
+                self.params['c'] = round(np.degrees(np.arctan2(relCoords('y'), relCoords('x')))) - 90
+                radProjectionOnXY = round(np.sqrt(relCoords('x') ** 2 + relCoords('y') ** 2))
+                self.params['b'] = round(np.degrees(np.arctan2(relCoords('z'), radProjectionOnXY)))
+            except IndexError: pass
+
         def spherical_movement(self, event):
             # клавиши управления
-            if event.keysym == 'a':
-                self.params['a'] += 5
-            elif event.keysym == 'd':
-                self.params['a'] -= 5
 
-            elif event.keysym == 'w':
+            if event.keysym == 'w':
                 self.params['rad'] += 5
             elif event.keysym == 's':
                 self.params['rad'] -= 5
+
+            elif event.keysym == 'a':
+                self.params['a'] += 5
+            elif event.keysym == 'd':
+                self.params['a'] -= 5
 
             elif event.keysym == 'e':
                 self.params['b'] += 5
@@ -160,12 +175,7 @@ class GraphicWidget:
                 self.params['c'] -= 5
 
             self.params['x'], self.params['y'], self.params['z'] = \
-                self.getSphericalCoordinates(self.params['a'])
-
-            self.points['rad'][-1] = self.params['rad']
-            self.points['a'][-1] = self.params['a']
-            self.points['b'][-1] = self.params['b']
-            self.points['c'][-1] = self.params['c']
+                self.getCoordinates(self.params['a'])
 
         def axes_movement(self, event):
             # клавиши управления
@@ -184,14 +194,11 @@ class GraphicWidget:
             elif event.keysym == 'q':
                 self.params['z'] -= 5
 
-            self.points['rad'][-1] = 0
-            self.points['a'][-1] = 0
-            self.points['b'][-1] = 0
-            self.points['c'][-1] = 0
+            self.getAngles()
 
         def placing_polygon(self, event):
             if self.CtrlFlag:
-                if event.keysym == 'equal' or event.keysym == 'plus':
+                if event .keysym == 'equal' or event.keysym == 'plus':
                     self.cornerNum += 1
                     if self.cornerNum > 10:
                         self.cornerNum = 10
@@ -208,7 +215,7 @@ class GraphicWidget:
 
                 for i in range(1, self.cornerNum + 1):
                     self.points['x'][-i - 1], self.points['y'][-i - 1], self.points['z'][-i - 1] = \
-                        self.getSphericalCoordinates(360 / self.cornerNum * i + self.params['a'])
+                        self.getCoordinates(360 / self.cornerNum * i + self.params['a'])
 
         def assignPointCoords(self):
             save = self.main.savesManager.currentSave
@@ -219,13 +226,25 @@ class GraphicWidget:
                     self.points['x'][i] = self.params['x']
                     self.points['y'][i] = self.params['y']
                     self.points['z'][i] = self.params['z']
+
+                    self.points['rad'][i] = self.params['rad']
+                    self.points['a'][i] = self.params['a']
+                    self.points['b'][i] = self.params['b']
+                    self.points['c'][i] = self.params['c']
                     break
 
             current_point = self.main.savesManager.saves[save].points[self.selectedTime]
 
             current_point.x = self.params['x']
-            self.main.savesManager.saves[save].points[self.selectedTime].y = self.params['y']
-            self.main.savesManager.saves[save].points[self.selectedTime].z = self.params['z']
+            current_point.y = self.params['y']
+            current_point.z = self.params['z']
+
+            current_point.rad = self.params['rad']
+            current_point.a = self.params['a']
+            current_point.b = self.params['b']
+            current_point.c = self.params['c']
+
+            self.updateScreenFlag = True
 
         def place_point(self, event):
             # сделать линию параллельной оси координат
@@ -266,9 +285,22 @@ class GraphicWidget:
                 elif self.params['z'] < self.min + 200:
                     self.params['z'] = self.min + 200
 
-                self.assignPointCoords()
+                elif self.params['a'] > 360:
+                    self.params['a'] -= 360
+                elif self.params['a'] < 0:
+                    self.params['a'] += 360
 
-                self.updateScreenFlag = True
+                elif self.params['b'] > 360:
+                    self.params['b'] -= 360
+                elif self.params['b'] < 0:
+                    self.params['b'] += 360
+
+                elif self.params['c'] > 360:
+                    self.params['c'] -= 360
+                elif self.params['c'] < 0:
+                    self.params['c'] += 360
+
+                self.assignPointCoords()
 
     def drawObjects(self, frame):
         if self.point.updateScreenFlag:
@@ -298,7 +330,7 @@ class GraphicWidget:
                     if self.point.AxesSphereMovementFlag:
                         a = np.linspace(0, 360, 50)
 
-                        x, y, z = self.point.getSphericalCoordinates(a)
+                        x, y, z = self.point.getCoordinates(a)
 
                         self.plot3d.ax_3d.plot3D(x, y, z, color='gray', linestyle=':')
 
