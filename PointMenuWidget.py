@@ -60,8 +60,12 @@ class PointMenuWidget:
         self.yEntry.insert(0, controlPanel.yEntry.get())
         self.zEntry.insert(0, controlPanel.zEntry.get())
         self.qEntry.insert(0, int((controlPanel.qSlider.get() / 100) * cfg.ManipulatorConfig.Q_LIMIT[1]))
-        self.eEntry.insert(0, controlPanel.eSlider.get())
-        self.fEntry.insert(0, controlPanel.fSlider.get())
+        self.eEntry.insert(0, int((controlPanel.eSlider.get() / 100) * cfg.ManipulatorConfig.E_LIMIT[1]))
+        self.fEntry.insert(0, int((controlPanel.fSlider.get() / 100) * cfg.ManipulatorConfig.F_LIMIT[1]))
+        self.radEntry.insert(0, str(0))
+        self.aEntry.insert(0, str(0))
+        self.bEntry.insert(0, str(0))
+        self.cEntry.insert(0, str(0))
 
     def onRobotToPoint(self):
         self.main.controlPanelWidget.xEntry.delete(0, END)
@@ -76,9 +80,9 @@ class PointMenuWidget:
         self.main.controlPanelWidget.eSlider.set((float(self.eEntry.get()) / cfg.ManipulatorConfig.E_LIMIT[1]) * 100)
         self.main.controlPanelWidget.fSlider.set((float(self.fEntry.get()) / cfg.ManipulatorConfig.F_LIMIT[1]) * 100)
 
-        self.main.controlPanelWidget.qLabel.configure(text=str(int((float(self.qEntry.get()) / cfg.ManipulatorConfig.Q_LIMIT[1]) * 100)))
-        self.main.controlPanelWidget.eLabel.configure(text=str(int((float(self.eEntry.get()) / cfg.ManipulatorConfig.E_LIMIT[1]) * 100)))
-        self.main.controlPanelWidget.fLabel.configure(text=str(int((float(self.fEntry.get()) / cfg.ManipulatorConfig.F_LIMIT[1]) * 100)))
+        self.main.controlPanelWidget.qLabel.configure(text=f"Q: {self.qEntry.get()}")
+        self.main.controlPanelWidget.eLabel.configure(text=f"E: {self.eEntry.get()}")
+        self.main.controlPanelWidget.fLabel.configure(text=f"F: {self.fEntry.get()}")
 
         self.main.controlPanelWidget.onEnterPressed(None)
 

@@ -9,6 +9,8 @@ class ManipulatorController:
 
     main = None
 
+    stop = False
+
     ser = None
     playThread = None
     sendThread = None
@@ -23,7 +25,7 @@ class ManipulatorController:
     lastSend = None
 
     def connect(self, name):
-        self.ser = serial.Serial(timeout=1)
+        self.ser = serial.Serial()
         portList = serial.tools.list_ports.comports()
         comPort = ''
 
@@ -92,6 +94,7 @@ class ManipulatorController:
             self.main.xzVisualisationWidget.update(int(kwargs['x']), int(kwargs['z']))
 
     def play(self, save):
+        self.stop = False
         self.playThread = threading.Thread(target=self.playAsync, args=[save])
         self.playThread.start()
 
@@ -100,6 +103,18 @@ class ManipulatorController:
             self.paused = not self.paused
         else:
             self.paused = status
+
+    def stopPlaying(self):
+        self.playThread = None
+        self.stop = True
+
+    def forceSend(self, data):
+        if self.connected:
+            print('connecnted')
+            toSend = data + '\r\n'
+            print('to send')
+            self.ser.write(toSend.encode('ascii'))
+            print('FORCE SEND - ' + toSend)
 
     def sendAsync(self):
         old_send = ''
@@ -121,6 +136,9 @@ class ManipulatorController:
         pointsVar = save.points
         lastTime = 0
         for i in points:
+            if self.stop:
+                self.stop = False
+                return
             time.sleep(pointsVar[i].time - lastTime)
             lastTime = pointsVar[i].time
             while self.paused:
