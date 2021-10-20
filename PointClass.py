@@ -1,4 +1,10 @@
 
+def tryGetValue(key, dict, default):
+    try:
+        return dict[key]
+    except KeyError:
+        return default
+
 class Point:
 
     x = 0
@@ -11,22 +17,25 @@ class Point:
     q = 0
     e = 0
     f = 0
+    g = 0
 
     time = 0
 
     def toDict(self):
-        return {'x': self.x, 'y': self.y, 'z': self.z, 'rad': self.rad, 'a': self.a, 'b': self.b, 'c': self.c, 'q': self.q, 'e': self.e, 'f': self.f, 'time': self.time}
+        return {'x': self.x, 'y': self.y, 'z': self.z, 'rad': self.rad, 'a': self.a, 'b': self.b, 'c': self.c, 'q': self.q, 'e': self.e, 'f': self.f, 'g': self.g, 'time': self.time}
 
     def fromDict(self, dict):
-        self.x = dict['x']
-        self.y = dict['y']
-        self.z = dict['z']
-        self.rad = dict['rad']
-        self.a = dict['a']
-        self.b = dict['b']
-        self.c = dict['c']
-        self.q = dict['q']
-        self.e = dict['e']
-        self.f = dict['f']
-        self.time = dict['time']
+        self.x = tryGetValue('x', dict, 0)
+        self.y = tryGetValue('y', dict, 0)
+        self.z = tryGetValue('z', dict, 0)
+        self.rad = tryGetValue('rad', dict, 0)
+        self.a = tryGetValue('a', dict, 0)
+        self.b = tryGetValue('b', dict, 0)
+        self.c = tryGetValue('c', dict, 0)
+        self.q = tryGetValue('q', dict, 0)
+        self.e = tryGetValue('e', dict, 0)
+        self.f = tryGetValue('f', dict, 90)
+        self.g = tryGetValue('g', dict, 90)
+
+        self.time = tryGetValue('time', dict, 1)
         return self

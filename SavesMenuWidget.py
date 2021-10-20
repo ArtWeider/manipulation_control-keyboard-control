@@ -93,7 +93,7 @@ class SavesMenuWidget:
 
     def onCreatePressed(self):
         save = Save()
-        save.fromDict({'name': self.nameEntry.get(), 'points': [{'x': 1, 'y': 1, 'z': 1, 'rad': 1, 'a': 1, 'b': 1, 'c': 1, 'time': 1, 'q': 0, 'e': 30, 'f': 90}]})
+        save.fromDict({'name': self.nameEntry.get(), 'points': [{'x': 1, 'y': 1, 'z': 1, 'rad': 1, 'a': 0, 'b': 0, 'c': 0, 'time': 1, 'q': 0, 'e': 30, 'f': 90, 'g': 90}]})
         self.main.savesManager.saves[self.nameEntry.get()] = save
         self.main.savesManager.currentSave = self.nameEntry.get()
         self.main.savesWidget.fillFromDict(self.main.savesManager.saves)

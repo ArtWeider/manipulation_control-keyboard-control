@@ -80,14 +80,14 @@ class ManipulatorController:
 
     def goToPoint(self, _=False, **kwargs):
         mess = ''
-        for key in ['x', 'y', 'z', 'q']:
+        for key in ['x', 'y', 'z', 'q', 'e', 'f', 'g']:
             if key in kwargs.keys():
                 mess += f'{key.upper()}{int(kwargs[key])} '
         self.toSend = mess
         if self.main.pointMenuWidget.followManipulatorVar.get():
-            self.main.pointMenuWidget.setStateAll('normal')
+            self.main.pointMenuWidget.setStateAll('normal', True)
             self.main.pointMenuWidget.onPointToRobotPressed()
-            self.main.pointMenuWidget.setStateAll('disabled')
+            self.main.pointMenuWidget.setStateAll('disabled', True)
         if 'x' in kwargs.keys() and 'y' in kwargs.keys():
             self.main.xyVisualisationWidget.update(x=int(kwargs['x']), y=int(kwargs['y']))
         if 'x' in kwargs.keys() and 'z' in kwargs.keys():
@@ -149,7 +149,8 @@ class ManipulatorController:
                            z=pointsVar[i].z,
                            q=pointsVar[i].q,
                            e=pointsVar[i].e,
-                           f=pointsVar[i].f)
+                           f=pointsVar[i].f,
+                           g=pointsVar[i].g)
         time.sleep(5)
         self.toSend = 'P'
 

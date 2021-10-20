@@ -28,6 +28,10 @@ class Cfg:
         Q_LIMIT = (0, 180)
         E_LIMIT = (0, 180)
         F_LIMIT = (0, 180)
+        G_LIMIT = (0, 180)
+
+        F_POINTS = (60, 90, 120)
+        G_POINTS = (60, 90, 120)
 
         DEFAULT_NAME = 'COM12'
 
