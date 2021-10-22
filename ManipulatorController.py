@@ -11,6 +11,8 @@ class ManipulatorController:
 
     stop = False
 
+    gMode = False
+
     ser = None
     playThread = None
     sendThread = None
@@ -80,9 +82,15 @@ class ManipulatorController:
 
     def goToPoint(self, _=False, **kwargs):
         mess = ''
-        for key in ['x', 'y', 'z', 'q', 'e', 'f', 'g']:
+        for key in ['x', 'y', 'z', 'q', 'e', 'f']:
             if key in kwargs.keys():
-                mess += f'{key.upper()}{int(kwargs[key])} '
+                if key == 'f':
+                    if self.gMode:
+                        mess += f'G{int(kwargs[key])} '
+                    else:
+                        mess += f'{key.upper()}{int(kwargs[key])} '
+                else:
+                    mess += f'{key.upper()}{int(kwargs[key])} '
         self.toSend = mess
         if self.main.pointMenuWidget.followManipulatorVar.get():
             self.main.pointMenuWidget.setStateAll('normal', True)
@@ -149,8 +157,7 @@ class ManipulatorController:
                            z=pointsVar[i].z,
                            q=pointsVar[i].q,
                            e=pointsVar[i].e,
-                           f=pointsVar[i].f,
-                           g=pointsVar[i].g)
+                           f=pointsVar[i].f)
         time.sleep(5)
         self.toSend = 'P'
 

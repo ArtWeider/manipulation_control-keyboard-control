@@ -27,7 +27,9 @@ opts = {
         'stop': ('стоп', 'остановить', 'прекратить'),
         'sponge': ('взять губку', 'схватить губку'),
         'bolt': ('взять болт', 'схватить болт'),
-        'marker': ('взять маркер', 'схватить маркер')
+        'marker': ('взять маркер', 'схватить маркер'),
+        'boltMode': ('шуруповёрт', 'шуруповёрт'),
+        'grabMode': ('захват', 'захват')
 
     }
 }
@@ -73,7 +75,6 @@ def execute_cmd(cmd):
         print('Точку к манипулятору')
         main.pointMenuWidget.onPointToRobotPressed()
 
-
     elif cmd == 'robotToPoint':
         print('Манипулятор к точке')
         main.pointMenuWidget.onRobotToPoint()
@@ -85,6 +86,14 @@ def execute_cmd(cmd):
     elif cmd == 'stop':
         print('Стоп')
         main.manipulatorController.stopPlaying()
+
+    elif cmd == 'boltMode':
+        print('Шуруповёрт')
+        main.manipulatorController.gMode = True
+
+    elif cmd == "grabMode":
+        print('Захват')
+        main.manipulatorController.gMode = False
 
 
 

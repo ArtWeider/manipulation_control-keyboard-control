@@ -12,43 +12,6 @@ class PointMenuWidget:
     WIDTH = 275 * cfg.SIZE_MULT
     HEIGHT = 350 * cfg.SIZE_MULT
 
-    def getFG(self, str):
-        f_limit = cfg.ManipulatorConfig.F_POINTS
-        g_limit = cfg.ManipulatorConfig.G_POINTS
-        f = f_limit[1]
-        g = g_limit[1]
-        try:
-            splitted = str.split(r' ')
-            if len(splitted) != 2: return f_limit[1], g_limit[1]
-        except:
-            return f_limit[1], g_limit[1]
-        try:
-            f = int(splitted[0])
-        except: pass
-        try:
-            g = int(splitted[1])
-        except: pass
-
-        if f < f_limit[0]: f = f_limit[0]
-        elif f > f_limit[2]: f = f_limit[2]
-        else: f = f_limit[1]
-
-        if g < g_limit[0]: g = g_limit[0]
-        elif g > g_limit[2]: g = g_limit[2]
-        else: g = g_limit[1]
-
-        return f, g
-
-    def setFG(self, f=None, g=None):
-        cur_f, cur_g = self.getFG(self.fEntry.get())
-        set_f, set_g = cur_f, cur_g
-
-        if f != None: set_f = f
-        if g != None: set_g = g
-
-        self.fEntry.delete(0, END)
-        self.fEntry.insert(0, f"{set_f} {set_g}")
-
     def isMouseOnWidget(self, event):
         return 925 < event.x < 1120 and -30 < event.y < 190
 
@@ -69,10 +32,8 @@ class PointMenuWidget:
         self.main.savesManager.saves[save].points[time].q = int(self.qEntry.get())
         self.main.savesManager.saves[save].points[time].e = int(self.eEntry.get())
 
-        f, g = self.getFG(self.fEntry.get())
-
-        self.main.savesManager.saves[save].points[time].f = f
-        self.main.savesManager.saves[save].points[time].g = g
+        self.main.savesManager.saves[save].points[time].f = int(self.fEntry.get())
+        self.main.savesManager.saves[save].points[time].gMode = bool(self.changeFGVar.get())
 
         self.main.savesManager.saves[save].points[time].rad = int(self.radEntry.get())
         self.main.graphicWidget.point.params['rad'] = int(self.radEntry.get())
@@ -101,7 +62,8 @@ class PointMenuWidget:
         self.zEntry.insert(0, controlPanel.zEntry.get())
         self.qEntry.insert(0, int((controlPanel.qSlider.get() / 100) * cfg.ManipulatorConfig.Q_LIMIT[1]))
         self.eEntry.insert(0, int((controlPanel.eSlider.get() / 100) * cfg.ManipulatorConfig.E_LIMIT[1]))
-        self.setFG(int((controlPanel.fSlider.get() / 100) * cfg.ManipulatorConfig.E_LIMIT[1]))
+        self.fEntry.insert(0, int((controlPanel.eSlider.get() / 100) * cfg.ManipulatorConfig.F_LIMIT[1]))
+        self.setFGMode(self.main.manipulatorController.gMode, True)
         self.radEntry.insert(0, str(0))
         self.aEntry.insert(0, str(0))
         self.bEntry.insert(0, str(0))
@@ -118,11 +80,13 @@ class PointMenuWidget:
 
         self.main.controlPanelWidget.qSlider.set((float(self.qEntry.get()) / cfg.ManipulatorConfig.Q_LIMIT[1]) * 100)
         self.main.controlPanelWidget.eSlider.set((float(self.eEntry.get()) / cfg.ManipulatorConfig.E_LIMIT[1]) * 100)
-        self.main.controlPanelWidget.fSlider.set((float(self.getFG(self.fEntry.get())[0]) / cfg.ManipulatorConfig.F_LIMIT[1]) * 100)
+        self.main.controlPanelWidget.fSlider.set((float(self.fEntry.get()) / cfg.ManipulatorConfig.F_LIMIT[1]) * 100)
+
+        self.main.manipulatorController.gMode = bool(self.changeFGVar.get())
 
         self.main.controlPanelWidget.qLabel.configure(text=f"Q: {self.qEntry.get()}")
         self.main.controlPanelWidget.eLabel.configure(text=f"E: {self.eEntry.get()}")
-        self.main.controlPanelWidget.fLabel.configure(text=f"F: {self.getFG(self.fEntry.get())[0]}")
+        self.main.controlPanelWidget.fLabel.configure(text=f"F: {self.fEntry.get()}")
 
         self.main.controlPanelWidget.onEnterPressed(None)
 
@@ -146,7 +110,8 @@ class PointMenuWidget:
         self.zEntry.insert(0, point.z)
         self.qEntry.insert(0, point.q)
         self.eEntry.insert(0, point.e)
-        self.setFG(point.f, point.g)
+        self.fEntry.insert(0, point.f)
+        self.setFGMode(point.gMode, True)
         self.radEntry.insert(0, point.rad)
         self.aEntry.insert(0, point.a)
         self.bEntry.insert(0, point.b)
@@ -156,6 +121,21 @@ class PointMenuWidget:
     def onPointDeselected(self):
         self.clearAll()
         self.setStateAll(DISABLED)
+
+    def setFGMode(self, gMode, setButtons):
+        if gMode:
+            self.fLabel.configure(text='G:')
+        else:
+            self.fLabel.configure(text='F:')
+
+        self.main.savesManager.saves[self.main.savesManager.currentSave].points[
+            self.main.timelineWidget.tag2time[int(self.main.timelineWidget.currentPoint[1][1::])]].gMode = gMode
+
+        if setButtons:
+            self.changeFGVar.set(int(gMode))
+
+    def onRadiobuttonChanged(self):
+        self.setFGMode(bool(self.changeFGVar.get()), False)
 
     def clearAll(self, ignoreCheckbutton=False, ignoreTime=False):
         self.xEntry.delete(0, END)
@@ -185,6 +165,8 @@ class PointMenuWidget:
         self.qEntry.configure(state=state)
         self.eEntry.configure(state=state)
         self.fEntry.configure(state=state)
+        self.fRadiobutton.configure(state=state)
+        self.gRadiobutton.configure(state=state)
 
         self.xLabel.configure(state=state)
         self.yLabel.configure(state=state)
@@ -463,6 +445,39 @@ class PointMenuWidget:
                             disabledbackground=cfg.SUBCOLOR)
         self.timeEntry.place(x=60, y=130)
         self.timeEntry.bind('<Return>', self.onEnterPressed)
+
+        self.changeFGVar = IntVar()
+        self.fRadiobutton = Radiobutton(master=self.mainLabel,
+                                        text='F',
+                                        variable=self.changeFGVar,
+                                        value=0,
+                                        font='Arial 11',
+                                        bg=cfg.SUBCOLOR,
+                                        bd=0,
+                                        fg=cfg.TEXT_COLOR,
+                                        activebackground=cfg.SUBCOLOR,
+                                        activeforeground=cfg.TEXT_COLOR,
+                                        selectcolor=cfg.MAIN_COLOR,
+                                        state=DISABLED,
+                                        command=self.onRadiobuttonChanged
+                                        )
+        self.fRadiobutton.place(x=100, y=127)
+
+        self.gRadiobutton = Radiobutton(master=self.mainLabel,
+                                        text='G',
+                                        variable=self.changeFGVar,
+                                        value=1,
+                                        font='Arial 11',
+                                        bg=cfg.SUBCOLOR,
+                                        bd=0,
+                                        fg=cfg.TEXT_COLOR,
+                                        activebackground=cfg.SUBCOLOR,
+                                        activeforeground=cfg.TEXT_COLOR,
+                                        selectcolor=cfg.MAIN_COLOR,
+                                        state=DISABLED,
+                                        command=self.onRadiobuttonChanged
+                                        )
+        self.gRadiobutton.place(x=140, y=127)
 
         self.followManipulatorVar = BooleanVar()
         self.followManipulatorCheckbutton = Checkbutton(master=self.mainLabel,
