@@ -54,7 +54,6 @@ class ControlPanelWidget:
         else:
             self.setStateAll(DISABLED)
 
-
     def onEnterPressed(self, event):
         x = float(self.xEntry.get())
         y = float(self.yEntry.get())
