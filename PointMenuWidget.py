@@ -68,6 +68,7 @@ class PointMenuWidget:
         self.aEntry.insert(0, str(0))
         self.bEntry.insert(0, str(0))
         self.cEntry.insert(0, str(0))
+        self.onEnterPressed(None)
 
     def onRobotToPoint(self):
         self.main.controlPanelWidget.xEntry.delete(0, END)
