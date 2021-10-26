@@ -15,11 +15,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         print('Connected by', addr)
         while True:
             try:
-                data = conn.recv(1024).decode('utf-8')
+                data = conn.recv(1024).decode('ascii')
                 print(data)
-                time.sleep(1)
-                conn.send(f'#{counter}'.encode('utf-8'))
-                counter += 1
             except:
                 conn, addr = s.accept()
 

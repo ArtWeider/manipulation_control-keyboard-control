@@ -35,15 +35,15 @@ class ControlPanelWidget:
 
         if slider == 'q':
             angle = (self.qSlider.get() / 100) * cfg.ManipulatorConfig.Q_LIMIT[1]
-            self.main.manipulatorController.goToPoint(q=angle)
+            #self.main.manipulatorController.goToPoint(q=angle)
             self.qLabel.configure(text=f"Q: {str(int(angle))}")
         elif slider == 'e':
             angle = (self.eSlider.get() / 100) * cfg.ManipulatorConfig.E_LIMIT[1]
-            self.main.manipulatorController.goToPoint(e=angle)
+            #self.main.manipulatorController.goToPoint(e=angle)
             self.eLabel.configure(text=f"E: {str(int(angle))}")
         elif slider == 'f':
             angle = (self.fSlider.get() / 100) * cfg.ManipulatorConfig.F_LIMIT[1]
-            self.main.manipulatorController.goToPoint(f=angle)
+            #self.main.manipulatorController.goToPoint(f=angle)
             self.fLabel.configure(text=f"F: {str(int(angle))}")
 
     def onIPEnterPressed(self, event):
@@ -172,6 +172,7 @@ class ControlPanelWidget:
                              relief=FLAT,
                              troughcolor=cfg.MAIN_COLOR,
                              command=lambda event: self.onScaleChanged(event, 'q'))
+        self.qSlider.bind('<Return>', self.onEnterPressed)
         self.qSlider.place(x=60, y=75)
 
         self.eLabel = Label(master=self.mainLabel,
@@ -199,6 +200,7 @@ class ControlPanelWidget:
                              troughcolor=cfg.MAIN_COLOR,
                              command=lambda event: self.onScaleChanged(event, 'e'))
         self.eSlider.place(x=60, y=105)
+        self.eSlider.bind('<Return>', self.onEnterPressed)
 
         self.fLabel = Label(master=self.mainLabel,
                              text="F: ",
@@ -225,6 +227,7 @@ class ControlPanelWidget:
                               troughcolor=cfg.MAIN_COLOR,
                              command=lambda event: self.onScaleChanged(event, 'f'))
         self.fSlider.place(x=60, y=135)
+        self.fSlider.bind('<Return>', self.onEnterPressed)
 
         self.IPLabel = Label(master=self.mainLabel,
                              text="Адрес: ",
@@ -266,7 +269,7 @@ class ControlPanelWidget:
                                        activebackground=cfg.BUTTON_ACTIVE_COLOR,
                                        activeforeground=cfg.TEXT_COLOR,
                                        )
-        self.takeSpongeButton.place(x=11, y=220)
+        self.takeSpongeButton.place(x=11, y=218)
 
         self.takeBoltButton = Button(master=self.mainLabel,
                                        text="Взять болт",
@@ -277,7 +280,7 @@ class ControlPanelWidget:
                                        activebackground=cfg.BUTTON_ACTIVE_COLOR,
                                        activeforeground=cfg.TEXT_COLOR,
                                        )
-        self.takeBoltButton.place(x=11, y=250)
+        self.takeBoltButton.place(x=11, y=246)
 
         self.playButton = Button(master=self.mainLabel,
                                      text="Запустить",
@@ -289,7 +292,7 @@ class ControlPanelWidget:
                                      activeforeground=cfg.TEXT_COLOR,
                                      command=lambda: self.main.manipulatorController.play(self.main.savesManager.saves[self.main.savesManager.currentSave])
                                      )
-        self.playButton.place(x=11, y=280)
+        self.playButton.place(x=11, y=274)
 
         self.pauseButton = Button(master=self.mainLabel,
                                  text="Пауза",
@@ -301,7 +304,19 @@ class ControlPanelWidget:
                                  activeforeground=cfg.TEXT_COLOR,
                                  command=self.main.manipulatorController.pause
                                  )
-        self.pauseButton.place(x=11, y=310)
+        self.pauseButton.place(x=11, y=302)
+
+        self.parkButton = Button(master=self.mainLabel,
+                                  text="Парковка",
+                                  bg=cfg.BUTTON_COLOR,
+                                  bd=0,
+                                  fg=cfg.TEXT_COLOR,
+                                  width=24,
+                                  activebackground=cfg.BUTTON_ACTIVE_COLOR,
+                                  activeforeground=cfg.TEXT_COLOR,
+                                  command=lambda: self.main.manipulatorController.forceSend('P')
+                                  )
+        self.parkButton.place(x=11, y=330)
 
         if self.main.manipulatorController.connected:
             self.setStateAll(NORMAL)

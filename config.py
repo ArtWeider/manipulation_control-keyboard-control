@@ -16,7 +16,7 @@ class Cfg:
 
     class ManipulatorConfig:
 
-        SEND_LIMIT = 0.3
+        SEND_LIMIT = 0.1
 
         START_POS = {'x': -150, 'y': -150, 'z': 450, 'q': 170, 'e': 90, 'f': 90}
 
@@ -33,7 +33,7 @@ class Cfg:
         F_POINTS = (60, 90, 120)
         G_POINTS = (60, 90, 120)
 
-        DEFAULT_NAME = '192.168.1.182'
+        DEFAULT_NAME = '127.0.0.1'
 
 
 

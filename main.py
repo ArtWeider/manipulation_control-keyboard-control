@@ -75,6 +75,7 @@ class Main:
         self.xzVisualisationWidget = XZVisualisationWidget(self)
         self.controlPanelWidget = ControlPanelWidget(self)
         Voice.main = self
+        self.manipulatorController.connect(cfg.ManipulatorConfig.DEFAULT_NAME)
 
         self.root.mainloop()
 

@@ -5,6 +5,7 @@ import time
 import serial.tools.list_ports
 from config import Cfg as cfg
 import datetime
+import time
 
 class ManipulatorController:
 
@@ -25,7 +26,7 @@ class ManipulatorController:
     listener2 = None
 
     toSend = ''
-    lastSend = None
+    lastSend = 0
 
     def connect(self, name):
 
@@ -36,7 +37,8 @@ class ManipulatorController:
             self.connected = False
 
         if self.connected:
-            try:
+            if True:
+                self.main.controlPanelWidget.setStateAll('normal')
                 self.main.controlPanelWidget.xEntry.delete(0, 'end')
                 self.main.controlPanelWidget.yEntry.delete(0, 'end')
                 self.main.controlPanelWidget.zEntry.delete(0, 'end')
@@ -53,24 +55,23 @@ class ManipulatorController:
                 self.main.controlPanelWidget.eLabel.configure(text=f"E: {cfg.ManipulatorConfig.START_POS['e']}")
                 self.main.controlPanelWidget.fLabel.configure(text=f"F: {cfg.ManipulatorConfig.START_POS['f']}")
 
+
                 self.goToPoint(x=cfg.ManipulatorConfig.START_POS['x'],
                                y=cfg.ManipulatorConfig.START_POS['y'],
                                z=cfg.ManipulatorConfig.START_POS['z'],
                                q=cfg.ManipulatorConfig.START_POS['q'],
                                e=cfg.ManipulatorConfig.START_POS['e'],
                                f=cfg.ManipulatorConfig.START_POS['f'])
-            except:
-                pass
+            '''except:
+                pass'''
 
 
 
     def __init__(self, main):
         self.main = main
-        self.connect(cfg.ManipulatorConfig.DEFAULT_NAME)
 
     def goToPoint(self, _=False, **kwargs):
         mess = self.toSend
-        print(f"Go to point {kwargs}")
         for key in ['x', 'y', 'z', 'q', 'e', 'f']:
             if key in kwargs.keys():
                 if key == 'f':
@@ -108,12 +109,11 @@ class ManipulatorController:
     def forceSend(self, data, wait=False):
         if self.connected:
             if wait:
-                print(datetime.time)
-
-            print('connecnted')
-            toSend = data + '\r\n'
-            print('to send')
+                if (time.time() - self.lastSend) < cfg.ManipulatorConfig.SEND_LIMIT:
+                    return
+            toSend = data
             self.tn.write(toSend.encode('ascii'))
+            self.lastSend = time.time()
             print('FORCE SEND - ' + toSend)
 
     def sendAsync(self):

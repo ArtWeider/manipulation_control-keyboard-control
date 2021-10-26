@@ -12,9 +12,6 @@ class PointMenuWidget:
     WIDTH = 275 * cfg.SIZE_MULT
     HEIGHT = 350 * cfg.SIZE_MULT
 
-    def isMouseOnWidget(self, event):
-        return 925 < event.x < 1120 and -30 < event.y < 190
-
     def onEnterPressed(self, event):
         tag = self.main.timelineWidget.currentPoint[1]
         time = self.main.timelineWidget.tag2time[int(tag[1::])]
@@ -47,7 +44,7 @@ class PointMenuWidget:
         self.main.savesManager.saves[save].points[time].c = int(self.cEntry.get())
         self.main.graphicWidget.point.params['c'] = int(self.cEntry.get())
 
-        self.main.timelineWidget.movePoint(tag, int(self.timeEntry.get()) * self.main.timelineWidget.pixPerSecond)
+        self.main.timelineWidget.movePoint(tag, float(self.timeEntry.get()) * self.main.timelineWidget.pixPerSecond)
 
         self.main.graphicWidget.point.getCoordinates()
         self.main.graphicWidget.point.getAngles()
