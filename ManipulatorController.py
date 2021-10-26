@@ -15,6 +15,8 @@ class ManipulatorController:
 
     gMode = False
 
+    useHand = False
+
     tn = None
     playThread = None
     sendThread = None
@@ -31,7 +33,7 @@ class ManipulatorController:
     def connect(self, name):
 
         try:
-            self.tn = telnet.Telnet(name, '23')
+            self.tn = telnet.Telnet(name, '23', timeout=1)
             self.connected = True
         except:
             self.connected = False
