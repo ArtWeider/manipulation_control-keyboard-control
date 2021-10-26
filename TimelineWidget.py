@@ -52,7 +52,7 @@ class TimelineWidget:
     def onMouseDoubleClicked(self, event):
         if self.isSaveSelected():
             x = self.canvas.canvasx(event.widget.winfo_pointerx() - event.widget.winfo_rootx())
-            self.main.savesManager.saves[self.main.savesManager.currentSave].addPoint(x/self.pixPerSecond)
+            self.main.savesManager.saves[self.main.savesManager.currentSave].addPoint(x/self.pixPerSecond, useLast=True)
             self.addPointToTimeline(x)
 
             self.main.graphicWidget.point.setPointFlag = True
@@ -69,6 +69,8 @@ class TimelineWidget:
             self.main.graphicWidget.point.assignPointCoords()
 
             self.main.graphicWidget.point.dictUpdate()
+
+            self.main.savesManager.save(self.main.savesManager.saves[self.main.savesManager.currentSave])
 
     def onEscPressed(self, event):
         if self.isSaveSelected() and self.isMouseOnWidget(event):
@@ -102,6 +104,8 @@ class TimelineWidget:
 
         self.main.graphicWidget.point.dictUpdate()
         self.deselectPoint()
+
+        self.main.savesManager.save(self.main.savesManager.saves[self.main.savesManager.currentSave])
 
     def drawPoint(self, x):
         y = 60
@@ -137,7 +141,7 @@ class TimelineWidget:
         self.recalculateScrollLimits()
 
     def onLeftButtonMove(self, event):
-        if self.isSaveSelected():
+        if self.isSaveSelected() and self.currentPoint[1] != '':
             x = self.canvas.canvasx(event.x)
             self.movePoint(self.currentPoint[1], x)
 
@@ -162,12 +166,15 @@ class TimelineWidget:
         self.main.graphicWidget.point.selectedTime = newTime
         self.main.graphicWidget.point.dictUpdate()
 
+        self.main.savesManager.save(self.main.savesManager.saves[self.main.savesManager.currentSave])
+
     def onPointSelected(self, tag):
         if self.currentPoint[1] != tag:
             self.currentPoint[0] = self.currentPoint[1]
             self.currentPoint[1] = tag
             self.canvas.itemconfigure(self.currentPoint[0], fill=cfg.POINT_COLOR)
             self.canvas.itemconfigure(tag, fill=cfg.POINT_SELECTED_COLOR)
+            self.main.pointMenuWidget.onPointDeselected()
             self.main.pointMenuWidget.onPointSelected(self.tag2time[int(tag[1::])])
 
             self.main.graphicWidget.point.selectedTime = self.tag2time[int(tag[1::])]

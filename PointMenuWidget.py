@@ -50,6 +50,66 @@ class PointMenuWidget:
         self.main.graphicWidget.point.getAngles()
 
         self.main.graphicWidget.point.assignPointCoords()
+        self.main.savesManager.save(self.main.savesManager.saves[self.main.savesManager.currentSave])
+
+    def validate(self, action, value, entry):
+        tag = self.main.timelineWidget.currentPoint[1]
+        time = self.main.timelineWidget.tag2time[int(tag[1::])]
+        save = self.main.savesManager.currentSave
+
+        try:
+            if entry == '.!frame3.!entry':
+                print(int(self.xEntry.get()))
+                self.main.savesManager.saves[save].points[time].x = int(value)
+                self.main.graphicWidget.point.params['x'] = int(value)
+
+            elif entry == '.!frame3.!entry2':
+                self.main.savesManager.saves[save].points[time].y = int(value)
+                self.main.graphicWidget.point.params['y'] = int(value)
+
+            elif entry == '.!frame3.!entry3':
+                self.main.savesManager.saves[save].points[time].z = int(value)
+                self.main.graphicWidget.point.params['z'] = int(value)
+
+            elif entry == '.!frame3.!entry8':
+                self.main.savesManager.saves[save].points[time].q = int(value)
+
+            elif entry == '.!frame3.!entry9':
+                self.main.savesManager.saves[save].points[time].e = int(value)
+
+            elif entry == '.!frame3.!entry10':
+                self.main.savesManager.saves[save].points[time].f = int(value)
+
+            elif entry == '.!frame3.!entry4':
+                self.main.savesManager.saves[save].points[time].rad = int(value)
+                self.main.graphicWidget.point.params['rad'] = int(value)
+
+            elif entry == '.!frame3.!entry5':
+                self.main.savesManager.saves[save].points[time].a = int(value)
+                self.main.graphicWidget.point.params['a'] = int(value)
+
+            elif entry == '.!frame3.!entry6':
+                self.main.savesManager.saves[save].points[time].b = int(value)
+                self.main.graphicWidget.point.params['b'] = int(value)
+
+            elif entry == '.!frame3.!entry7':
+                self.main.savesManager.saves[save].points[time].c = int(value)
+                self.main.graphicWidget.point.params['c'] = int(value)
+
+            elif entry == '.!frame3.!entry11':
+                self.main.timelineWidget.movePoint(tag, float(value) * self.main.timelineWidget.pixPerSecond)
+
+            self.main.graphicWidget.point.getCoordinates()
+            self.main.graphicWidget.point.getAngles()
+
+            self.main.graphicWidget.point.assignPointCoords()
+            self.main.savesManager.save(self.main.savesManager.saves[self.main.savesManager.currentSave])
+
+        except ValueError:
+            pass
+        except KeyError:
+            pass
+        return True
 
     def onPointToRobotPressed(self):
         controlPanel = self.main.controlPanelWidget
@@ -91,6 +151,7 @@ class PointMenuWidget:
     def onFollowCheckbuttonChanged(self):
         if self.followManipulatorVar.get():
             self.setStateAll(DISABLED, True)
+
         else:
             self.setStateAll(NORMAL, True)
 
@@ -117,6 +178,8 @@ class PointMenuWidget:
         self.timeEntry.insert(0, point.time)
 
     def onPointDeselected(self):
+        self.followManipulatorVar.set(0)
+        self.followManipulatorCheckbutton.deselect()
         self.clearAll()
         self.setStateAll(DISABLED)
 
@@ -190,6 +253,8 @@ class PointMenuWidget:
         self.mainLabel = ttk.Frame(style="RoundedFrame", height=self.HEIGHT, width=self.WIDTH)
         self.mainLabel.place(x=self.X, y=self.Y)
 
+        self.validateCommand = self.mainLabel.register(self.validate)
+
         self.textLabel = Label(
             master=self.mainLabel,
             text="Текущая точка",
@@ -228,6 +293,8 @@ class PointMenuWidget:
                             justify=LEFT,
                             state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR,
+                            validate='key',
+                            validatecommand=(self.validateCommand, '%d', '%P', '%W')
                             )
         self.xEntry.place(x=25, y=39)
         self.xEntry.bind('<Return>', self.onEnterPressed)
@@ -249,7 +316,10 @@ class PointMenuWidget:
                             fg=cfg.TEXT_COLOR,
                             justify=LEFT,
                             state=DISABLED,
-                            disabledbackground=cfg.SUBCOLOR)
+                            disabledbackground=cfg.SUBCOLOR,
+                            validate='key',
+                            validatecommand=(self.validateCommand, '%d', '%P', '%W')
+                            )
         self.yEntry.place(x=90, y=39)
         self.yEntry.bind('<Return>', self.onEnterPressed)
 
@@ -270,7 +340,10 @@ class PointMenuWidget:
                             fg=cfg.TEXT_COLOR,
                             justify=LEFT,
                             state=DISABLED,
-                            disabledbackground=cfg.SUBCOLOR)
+                            disabledbackground=cfg.SUBCOLOR,
+                            validate='key',
+                            validatecommand=(self.validateCommand, '%d', '%P', '%W')
+                            )
         self.zEntry.place(x=155, y=39)
         self.zEntry.bind('<Return>', self.onEnterPressed)
 
@@ -291,7 +364,10 @@ class PointMenuWidget:
                             fg=cfg.TEXT_COLOR,
                             justify=LEFT,
                             state=DISABLED,
-                            disabledbackground=cfg.SUBCOLOR)
+                            disabledbackground=cfg.SUBCOLOR,
+                              validate='key',
+                              validatecommand=(self.validateCommand, '%d', '%P', '%W')
+                              )
         self.radEntry.place(x=22, y=97)
         self.radEntry.bind('<Return>', self.onEnterPressed)
 
@@ -312,7 +388,10 @@ class PointMenuWidget:
                             fg=cfg.TEXT_COLOR,
                             justify=LEFT,
                             state=DISABLED,
-                            disabledbackground=cfg.SUBCOLOR)
+                            disabledbackground=cfg.SUBCOLOR,
+                            validate='key',
+                            validatecommand=(self.validateCommand, '%d', '%P', '%W')
+                            )
         self.aEntry.place(x=65, y=97)
         self.aEntry.bind('<Return>', self.onEnterPressed)
 
@@ -333,7 +412,10 @@ class PointMenuWidget:
                             fg=cfg.TEXT_COLOR,
                             justify=LEFT,
                             state=DISABLED,
-                            disabledbackground=cfg.SUBCOLOR)
+                            disabledbackground=cfg.SUBCOLOR,
+                            validate='key',
+                            validatecommand=(self.validateCommand, '%d', '%P', '%W')
+                            )
         self.bEntry.place(x=115, y=97)
         self.bEntry.bind('<Return>', self.onEnterPressed)
 
@@ -354,7 +436,10 @@ class PointMenuWidget:
                              fg=cfg.TEXT_COLOR,
                              justify=LEFT,
                              state=DISABLED,
-                             disabledbackground=cfg.SUBCOLOR)
+                             disabledbackground=cfg.SUBCOLOR,
+                            validate='key',
+                            validatecommand=(self.validateCommand, '%d', '%P', '%W')
+                            )
         self.cEntry.place(x=160, y=97)
         self.cEntry.bind('<Return>', self.onEnterPressed)
 
@@ -377,6 +462,8 @@ class PointMenuWidget:
                             justify=LEFT,
                             state=DISABLED,
                             disabledbackground=cfg.SUBCOLOR,
+                            validate='key',
+                            validatecommand=(self.validateCommand, '%d', '%P', '%W')
                             )
         self.qEntry.place(x=25, y=69)
         self.qEntry.bind('<Return>', self.onEnterPressed)
@@ -398,7 +485,10 @@ class PointMenuWidget:
                             fg=cfg.TEXT_COLOR,
                             justify=LEFT,
                             state=DISABLED,
-                            disabledbackground=cfg.SUBCOLOR)
+                            disabledbackground=cfg.SUBCOLOR,
+                            validate='key',
+                            validatecommand=(self.validateCommand, '%d', '%P', '%W')
+                            )
         self.eEntry.place(x=90, y=69)
         self.eEntry.bind('<Return>', self.onEnterPressed)
 
@@ -419,7 +509,10 @@ class PointMenuWidget:
                             fg=cfg.TEXT_COLOR,
                             justify=LEFT,
                             state=DISABLED,
-                            disabledbackground=cfg.SUBCOLOR)
+                            disabledbackground=cfg.SUBCOLOR,
+                            validate='key',
+                            validatecommand=(self.validateCommand, '%d', '%P', '%W')
+                            )
         self.fEntry.place(x=155, y=69)
         self.fEntry.bind('<Return>', self.onEnterPressed)
 
@@ -440,7 +533,10 @@ class PointMenuWidget:
                             fg=cfg.TEXT_COLOR,
                             justify=LEFT,
                             state=DISABLED,
-                            disabledbackground=cfg.SUBCOLOR)
+                            disabledbackground=cfg.SUBCOLOR,
+                               validate='key',
+                               validatecommand=(self.validateCommand, '%d', '%P', '%W')
+                               )
         self.timeEntry.place(x=60, y=130)
         self.timeEntry.bind('<Return>', self.onEnterPressed)
 

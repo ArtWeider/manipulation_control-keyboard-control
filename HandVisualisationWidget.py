@@ -91,15 +91,13 @@ class HandVisualisationWidget:
 
                 self.main.controlPanelWidget.qSlider.set((-int(self.gloveData['hy'] - 90) / cfg.ManipulatorConfig.F_LIMIT[1]) * 100)
                 self.main.controlPanelWidget.qLabel.configure(text=f"Q: {-int(self.gloveData['hy'] - 90)}")
-                '''self.main.controlPanelWidget.eSlider.set(
-                    (float(self.eEntry.get()) / cfg.ManipulatorConfig.E_LIMIT[1]) * 100)
+                self.main.controlPanelWidget.eSlider.set(
+                    (int(self.gloveData['hx']) / cfg.ManipulatorConfig.E_LIMIT[1]) * 100)
                 self.main.controlPanelWidget.fSlider.set(
-                    (float(self.fEntry.get()) / cfg.ManipulatorConfig.F_LIMIT[1]) * 100)
+                    (int(self.gloveData['g']) / cfg.ManipulatorConfig.F_LIMIT[1]) * 100)
 
-                self.main.manipulatorController.gMode = bool(self.changeFGVar.get())
-
-                self.main.controlPanelWidget.eLabel.configure(text=f"E: {self.eEntry.get()}")
-                self.main.controlPanelWidget.fLabel.configure(text=f"F: {self.fEntry.get()}")'''
+                self.main.controlPanelWidget.eLabel.configure(text=f"E: {int(self.gloveData['hx'])}")
+                self.main.controlPanelWidget.fLabel.configure(text=f"F: {int(self.gloveData['g'])}")
 
                 self.main.controlPanelWidget.onEnterPressed(None)
 

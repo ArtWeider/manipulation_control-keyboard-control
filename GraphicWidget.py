@@ -1,5 +1,5 @@
 from tkinter import ttk
-from config import Cfg
+from config import Cfg as cfg
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
@@ -7,10 +7,10 @@ import matplotlib.animation as animation
 
 
 class GraphicWidget:
-    X = 515 * Cfg.SIZE_MULT
-    Y = 30 * Cfg.SIZE_MULT
-    WIDTH = 800 * Cfg.SIZE_MULT
-    HEIGHT = 700 * Cfg.SIZE_MULT
+    X = 515 * cfg.SIZE_MULT
+    Y = 30 * cfg.SIZE_MULT
+    WIDTH = 800 * cfg.SIZE_MULT
+    HEIGHT = 700 * cfg.SIZE_MULT
 
     def quit(self):
         self.root.remove()
@@ -45,9 +45,6 @@ class GraphicWidget:
         AxesSphereMovementFlag = False
         ShiftFlag = False
         CtrlFlag = False
-
-        max = 200
-        min = -200
 
         points = {'time': [], 'x': [], 'y': [], 'z': [], 'rad': [], 'a': [], 'b': [], 'c': []}
         params = {'x': 0, 'y': 0, 'z': 0, 'rad': 0, 'a': 0, 'b': 0, 'c': 0}
@@ -185,9 +182,9 @@ class GraphicWidget:
                 self.params['x'] -= 5
 
             elif event.keysym == 'w':
-                self.params['y'] += 5
-            elif event.keysym == 's':
                 self.params['y'] -= 5
+            elif event.keysym == 's':
+                self.params['y'] += 5
 
             elif event.keysym == 'e':
                 self.params['z'] += 5
@@ -270,20 +267,20 @@ class GraphicWidget:
                     self.main.pointMenuWidget.onPointSelected(self.selectedTime)
 
                 # диапазоны
-                if self.params['x'] > self.max:
-                    self.params['x'] = self.max
-                elif self.params['x'] < self.min:
-                    self.params['x'] = self.min
+                if self.params['x'] > cfg.ManipulatorConfig.LIMIT_X[1]:
+                    self.params['x'] = cfg.ManipulatorConfig.LIMIT_X[1]
+                elif self.params['x'] < -cfg.ManipulatorConfig.LIMIT_X[1]:
+                    self.params['x'] = -cfg.ManipulatorConfig.LIMIT_X[1]
 
-                elif self.params['y'] > self.max:
-                    self.params['y'] = self.max
-                elif self.params['y'] < self.min:
-                    self.params['y'] = self.min
+                elif self.params['y'] > cfg.ManipulatorConfig.LIMIT_Y[1]:
+                    self.params['y'] = cfg.ManipulatorConfig.LIMIT_Y[1]
+                elif self.params['y'] < cfg.ManipulatorConfig.LIMIT_Y[0]:
+                    self.params['y'] = cfg.ManipulatorConfig.LIMIT_Y[0]
 
-                elif self.params['z'] > self.max + 200:
-                    self.params['z'] = self.max + 200
-                elif self.params['z'] < self.min + 200:
-                    self.params['z'] = self.min + 200
+                elif self.params['z'] > cfg.ManipulatorConfig.LIMIT_Z[1]:
+                    self.params['z'] = cfg.ManipulatorConfig.LIMIT_Z[1]
+                elif self.params['z'] < cfg.ManipulatorConfig.LIMIT_Z[0]:
+                    self.params['z'] = cfg.ManipulatorConfig.LIMIT_Z[0]
 
                 elif self.params['a'] > 360:
                     self.params['a'] -= 360
@@ -301,15 +298,16 @@ class GraphicWidget:
                     self.params['c'] += 360
 
                 self.assignPointCoords()
+                self.main.savesManager.save(self.main.savesManager.saves[self.main.savesManager.currentSave])
 
     def drawObjects(self, frame):
         if self.point.updateScreenFlag:
             self.plot3d.ax_3d.clear()
 
             self.plot3d.ax_3d.plot3D(self.point.points['x'], self.point.points['y'], self.point.points['z'], color='orange', marker='o')
-            self.plot3d.ax_3d.set_xlim(xmax=self.point.max, xmin=self.point.min)
-            self.plot3d.ax_3d.set_ylim(ymax=self.point.min, ymin=self.point.max)
-            self.plot3d.ax_3d.set_zlim(zmax=self.point.max + 200, zmin=self.point.min + 200)
+            self.plot3d.ax_3d.set_xlim(xmax=cfg.ManipulatorConfig.LIMIT_X[1], xmin=-cfg.ManipulatorConfig.LIMIT_X[1])
+            self.plot3d.ax_3d.set_ylim(ymax=cfg.ManipulatorConfig.LIMIT_Y[1], ymin=cfg.ManipulatorConfig.LIMIT_Y[0])
+            self.plot3d.ax_3d.set_zlim(zmax=cfg.ManipulatorConfig.LIMIT_Z[1], zmin=cfg.ManipulatorConfig.LIMIT_Z[0])
 
             plt.xlabel("X")
             plt.ylabel("Y")

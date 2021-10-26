@@ -19,6 +19,9 @@ class ControlPanelWidget:
         self.xLabel.configure(state=state)
         self.yLabel.configure(state=state)
         self.zLabel.configure(state=state)
+        self.xEntry.configure(state=state)
+        self.yEntry.configure(state=state)
+        self.zEntry.configure(state=state)
         self.qSlider.configure(state=state)
         self.eSlider.configure(state=state)
         self.fSlider.configure(state=state)
@@ -30,6 +33,7 @@ class ControlPanelWidget:
         self.takeMarkerButton.configure(state=state)
         self.playButton.configure(state=state)
         self.pauseButton.configure(state=state)
+        self.parkButton.configure(state=state)
 
     def onScaleChanged(self, event, slider):
 

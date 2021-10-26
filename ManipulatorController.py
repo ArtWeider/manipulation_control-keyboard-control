@@ -153,5 +153,5 @@ class ManipulatorController:
                            e=pointsVar[i].e,
                            f=pointsVar[i].f)
         time.sleep(5)
-        self.toSend = 'P'
+        self.forceSend('P')
 
