@@ -14,7 +14,7 @@ from XZVisualisationWidget import XZVisualisationWidget
 from ControlPanelWidget import ControlPanelWidget
 from SavesManager import SavesManager
 from ManipulatorController import ManipulatorController
-import Tests.VoiceTest as Voice
+#import Tests.VoiceTest as Voice
 
 class Main:
 
@@ -38,7 +38,6 @@ class Main:
     def quit(self):
         self.root.destroy()
         self.matplotlibWidget.quit()
-        self.manipulatorController.forceSend('P')
         exit()
 
     def __init__(self):
@@ -68,21 +67,16 @@ class Main:
         self.upperStatusBar = UpperStatusBar()
         self.savesWidget = SavesWidget(self)
         self.pointMenuWidget = PointMenuWidget(self)
-        self.handVisualisationWidget = HandVisualisationWidget(self)
+        self.handVisualisationWidget = HandVisualisationWidget()
         self.savesMenuWidget = SavesMenuWidget(self)
         self.graphicWidget = GraphicWidget(self)
         self.timelineWidget = TimelineWidget(self)
         self.xyVisualisationWidget = XYVisualisationWidget(self)
-        self.xzVisualisationWidget = XZVisualisationWidget(self)
+        self.xzVisualisationWidget = XZVisualisationWidget()
         self.controlPanelWidget = ControlPanelWidget(self)
-        Voice.main = self
-        self.manipulatorController.connect(cfg.ManipulatorConfig.DEFAULT_NAME)
+        #Voice.main = self
 
-        try:
-            self.root.mainloop()
-        except KeyboardInterrupt:
-            self.quit()
-
+        self.root.mainloop()
 
 
 if __name__ == "__main__":
