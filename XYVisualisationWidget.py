@@ -84,7 +84,6 @@ class XYVisualisationWidget:
             x = float(self.main.controlPanelWidget.xEntry.get())
             y = float(self.main.controlPanelWidget.yEntry.get())
         x, y = self.toLocal(x, y)
-        print(x, y)
         self.canvas.moveto('point', x-self.point_size, y-self.point_size)
 
 

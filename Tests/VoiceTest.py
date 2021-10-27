@@ -18,11 +18,19 @@ import datetime
 main = None
 
 opts = {
-    "tbr": ('скажи'),
+    "tbr": (),
     "cmds": {
-        'park': ('парковка', 'вернуться'),
-        'radio': ('включи музыку', 'воспроизведи радио', 'включи радио'),
-        'stupid1': ('расскажи анекдот', 'рассмеши меня', 'ты знаешь анекдоты')
+        'park': ('парковка', 'вернуться', 'припарковаться'),
+        "pointToRobot": ('точку к манипулятору', 'точку к роботу'),
+        'robotToPoint': ('манипулятор к точке', 'робот к точке'),
+        'pause': ('пауза', 'паузу'),
+        'stop': ('стоп', 'остановить', 'прекратить'),
+        'sponge': ('взять губку', 'схватить губку'),
+        'bolt': ('взять болт', 'схватить болт'),
+        'marker': ('взять маркер', 'схватить маркер'),
+        'boltMode': ('шуруповёрт', 'шуруповёрт'),
+        'grabMode': ('захват', 'захват')
+
     }
 }
 
@@ -32,50 +40,61 @@ m = sr.Microphone(device_index=1)
 def callback(recognizer, audio):
     try:
         voice = recognizer.recognize_google(audio, language='ru-RU').lower()
-        print("[log] Разпознано: " + voice)
-
 
         cmd = voice
-
-
-        for x in opts['tbr']:
-            cmd.replace(x, '').strip()
 
         cmd = recognize_cmd(cmd)
         execute_cmd(cmd['cmd'])
 
-    except sr.UnknownValueError:
-        print('[log] Голос не распознан!')
-    except sr.RequestError as e:
-        print("[log] Неизвестная ошибка, проверьте интернет!")
+    except sr.UnknownValueError: pass
+    except sr.RequestError as e: pass
+
 
 def recognize_cmd(cmd):
+    print(cmd)
     RC = {'cmd': '', 'percent': 0}
     cmd = cmd.split(' ')
     for key, value in opts['cmds'].items():
-        for word in cmd:
-            for x in value:
-                vrt = fuzz.ratio(word, x)
-                if vrt > RC['percent'] and vrt > 50:
-                    RC['cmd'] = key
-                    RC['percent'] = vrt
+        for x in value:
+            vrt = fuzz.ratio(cmd, x)
+            if vrt > RC['percent'] and vrt > 50:
 
+                RC['cmd'] = key
+                RC['percent'] = vrt
 
+    print(RC['cmd'])
     return RC
 
 def execute_cmd(cmd):
     if cmd == 'park':
-        main.manipulatorController.toSend = 'P'
-        main.manipulatorController.send(False)
+        print('Парковка')
+        main.manipulatorController.stopPlaying()
+        main.manipulatorController.forceSend("P")
 
-    elif cmd == 'radio':
-        print('radio')
+    elif cmd == 'pointToRobot':
+        print('Точку к манипулятору')
+        main.pointMenuWidget.onPointToRobotPressed()
 
-    elif cmd == 'stupid1':
-        print('i am stupid')
+    elif cmd == 'robotToPoint':
+        print('Манипулятор к точке')
+        main.pointMenuWidget.onRobotToPoint()
 
-    else:
-        print('unknown command')
+    elif cmd == 'pause':
+        print('Пауза')
+        main.manipulatorController.pause()
+
+    elif cmd == 'stop':
+        print('Стоп')
+        main.manipulatorController.stopPlaying()
+
+    elif cmd == 'boltMode':
+        print('Шуруповёрт')
+        main.manipulatorController.gMode = True
+
+    elif cmd == "grabMode":
+        print('Захват')
+        main.manipulatorController.gMode = False
+
 
 
 with m as source:
