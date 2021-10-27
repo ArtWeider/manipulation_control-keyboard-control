@@ -33,11 +33,12 @@ class Cfg:
         F_POINTS = (60, 90, 120)
         G_POINTS = (60, 90, 120)
 
-        DEFAULT_NAME = '10.10.11.72'
+        DEFAULT_NAME = '127.0.0.1'
+        #10.10.11.72
 
 
     class GloveConfig:
-        LIMIT_X = (370, 770)
+        LIMIT_X = (500, 770)
         LIMIT_Y = (-770, 790)
         LIMIT_Z = (-40, 860)
 

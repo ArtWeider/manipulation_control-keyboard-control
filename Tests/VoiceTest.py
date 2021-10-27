@@ -17,7 +17,7 @@ import datetime
 main = None
 
 opts = {
-    "tbr": (),
+    "wwl": [],
     "cmds": {
         'park': ('парковка', 'вернуться', 'припарковаться'),
         "pointToRobot": ('точку к манипулятору', 'точку к роботу'),
@@ -25,6 +25,7 @@ opts = {
         'pause': ('пауза', 'паузу'),
         'stop': ('стоп', 'остановить', 'прекратить'),
         'sponge': ('взять губку', 'схватить губку'),
+        'sponge 2': ('положить губку', 'убрать губку'),
         'bolt': ('взять болт', 'схватить болт'),
         'marker': ('взять маркер', 'схватить маркер'),
         'boltMode': ('шуруповёрт', 'шуруповёрт'),
@@ -32,6 +33,13 @@ opts = {
 
     }
 }
+
+for c in opts['cmds'].values():
+    for v in c:
+        words = v.split(' ')
+        for word in words:
+            if not word in opts['wwl']:
+                opts['wwl'].append(word)
 
 r = sr.Recognizer()
 m = sr.Microphone(device_index=1)
@@ -55,6 +63,10 @@ def recognize_cmd(cmd):
     cmd = cmd.split(' ')
     for key, value in opts['cmds'].items():
         for x in value:
+            if x in cmd:
+                RC['cmd'] = key
+                RC['percent'] = 100
+                return RC
             vrt = fuzz.ratio(cmd, x)
             if vrt > RC['percent'] and vrt > 50:
 
@@ -85,6 +97,14 @@ def execute_cmd(cmd):
     elif cmd == 'stop':
         print('Стоп')
         main.manipulatorController.stopPlaying()
+
+    elif cmd == 'sponge':
+        print('Взять губку')
+        main.manipulatorController.play(main.savesManager.saves['Sponge'])
+
+    elif cmd == 'sponge 2':
+        print('Положить губку')
+        main.manipulatorController.play(main.savesManager.saves['Sponge 2'])
 
     elif cmd == 'boltMode':
         print('Шуруповёрт')

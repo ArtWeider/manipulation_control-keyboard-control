@@ -95,6 +95,8 @@ class ManipulatorController:
 
     def play(self, save):
         self.stop = False
+        self.pause = False
+        self.useHand = False
         self.playThread = threading.Thread(target=self.playAsync, args=[save])
         self.playThread.start()
 
@@ -152,6 +154,7 @@ class ManipulatorController:
                            q=pointsVar[i].q,
                            e=pointsVar[i].e,
                            f=pointsVar[i].f)
+        self.useHand = True
         time.sleep(5)
         self.forceSend('P')
 
