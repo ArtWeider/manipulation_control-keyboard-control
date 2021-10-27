@@ -53,6 +53,7 @@ class PointMenuWidget:
         self.main.savesManager.save(self.main.savesManager.saves[self.main.savesManager.currentSave])
 
     def validate(self, action, value, entry):
+        return True
         tag = self.main.timelineWidget.currentPoint[1]
         time = self.main.timelineWidget.tag2time[int(tag[1::])]
         save = self.main.savesManager.currentSave
