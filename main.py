@@ -14,7 +14,7 @@ from XZVisualisationWidget import XZVisualisationWidget
 from ControlPanelWidget import ControlPanelWidget
 from SavesManager import SavesManager
 from ManipulatorController import ManipulatorController
-import Tests.VoiceTest as Voice
+#import Tests.VoiceTest as Voice
 
 class Main:
 
@@ -74,7 +74,7 @@ class Main:
         self.xyVisualisationWidget = XYVisualisationWidget(self)
         self.xzVisualisationWidget = XZVisualisationWidget()
         self.controlPanelWidget = ControlPanelWidget(self)
-        Voice.main = self
+        #Voice.main = self
 
         self.root.mainloop()
 

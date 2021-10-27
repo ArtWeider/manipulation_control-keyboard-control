@@ -30,9 +30,10 @@ class HandVisualisationWidget:
         wrist_len = 70
         hand_len = 40
 
+        start = [10, height / 2]
+
         while True:
             try:
-                start = [0, 0] #[10, height / 2]
                 shoulder = self.GetPointPos(start, shoulder_len, self.gloveData['sy'])
                 wrist = self.GetPointPos(shoulder, wrist_len, self.gloveData['wy'])
                 hand = self.GetPointPos(wrist, hand_len, self.gloveData['hy'])
@@ -58,9 +59,9 @@ class HandVisualisationWidget:
                                             fill='SlateGray', outline='SlateGray')
 
                 self.handCanvas.create_oval(self.gloveData['X'] - point_size,
-                                            self.gloveData['Y'] - point_size,
+                                            self.gloveData['Z']-400 - point_size,
                                             self.gloveData['X'] + point_size,
-                                            self.gloveData['Y'] + point_size,
+                                            self.gloveData['Z']-450 + point_size,
                                             fill='white', outline='white')
 
                 self.handCanvas.create_arc(200-10, 107-10+5, 200+10, 107+10+5, start=90, extent=self.gloveData['sz']*3 - 90, style=ARC, outline='FireBrick', width=3)
@@ -117,8 +118,8 @@ class HandVisualisationWidget:
                     self.gloveData['wy'] = float(packet[2])
 
                     self.gloveData['X'] = float(packet[3])
-                    self.gloveData['Y'] = float(packet[4])
-                    self.gloveData['Z'] = float(packet[5])
+                    self.gloveData['Z'] = float(packet[4])
+                    self.gloveData['Y'] = float(packet[5])
 
                     self.gloveData['hy'] = float(packet[6])
                     self.gloveData['hx'] = float(packet[7])

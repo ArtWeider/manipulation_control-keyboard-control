@@ -3,8 +3,8 @@ from tkinter import ttk
 from config import Cfg as cfg
 from math import *
 
-class TimelineWidget:
 
+class TimelineWidget:
     root = None
     mainLabel = None
     canvas = None
@@ -52,7 +52,7 @@ class TimelineWidget:
     def onMouseDoubleClicked(self, event):
         if self.isSaveSelected():
             x = self.canvas.canvasx(event.widget.winfo_pointerx() - event.widget.winfo_rootx())
-            self.main.savesManager.saves[self.main.savesManager.currentSave].addPoint(x/self.pixPerSecond)
+            self.main.savesManager.saves[self.main.savesManager.currentSave].addPoint(x / self.pixPerSecond)
             self.addPointToTimeline(x)
 
             self.main.graphicWidget.point.setPointFlag = True
@@ -67,6 +67,7 @@ class TimelineWidget:
 
     def onEscPressed(self, event):
         if self.isSaveSelected() and self.isMouseOnWidget(event):
+            print(1)
             self.deselectPoint()
 
     def deselectPoint(self):
@@ -85,6 +86,8 @@ class TimelineWidget:
             self.canvas.xview_scroll(int(copysign(1, event.delta)), UNITS)
 
     def onDeletePressed(self, event):
+
+        print(event.widget)
         if self.isSaveSelected() and self.isMouseOnWidget(event):
             self.deletePoint(self.currentPoint[1])
 
@@ -101,7 +104,7 @@ class TimelineWidget:
     def drawPoint(self, x):
         y = 60
         try:
-            num = max(self.tag2time.keys())+1
+            num = max(self.tag2time.keys()) + 1
         except ValueError:
             num = 0
         tag = f't{num}'
@@ -113,12 +116,12 @@ class TimelineWidget:
         if seconds <= 0:
             self.canvas.create_line(0, 0, 0, 0)
             return
-        for i in range(start_sec, seconds+start_sec):
+        for i in range(start_sec, seconds + start_sec):
             i += 1
-            self.canvas.create_line(i*self.pixPerSecond, 30, i*self.pixPerSecond, 90, width=2, fill=cfg.LINE_COLOR)
-            self.canvas.create_text(i*self.pixPerSecond, 10, text=str(i), fill=cfg.LINE_COLOR)
-        if start_sec+seconds > self.maxSeconds:
-            self.maxSeconds = start_sec+seconds
+            self.canvas.create_line(i * self.pixPerSecond, 30, i * self.pixPerSecond, 90, width=2, fill=cfg.LINE_COLOR)
+            self.canvas.create_text(i * self.pixPerSecond, 10, text=str(i), fill=cfg.LINE_COLOR)
+        if start_sec + seconds > self.maxSeconds:
+            self.maxSeconds = start_sec + seconds
         self.recalculateScrollLimits()
 
     def drawSave(self):
@@ -132,9 +135,12 @@ class TimelineWidget:
         self.recalculateScrollLimits()
 
     def onLeftButtonMove(self, event):
-        if self.isSaveSelected():
-            x = self.canvas.canvasx(event.x)
-            self.movePoint(self.currentPoint[1], x)
+        try:
+            if self.isSaveSelected():
+                x = self.canvas.canvasx(event.x)
+                self.movePoint(self.currentPoint[1], x)
+        except ValueError:
+            pass
 
     def movePoint(self, tag, x):
         oldTime = self.tag2time[int(tag[1::])]
@@ -146,13 +152,15 @@ class TimelineWidget:
                 return
 
         self.main.savesManager.saves[self.main.savesManager.currentSave].points[oldTime].time = newTime
-        self.main.savesManager.saves[self.main.savesManager.currentSave].points[newTime] = self.main.savesManager.saves[self.main.savesManager.currentSave].points.pop(oldTime)
+        self.main.savesManager.saves[self.main.savesManager.currentSave].points[newTime] = self.main.savesManager.saves[
+            self.main.savesManager.currentSave].points.pop(oldTime)
         self.tag2time[intTag] = newTime
         y = 60
-        self.canvas.coords(tag, x, y+5, x+5, y, x, y-5, x-5, y)
+        self.canvas.coords(tag, x, y + 5, x + 5, y, x, y - 5, x - 5, y)
         self.main.pointMenuWidget.onPointMoved(newTime)
 
-        self.main.savesManager.saves[self.main.savesManager.currentSave].points = dict(sorted(self.main.savesManager.saves[self.main.savesManager.currentSave].points.items(), key=lambda x: x[0]))
+        self.main.savesManager.saves[self.main.savesManager.currentSave].points = dict(
+            sorted(self.main.savesManager.saves[self.main.savesManager.currentSave].points.items(), key=lambda x: x[0]))
 
         self.main.graphicWidget.point.selectedTime = newTime
         self.main.graphicWidget.point.dictUpdate()

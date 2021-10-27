@@ -20,6 +20,7 @@
 //------------------------//
 //OUTPUT_DATA:
 //  shoulderX/shoulderZ/absoluteX/absoluteY/wristX/handX/handY/gripPercent
+//  shoulderX/shoulderZ/absoluteX/absoluteY/wristX/E/Q/F
 //------------------------//
 
 #define SHOULDER D6
@@ -152,8 +153,8 @@ void getAngle(byte num, float last_gx, float last_gy, float last_gz, float zero_
   returned_gy = returned_gy * (1 - FK) + angle_ay * FK;
 
   // абсолютные координаты
-  const int shoulderLenght = 80, wristLenght = 70, handLenght = 40;
-  static float absX, absY, absZ, ZAngle;
+  const int shoulderLenght = 330, wristLenght = 320, handLenght = 170;
+  static float absX, absY = 400, absZ, ZAngle;
   
   switch (num) {
     case 0:// shoulder
@@ -178,7 +179,7 @@ void getAngle(byte num, float last_gx, float last_gy, float last_gz, float zero_
       output_str += String(absY, 2); output_str += String("/");
       output_str += String(absZ, 2); output_str += String("/");
 
-      absX = 0; absY = 0;
+      absX = 0; absY = 400;
     
       output_str += String(-returned_gy, 2); output_str += String("/");
 
