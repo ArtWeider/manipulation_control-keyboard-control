@@ -12,6 +12,8 @@ class PointMenuWidget:
     WIDTH = 275 * cfg.SIZE_MULT
     HEIGHT = 350 * cfg.SIZE_MULT
 
+    validation = False
+
     def onEnterPressed(self, event):
         tag = self.main.timelineWidget.currentPoint[1]
         time = self.main.timelineWidget.tag2time[int(tag[1::])]
@@ -53,17 +55,25 @@ class PointMenuWidget:
         self.main.savesManager.save(self.main.savesManager.saves[self.main.savesManager.currentSave])
 
     def validate(self, action, value, entry):
+        if not self.validation:
+            return
+
         tag = self.main.timelineWidget.currentPoint[1]
         time = self.main.timelineWidget.tag2time[int(tag[1::])]
         save = self.main.savesManager.currentSave
 
         try:
+            int(value)
+        except:
+            return True
+
+        try:
             if entry == '.!frame3.!entry':
-                print(int(self.xEntry.get()))
                 self.main.savesManager.saves[save].points[time].x = int(value)
                 self.main.graphicWidget.point.params['x'] = int(value)
 
             elif entry == '.!frame3.!entry2':
+                print('validate y', value, time)
                 self.main.savesManager.saves[save].points[time].y = int(value)
                 self.main.graphicWidget.point.params['y'] = int(value)
 
@@ -160,6 +170,7 @@ class PointMenuWidget:
         self.timeEntry.insert(0, time)
 
     def onPointSelected(self, time):
+        self.validation = False
         currentSave = self.main.savesManager.saves[self.main.savesManager.currentSave]
         point = currentSave.points[time]
         self.setStateAll(NORMAL)
@@ -176,8 +187,10 @@ class PointMenuWidget:
         self.bEntry.insert(0, point.b)
         self.cEntry.insert(0, point.c)
         self.timeEntry.insert(0, point.time)
+        self.validation = True
 
     def onPointDeselected(self):
+        self.validation = False
         self.followManipulatorVar.set(0)
         self.followManipulatorCheckbutton.deselect()
         self.clearAll()
