@@ -94,6 +94,7 @@ class ManipulatorController:
             self.main.xzVisualisationWidget.update(int(kwargs['x']), int(kwargs['z']))
 
     def play(self, save):
+        self.useHand = False
         self.stop = False
         self.pause = False
         self.useHand = False

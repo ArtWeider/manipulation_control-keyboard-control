@@ -45,11 +45,18 @@ for c in opts['cmds'].values():
 r = sr.Recognizer()
 m = sr.Microphone(device_index=1)
 
+for c in opts['cmds'].values():
+    for var in c:
+        words = var.split(' ')
+        for word in words:
+            opts['wwl'].append(word)
+
 def callback(recognizer, audio):
     try:
         voice = recognizer.recognize_google(audio, language='ru-RU').lower()
 
         cmd = voice
+
 
         cmd = recognize_cmd(cmd)
         execute_cmd(cmd['cmd'])
@@ -72,6 +79,7 @@ def recognize_cmd(cmd):
                 RC['cmd'] = key
                 RC['percent'] = 100
                 return RC
+
             vrt = fuzz.ratio(cmd, x)
             if vrt > RC['percent'] and vrt > 50:
 

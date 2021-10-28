@@ -34,6 +34,7 @@ class Cfg:
         G_POINTS = (60, 90, 120)
 
         DEFAULT_NAME = '10.10.11.72'
+
         #10.10.11.72
 
 

@@ -49,20 +49,23 @@ class HandVisualisationWidget:
                 hand = self.GetPointPos(wrist, hand_len, self.gloveData['hy'])
 
                 self.handCanvas.coords('l0', start[0], start[1], shoulder[0], shoulder[1])
-                self.handCanvas.create_line('l1', shoulder[0], shoulder[1], wrist[0], wrist[1])
-                self.handCanvas.create_line('l2', wrist[0], wrist[1], hand[0], hand[1])
 
-                self.handCanvas.create_oval('p0', start[0] - point_size,
+                self.handCanvas.coords('l1', shoulder[0], shoulder[1], wrist[0], wrist[1])
+                self.handCanvas.coords('l2', wrist[0], wrist[1], hand[0], hand[1])
+
+                self.handCanvas.coords('p0', start[0] - point_size,
                                             start[1] - point_size,
                                             start[0] + point_size,
                                             start[1] + point_size,
                                             )
-                self.handCanvas.create_oval('p1', shoulder[0] - point_size,
+
+                self.handCanvas.coords('p1', shoulder[0] - point_size,
                                             shoulder[1] - point_size,
                                             shoulder[0] + point_size,
                                             shoulder[1] + point_size,
                                             )
-                self.handCanvas.create_oval('p2', wrist[0] - point_size,
+
+                self.handCanvas.coords('p2', wrist[0] - point_size,
                                             wrist[1] - point_size,
                                             wrist[0] + point_size,
                                             wrist[1] + point_size,
@@ -100,7 +103,6 @@ class HandVisualisationWidget:
                 self.main.controlPanelWidget.fLabel.configure(text=f"F: {f}")
 
                 self.main.manipulatorController.goToPoint(x=x, y=y, z=z, q=q, e=e, f=f)
-
                 sleep(0.1)
             except UnicodeDecodeError: continue
             except: break
@@ -111,6 +113,8 @@ class HandVisualisationWidget:
         return out
 
     def toManipulatorCords(self, x, y, z):
+
+        print('x', x)
 
         glove_limit_x = cfg.GloveConfig.LIMIT_X
         glove_limit_y = cfg.GloveConfig.LIMIT_Y
@@ -124,6 +128,7 @@ class HandVisualisationWidget:
 
         out_x = remap(x, glove_limit_x[0], glove_limit_x[1], robot_limit_x[0]-200, robot_limit_x[1])
         out_y = abs(-remap(y, glove_limit_y[0], glove_limit_y[1], -robot_limit_y[1], robot_limit_y[1]))
+
         out_z = remap(z, glove_limit_z[0], glove_limit_z[1], robot_limit_z[0], robot_limit_z[1])
         print(int(out_x), int(out_y), int(out_z))
 
@@ -178,6 +183,9 @@ class HandVisualisationWidget:
             except UnicodeDecodeError: continue
             except ValueError: continue
             except IndexError: continue
+            except serial.serialutil.SerialException:
+                self.main.manipulatorController.useHand = False
+                return
 
 
     def __init__(self, main):

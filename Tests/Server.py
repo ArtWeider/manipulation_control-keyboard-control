@@ -16,7 +16,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         while True:
             try:
                 data = conn.recv(1024).decode('ascii')
-                print(data)
+                if data != '' and data != ' ':
+
+                    print(data)
             except:
                 conn, addr = s.accept()
 
