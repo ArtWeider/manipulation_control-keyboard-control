@@ -4,7 +4,6 @@ from config import Cfg as cfg
 import serial.tools.list_ports
 import threading
 from math import *
-from time import sleep
 
 def remap(old_value, old_min, old_max, new_min, new_max):
     out = ((old_value - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min
@@ -38,74 +37,60 @@ class HandVisualisationWidget:
         wrist_len = 70
         hand_len = 40
 
-        while True:
-            if not self.main.manipulatorController.useHand:
-                sleep(0.3)
-                continue
-            try:
-                start = [10, height / 2]
-                shoulder = self.GetPointPos(start, shoulder_len, self.gloveData['sy'])
-                wrist = self.GetPointPos(shoulder, wrist_len, self.gloveData['wy'])
-                hand = self.GetPointPos(wrist, hand_len, self.gloveData['hy'])
+        start = [10, height / 2]
+        shoulder = self.GetPointPos(start, shoulder_len, self.gloveData['sy'])
+        wrist = self.GetPointPos(shoulder, wrist_len, self.gloveData['wy'])
+        hand = self.GetPointPos(wrist, hand_len, self.gloveData['hy'])
 
-                self.handCanvas.coords('l0', start[0], start[1], shoulder[0], shoulder[1])
+        self.handCanvas.coords('l0', start[0], start[1], shoulder[0], shoulder[1])
+        self.handCanvas.coords('l1', shoulder[0], shoulder[1], wrist[0], wrist[1])
+        self.handCanvas.coords('l2', wrist[0], wrist[1], hand[0], hand[1])
 
-                self.handCanvas.coords('l1', shoulder[0], shoulder[1], wrist[0], wrist[1])
-                self.handCanvas.coords('l2', wrist[0], wrist[1], hand[0], hand[1])
+        self.handCanvas.coords('p0', start[0] - point_size,
+                                    start[1] - point_size,
+                                    start[0] + point_size,
+                                    start[1] + point_size)
+        self.handCanvas.coords('p1', shoulder[0] - point_size,
+                                    shoulder[1] - point_size,
+                                    shoulder[0] + point_size,
+                                    shoulder[1] + point_size)
+        self.handCanvas.coords('p2', wrist[0] - point_size,
+                                    wrist[1] - point_size,
+                                    wrist[0] + point_size,
+                                    wrist[1] + point_size)
 
-                self.handCanvas.coords('p0', start[0] - point_size,
-                                            start[1] - point_size,
-                                            start[0] + point_size,
-                                            start[1] + point_size,
-                                            )
+        self.main.controlPanelWidget.xEntry.delete(0, END)
+        self.main.controlPanelWidget.yEntry.delete(0, END)
+        self.main.controlPanelWidget.zEntry.delete(0, END)
 
-                self.handCanvas.coords('p1', shoulder[0] - point_size,
-                                            shoulder[1] - point_size,
-                                            shoulder[0] + point_size,
-                                            shoulder[1] + point_size,
-                                            )
+        x, y, z = self.toManipulatorCords(self.gloveData['X'], self.gloveData['Y'], self.gloveData['Z'])
 
-                self.handCanvas.coords('p2', wrist[0] - point_size,
-                                            wrist[1] - point_size,
-                                            wrist[0] + point_size,
-                                            wrist[1] + point_size,
-                                            )
+        self.main.controlPanelWidget.xEntry.insert(0, int(x))
+        self.main.controlPanelWidget.yEntry.insert(0, int(y))
+        self.main.controlPanelWidget.zEntry.insert(0, int(z))
 
-                self.main.controlPanelWidget.xEntry.delete(0, END)
-                self.main.controlPanelWidget.yEntry.delete(0, END)
-                self.main.controlPanelWidget.zEntry.delete(0, END)
+        _f = 100 - self.gloveData['g']
+        f = 90
 
-                x, y, z = self.toManipulatorCords(self.gloveData['X'], self.gloveData['Y'], self.gloveData['Z'])
+        if _f < 10:
+            f = 60
+        elif _f > 80:
+            f = 120
+        else:
+            f = 90
 
-                self.main.controlPanelWidget.xEntry.insert(0, int(x))
-                self.main.controlPanelWidget.yEntry.insert(0, int(y))
-                self.main.controlPanelWidget.zEntry.insert(0, int(z))
+        q = -int(self.gloveData['hy'] - 90)
+        e = self.gloveData['hx']
 
-                _f = 100 - self.gloveData['g']
-                f = 90
+        self.main.controlPanelWidget.qSlider.set((q / cfg.ManipulatorConfig.Q_LIMIT[1]) * 100)
+        self.main.controlPanelWidget.eSlider.set((e / cfg.ManipulatorConfig.E_LIMIT[1]) * 100)
+        self.main.controlPanelWidget.fSlider.set((f / cfg.ManipulatorConfig.F_LIMIT[1]) * 100)
 
-                if _f < 10:
-                    f = 60
-                elif _f > 80:
-                    f = 120
-                else:
-                    f = 90
+        self.main.controlPanelWidget.qLabel.configure(text=f"Q: {q}")
+        self.main.controlPanelWidget.eLabel.configure(text=f"E: {e}")
+        self.main.controlPanelWidget.fLabel.configure(text=f"F: {f}")
 
-                q = -int(self.gloveData['hy'] - 90)
-                e = self.gloveData['hx']
-
-                self.main.controlPanelWidget.qSlider.set((q / cfg.ManipulatorConfig.Q_LIMIT[1]) * 100)
-                self.main.controlPanelWidget.eSlider.set((e / cfg.ManipulatorConfig.E_LIMIT[1]) * 100)
-                self.main.controlPanelWidget.fSlider.set((f / cfg.ManipulatorConfig.F_LIMIT[1]) * 100)
-
-                self.main.controlPanelWidget.qLabel.configure(text=f"Q: {q}")
-                self.main.controlPanelWidget.eLabel.configure(text=f"E: {e}")
-                self.main.controlPanelWidget.fLabel.configure(text=f"F: {f}")
-
-                self.main.manipulatorController.goToPoint(x=x, y=y, z=z, q=q, e=e, f=f)
-                sleep(0.1)
-            except UnicodeDecodeError: continue
-            except: break
+        self.main.manipulatorController.goToPoint(x=x, y=y, z=z, q=q, e=e, f=f)
 
     def GetPointPos(self, startPoint, length, angle):
 
@@ -113,8 +98,6 @@ class HandVisualisationWidget:
         return out
 
     def toManipulatorCords(self, x, y, z):
-
-        print('x', x)
 
         glove_limit_x = cfg.GloveConfig.LIMIT_X
         glove_limit_y = cfg.GloveConfig.LIMIT_Y
@@ -128,7 +111,6 @@ class HandVisualisationWidget:
 
         out_x = remap(x, glove_limit_x[0], glove_limit_x[1], robot_limit_x[0]-200, robot_limit_x[1])
         out_y = abs(-remap(y, glove_limit_y[0], glove_limit_y[1], -robot_limit_y[1], robot_limit_y[1]))
-
         out_z = remap(z, glove_limit_z[0], glove_limit_z[1], robot_limit_z[0], robot_limit_z[1])
         print(int(out_x), int(out_y), int(out_z))
 
@@ -180,13 +162,12 @@ class HandVisualisationWidget:
 
                     self.gloveData['g'] = float(packet[8])
 
+                    self.DrawHand()
+
             except UnicodeDecodeError: continue
             except ValueError: continue
             except IndexError: continue
-            except serial.serialutil.SerialException:
-                self.main.manipulatorController.useHand = False
-                return
-
+            except RuntimeError: continue
 
     def __init__(self, main):
         self.main = main
@@ -269,22 +250,8 @@ class HandVisualisationWidget:
             self.handCanvas.create_line(0, 0, 1, 1, width=5, fill='ForestGreen', tag='l1')
             self.handCanvas.create_line(0, 0, 1, 1, width=5, fill='Teal', tag='l2')
 
-            self.handCanvas.create_oval(0,
-                                        0,
-                                        1,
-                                        1,
-                                        fill='SlateGray', outline='SlateGray', tag='p0')
-            self.handCanvas.create_oval(0,
-                                        0,
-                                        1,
-                                        1,
-                                        fill='SlateGray', outline='SlateGray', tag='p1')
-            self.handCanvas.create_oval(0,
-                                        0,
-                                        1,
-                                        1,
-                                        fill='SlateGray', outline='SlateGray', tag='p2')
-
+            self.handCanvas.create_oval(0, 0, 1, 1, fill='SlateGray', outline='SlateGray', tag='p0')
+            self.handCanvas.create_oval(0, 0, 1, 1, fill='SlateGray', outline='SlateGray', tag='p1')
+            self.handCanvas.create_oval(0, 0, 1, 1, fill='SlateGray', outline='SlateGray', tag='p2')
 
             threading.Thread(target=self.getDataFromGlove).start()
-            threading.Thread(target=self.DrawHand).start()
