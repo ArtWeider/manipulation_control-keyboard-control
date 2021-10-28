@@ -261,6 +261,7 @@ class ControlPanelWidget:
                                          width=24,
                                          activebackground=cfg.BUTTON_ACTIVE_COLOR,
                                          activeforeground=cfg.TEXT_COLOR,
+                                         command=lambda: self.main.manipulatorController.play(self.main.savesManager.saves['Marker'])
                                          )
         self.takeMarkerButton.place(x=11, y=190)
 
@@ -272,6 +273,7 @@ class ControlPanelWidget:
                                        width=24,
                                        activebackground=cfg.BUTTON_ACTIVE_COLOR,
                                        activeforeground=cfg.TEXT_COLOR,
+                                       command=lambda: self.main.manipulatorController.play(self.main.savesManager.saves['Sponge'])
                                        )
         self.takeSpongeButton.place(x=11, y=218)
 
