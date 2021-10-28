@@ -28,6 +28,7 @@ opts = {
         'sponge 2': ('положить губку', 'убрать губку'),
         'bolt': ('взять болт', 'схватить болт'),
         'marker': ('взять маркер', 'схватить маркер'),
+        'marker 2': ('положить маркер', 'убрать маркер'),
         'boltMode': ('шуруповёрт', 'шуруповёрт'),
         'grabMode': ('захват', 'захват')
 
@@ -58,12 +59,16 @@ def callback(recognizer, audio):
 
 
 def recognize_cmd(cmd):
-    print(cmd)
+    print('Распознано:', cmd)
     RC = {'cmd': '', 'percent': 0}
     cmd = cmd.split(' ')
     for key, value in opts['cmds'].items():
         for x in value:
-            if x in cmd:
+            _cmd = ''
+            for i in cmd:
+                _cmd += i
+                _cmd += ' '
+            if x in _cmd:
                 RC['cmd'] = key
                 RC['percent'] = 100
                 return RC
@@ -73,7 +78,6 @@ def recognize_cmd(cmd):
                 RC['cmd'] = key
                 RC['percent'] = vrt
 
-    print(RC['cmd'])
     return RC
 
 def execute_cmd(cmd):
@@ -105,6 +109,14 @@ def execute_cmd(cmd):
     elif cmd == 'sponge 2':
         print('Положить губку')
         main.manipulatorController.play(main.savesManager.saves['Sponge 2'])
+
+    elif cmd == 'marker':
+        print('Взять маркер')
+        main.manipulatorController.play(main.savesManager.saves['Marker'])
+
+    elif cmd == 'marker 2':
+        print('Положить маркер')
+        main.manipulatorController.play(main.savesManager.saves['Marker 2'])
 
     elif cmd == 'boltMode':
         print('Шуруповёрт')

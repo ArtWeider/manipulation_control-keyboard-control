@@ -33,7 +33,7 @@ class Cfg:
         F_POINTS = (60, 90, 120)
         G_POINTS = (60, 90, 120)
 
-        DEFAULT_NAME = '127.0.0.1'
+        DEFAULT_NAME = '10.10.11.72'
         #10.10.11.72
 
 
