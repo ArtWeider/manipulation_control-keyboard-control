@@ -39,7 +39,7 @@ class Cfg:
 
 
     class GloveConfig:
-        LIMIT_X = (500, 770)
+        LIMIT_X = (400, 770)
         LIMIT_Y = (-770, 790)
         LIMIT_Z = (-40, 860)
 

@@ -119,7 +119,6 @@ class ManipulatorController:
             toSend = data
             self.tn.write(toSend.encode('ascii'))
             self.lastSend = time.time()
-            print('FORCE SEND - ' + toSend)
 
     def sendAsync(self):
         old_send = ''

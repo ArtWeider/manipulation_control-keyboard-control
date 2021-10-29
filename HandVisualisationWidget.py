@@ -29,6 +29,10 @@ class HandVisualisationWidget:
     gloveData = {'sy': 0, 'sz': 0, 'X': 0, 'Y': 0, 'Z': 0, 'wy': 0, 'hy': 0, 'hx': 0, 'g': 0}
 
     def DrawHand(self):
+
+        if not self.main.manipulatorController.useHand:
+            return
+
         point_size = 5
         width = self.canvasSize[0]
         height = self.canvasSize[1]
@@ -109,10 +113,15 @@ class HandVisualisationWidget:
 
         z = glove_limit_z[1] - z
 
-        out_x = remap(x, glove_limit_x[0], glove_limit_x[1], robot_limit_x[0]-200, robot_limit_x[1])
-        out_y = abs(-remap(y, glove_limit_y[0], glove_limit_y[1], -robot_limit_y[1], robot_limit_y[1]))
-        out_z = remap(z, glove_limit_z[0], glove_limit_z[1], robot_limit_z[0], robot_limit_z[1])
-        print(int(out_x), int(out_y), int(out_z))
+        out_x = x
+        out_y = y
+        out_z = z
+
+        '''out_x = copysign(remap(abs(x), glove_limit_x[0], glove_limit_x[1], robot_limit_x[0], robot_limit_x[1]) - 200, x)
+        out_y = abs(-remap(y, glove_limit_y[0], glove_limit_y[1], robot_limit_y[0], robot_limit_y[1]))
+        out_z = remap(z, glove_limit_z[0], glove_limit_z[1], robot_limit_z[0], robot_limit_z[1])'''
+
+        print(x, y, z, out_x, out_y, out_z)
 
         return out_x, out_y, out_z
 
@@ -168,6 +177,7 @@ class HandVisualisationWidget:
             except ValueError: continue
             except IndexError: continue
             except RuntimeError: continue
+
 
     def __init__(self, main):
         self.main = main
