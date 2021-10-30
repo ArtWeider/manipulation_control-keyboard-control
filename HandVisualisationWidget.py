@@ -41,6 +41,10 @@ class HandVisualisationWidget:
         wrist_len = 70
         hand_len = 40
 
+        real_shoulder_len = 250
+        real_wrist_len = 240
+        real_hand_len = 180
+
         start = [10, height / 2]
         shoulder = self.GetPointPos(start, shoulder_len, self.gloveData['sy'])
         wrist = self.GetPointPos(shoulder, wrist_len, self.gloveData['wy'])
@@ -67,17 +71,17 @@ class HandVisualisationWidget:
         self.main.controlPanelWidget.yEntry.delete(0, END)
         self.main.controlPanelWidget.zEntry.delete(0, END)
 
-        x, z = self.GetPointPos(start, shoulder_len, self.gloveData['sy'])
-        x, z = self.GetPointPos((x, z), wrist_len, self.gloveData['wy'])
-        x, z = self.GetPointPos((x, z), hand_len, self.gloveData['hy'])
+        x, z = self.GetPointPos(start, real_shoulder_len, self.gloveData['sy'])
+        x, z = self.GetPointPos((x, z), real_wrist_len, self.gloveData['wy'])
+        x, z = self.GetPointPos((x, z), real_hand_len, self.gloveData['hy'])
         x, y = self.GetPointPos((start[0], 0), x, self.gloveData['sz'])
 
-        print(x, z, y)
+        z = int(z / -2.2 + 300)
+        # если не сработает поменять x и y местами
+        x = int(x / 1.36)
+        y = int(y / 1.36)
 
-        self.handCanvas.coords('p2', x - point_size,
-                               z - point_size,
-                               x + point_size,
-                               z + point_size)
+        print(x, z, y)
 
         self.main.controlPanelWidget.xEntry.insert(0, int(x))
         self.main.controlPanelWidget.yEntry.insert(0, int(y))
