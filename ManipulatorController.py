@@ -159,7 +159,8 @@ class ManipulatorController:
                            z=pointsVar[i].z,
                            q=pointsVar[i].q,
                            e=pointsVar[i].e,
-                           f=pointsVar[i].f)
+                           f=pointsVar[i].f,
+                           gMode=pointsVar[i].gMode)
         self.useHand = True
         time.sleep(5)
         self.forceSend('P')

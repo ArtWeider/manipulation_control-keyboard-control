@@ -18,7 +18,7 @@ class Cfg:
 
         SEND_LIMIT = 0.1
 
-        START_POS = {'x': 300, 'y': 0, 'z': 450, 'q': 170, 'e': 90, 'f': 90}
+        START_POS = {'x': 20, 'y': 150, 'z': 410, 'q': 190, 'e': 90, 'f': 90}
 
         LIMIT_X = (0, 600)
         LIMIT_Y = (0, 600)
