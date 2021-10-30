@@ -55,6 +55,7 @@ class PointMenuWidget:
         self.main.savesManager.save(self.main.savesManager.saves[self.main.savesManager.currentSave])
 
     def validate(self, action, value, entry):
+        return True
         if not self.validation:
             return
 
@@ -127,9 +128,9 @@ class PointMenuWidget:
         self.xEntry.insert(0, controlPanel.xEntry.get())
         self.yEntry.insert(0, controlPanel.yEntry.get())
         self.zEntry.insert(0, controlPanel.zEntry.get())
-        self.qEntry.insert(0, int((controlPanel.qSlider.get() / 100) * cfg.ManipulatorConfig.Q_LIMIT[1]))
-        self.eEntry.insert(0, int((controlPanel.eSlider.get() / 100) * cfg.ManipulatorConfig.E_LIMIT[1]))
-        self.fEntry.insert(0, int((controlPanel.eSlider.get() / 100) * cfg.ManipulatorConfig.F_LIMIT[1]))
+        self.qEntry.insert(0, int(float(self.main.controlPanelWidget.qLabel.cget('text')[2::])))
+        self.eEntry.insert(0, int(float(self.main.controlPanelWidget.eLabel.cget('text')[2::])))
+        self.fEntry.insert(0, int(float(self.main.controlPanelWidget.fLabel.cget('text')[2::])))
         self.setFGMode(self.main.manipulatorController.gMode, True)
         self.radEntry.insert(0, str(0))
         self.aEntry.insert(0, str(0))
@@ -156,7 +157,13 @@ class PointMenuWidget:
         self.main.controlPanelWidget.eLabel.configure(text=f"E: {self.eEntry.get()}")
         self.main.controlPanelWidget.fLabel.configure(text=f"F: {self.fEntry.get()}")
 
-        self.main.controlPanelWidget.onEnterPressed(None)
+        self.main.manipulatorController.goToPoint(x=float(self.xEntry.get()),
+                                                  y=float(self.yEntry.get()),
+                                                  z=float(self.zEntry.get()),
+                                                  q=int(self.qEntry.get()),
+                                                  e=int(self.eEntry.get()),
+                                                  f=int(self.fEntry.get()),
+                                                  gMode=bool(self.changeFGVar.get()))
 
     def onFollowCheckbuttonChanged(self):
         if self.followManipulatorVar.get():

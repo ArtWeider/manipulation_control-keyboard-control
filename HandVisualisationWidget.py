@@ -111,6 +111,7 @@ class HandVisualisationWidget:
         out = [int(startPoint[0] + length * cos(radians(angle))), int(startPoint[1] + length * sin(radians(angle)))]
         return out
 
+
     def connectToUART(self):
         # поиск порта подключенного устройства
         for i in range(0, len(self.portList)):

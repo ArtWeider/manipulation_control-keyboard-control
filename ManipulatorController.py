@@ -74,10 +74,15 @@ class ManipulatorController:
 
     def goToPoint(self, _=False, **kwargs):
         mess = self.toSend
+        g_mode = False
+        if 'gMode' in kwargs.keys():
+            g_mode = kwargs['gMode']
+        else:
+            g_mode = self.gMode
         for key in ['x', 'y', 'z', 'q', 'e', 'f']:
             if key in kwargs.keys():
                 if key == 'f':
-                    if self.gMode:
+                    if g_mode:
                         mess += f'G{int(kwargs[key])} '
                     else:
                         mess += f'{key.upper()}{int(kwargs[key])} '
@@ -118,6 +123,7 @@ class ManipulatorController:
                     return
             toSend = data
             self.tn.write(toSend.encode('ascii'))
+            print('FORCE SEND:', toSend)
             self.lastSend = time.time()
 
     def sendAsync(self):
