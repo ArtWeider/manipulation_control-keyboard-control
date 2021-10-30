@@ -26,7 +26,7 @@ class HandVisualisationWidget:
     portList = serial.tools.list_ports.comports()
     comPort = ''
 
-    gloveData = {'sy': 0, 'sz': 0, 'X': 0, 'Y': 0, 'Z': 0, 'wy': 0, 'hy': 0, 'hx': 0, 'g': 0}
+    gloveData = {'sy': 0, 'sz': 0, 'wy': 0, 'hy': 0, 'hx': 0, 'g': 0}
 
     def DrawHand(self):
 
@@ -67,7 +67,17 @@ class HandVisualisationWidget:
         self.main.controlPanelWidget.yEntry.delete(0, END)
         self.main.controlPanelWidget.zEntry.delete(0, END)
 
-        x, y, z = self.toManipulatorCords(self.gloveData['X'], self.gloveData['Y'], self.gloveData['Z'])
+        x, z = self.GetPointPos(start, shoulder_len, self.gloveData['sy'])
+        x, z = self.GetPointPos((x, z), wrist_len, self.gloveData['wy'])
+        x, z = self.GetPointPos((x, z), hand_len, self.gloveData['hy'])
+        x, y = self.GetPointPos((start[0], 0), x, self.gloveData['sz'])
+
+        print(x, z, y)
+
+        self.handCanvas.coords('p2', x - point_size,
+                               z - point_size,
+                               x + point_size,
+                               z + point_size)
 
         self.main.controlPanelWidget.xEntry.insert(0, int(x))
         self.main.controlPanelWidget.yEntry.insert(0, int(y))
@@ -101,30 +111,6 @@ class HandVisualisationWidget:
         out = [int(startPoint[0] + length * cos(radians(angle))), int(startPoint[1] + length * sin(radians(angle)))]
         return out
 
-    def toManipulatorCords(self, x, y, z):
-
-        glove_limit_x = cfg.GloveConfig.LIMIT_X
-        glove_limit_y = cfg.GloveConfig.LIMIT_Y
-        glove_limit_z = cfg.GloveConfig.LIMIT_Z
-
-        robot_limit_x = cfg.ManipulatorConfig.LIMIT_X
-        robot_limit_y = cfg.ManipulatorConfig.LIMIT_Y
-        robot_limit_z = cfg.ManipulatorConfig.LIMIT_Z
-
-        z = glove_limit_z[1] - z
-
-        out_x = x
-        out_y = y
-        out_z = z
-
-        '''out_x = copysign(remap(abs(x), glove_limit_x[0], glove_limit_x[1], robot_limit_x[0], robot_limit_x[1]) - 200, x)
-        out_y = abs(-remap(y, glove_limit_y[0], glove_limit_y[1], robot_limit_y[0], robot_limit_y[1]))
-        out_z = remap(z, glove_limit_z[0], glove_limit_z[1], robot_limit_z[0], robot_limit_z[1])'''
-
-        print(x, y, z, out_x, out_y, out_z)
-
-        return out_x, out_y, out_z
-
     def connectToUART(self):
         # поиск порта подключенного устройства
         for i in range(0, len(self.portList)):
@@ -152,24 +138,20 @@ class HandVisualisationWidget:
 
                     self.A1Label['text'] = "S:" + packet[0] + "°"
                     self.A2Label['text'] = "W:" + packet[2] + "°"
-                    self.A3Label['text'] = "H:" + packet[6] + "°"
+                    self.A3Label['text'] = "H:" + packet[3] + "°"
                     self.A4Label['text'] = "YAW:" + packet[1] + "°"
-                    self.A5Label['text'] = "ROLL:" + packet[7] + "°"
-                    self.A6Label['text'] = "GRAB:" + packet[8] + "%"
+                    self.A5Label['text'] = "ROLL:" + packet[4] + "°"
+                    self.A6Label['text'] = "GRAB:" + packet[5] + "%"
 
                     self.gloveData['sy'] = float(packet[0])
                     self.gloveData['sz'] = float(packet[1])
 
                     self.gloveData['wy'] = float(packet[2])
 
-                    self.gloveData['X'] = float(packet[3])
-                    self.gloveData['Y'] = float(packet[5])
-                    self.gloveData['Z'] = float(packet[4])
+                    self.gloveData['hy'] = float(packet[3])
+                    self.gloveData['hx'] = float(packet[4])
 
-                    self.gloveData['hy'] = float(packet[6])
-                    self.gloveData['hx'] = float(packet[7])
-
-                    self.gloveData['g'] = float(packet[8])
+                    self.gloveData['g'] = float(packet[5])
 
                     self.DrawHand()
 
