@@ -62,9 +62,9 @@ class ControlPanelWidget:
         x = float(self.xEntry.get())
         y = float(self.yEntry.get())
         z = float(self.zEntry.get())
-        q = (float(self.qSlider.get()) / 100) * cfg.ManipulatorConfig.Q_LIMIT[1]
-        e = (float(self.eSlider.get()) / 100) * cfg.ManipulatorConfig.E_LIMIT[1]
-        f = (float(self.fSlider.get()) / 100) * cfg.ManipulatorConfig.F_LIMIT[1]
+        q = float(self.qLabel.cget('text')[2::])
+        e = float(self.eLabel.cget('text')[2::])
+        f = float(self.fLabel.cget('text')[2::])
         self.main.manipulatorController.goToPoint(False, x=x, y=y, z=z, q=q, e=e, f=f)
         self.main.xyVisualisationWidget.update()
 

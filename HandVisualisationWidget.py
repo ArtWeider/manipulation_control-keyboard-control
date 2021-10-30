@@ -101,6 +101,8 @@ class HandVisualisationWidget:
         out = [int(startPoint[0] + length * cos(radians(angle))), int(startPoint[1] + length * sin(radians(angle)))]
         return out
 
+    
+
     def toManipulatorCords(self, x, y, z):
 
         glove_limit_x = cfg.GloveConfig.LIMIT_X
