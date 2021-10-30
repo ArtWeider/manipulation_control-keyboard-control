@@ -160,27 +160,13 @@ void getAngle(byte num, float last_gx, float last_gy, float last_gz, float zero_
     case 0:// shoulder
       absX += shoulderLenght * cos(radians(returned_gy));
       absY += shoulderLenght * sin(radians(-returned_gy));
-      ZAngle = returned_gz * 60;
       output_str += String(-returned_gy, 2); output_str += String("/");
-      output_str += String(ZAngle, 2); output_str += String("/");
+      output_str += String(returned_gz * 60, 2); output_str += String("/");
       break;
     case 1:// wrist
-      absX += wristLenght * cos(radians(returned_gy));
-      absY += wristLenght * sin(radians(-returned_gy));
-      
       output_str += String(-returned_gy, 2); output_str += String("/");
       break;
     case 2:// hand
-      absX += handLenght * cos(radians(returned_gy));
-      absY += handLenght * sin(radians(-returned_gy));
-      absZ = absX * sin(radians(ZAngle));
-      absX *= cos(radians(ZAngle));
-      output_str += String(absX, 2); output_str += String("/");
-      output_str += String(absY, 2); output_str += String("/");
-      output_str += String(absZ, 2); output_str += String("/");
-
-      absX = 0; absY = 400;
-    
       output_str += String(-returned_gy, 2); output_str += String("/");
 
       if (returned_gx > 21 || returned_gx < -18) {

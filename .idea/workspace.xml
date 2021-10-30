@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="227b4123-9499-4a7e-abae-eeec81164ff5" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Saves/Sponge.save" beforeDir="false" afterPath="$PROJECT_DIR$/Saves/Sponge.save" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Saves/testG.save" beforeDir="false" afterPath="$PROJECT_DIR$/Saves/testG.save" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/PyAudio-0.2.11-cp38-cp38-win32.whl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/PyAudio-0.2.11-cp38-cp38-win_amd64.whl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/VoiceTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/VoiceTest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HandVisualisationWidget.py" beforeDir="false" afterPath="$PROJECT_DIR$/HandVisualisationWidget.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gyro_multyadress/gyro_multyadress.ino" beforeDir="false" afterPath="$PROJECT_DIR$/gyro_multyadress/gyro_multyadress.ino" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
