@@ -59,14 +59,9 @@ class ControlPanelWidget:
             self.setStateAll(DISABLED)
 
     def onEnterPressed(self, event):
-        x = float(self.xEntry.get())
-        y = float(self.yEntry.get())
-        z = float(self.zEntry.get())
-        q = float(self.qLabel.cget('text')[2::])
-        e = float(self.eLabel.cget('text')[2::])
-        f = float(self.fLabel.cget('text')[2::])
-        self.main.manipulatorController.goToPoint(False, x=x, y=y, z=z, q=q, e=e, f=f)
-        self.main.xyVisualisationWidget.update()
+            self.main.manipulatorController.goToPoint(x=float(self.xEntry.get()), y=float(self.yEntry.get()), z=float(self.zEntry.get()), q=float(self.qLabel.cget('text')[2::]),
+                                                  e=float(self.eLabel.cget('text')[2::]),
+                                                  f=float(self.fLabel.cget('text')[2::]))
 
     def __init__(self, main):
 

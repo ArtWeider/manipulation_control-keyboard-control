@@ -34,18 +34,6 @@ class PointMenuWidget:
         self.main.savesManager.saves[save].points[time].f = int(self.fEntry.get())
         self.main.savesManager.saves[save].points[time].gMode = bool(self.changeFGVar.get())
 
-        self.main.savesManager.saves[save].points[time].rad = int(self.radEntry.get())
-        self.main.graphicWidget.point.params['rad'] = int(self.radEntry.get())
-
-        self.main.savesManager.saves[save].points[time].a = int(self.aEntry.get())
-        self.main.graphicWidget.point.params['a'] = int(self.aEntry.get())
-
-        self.main.savesManager.saves[save].points[time].b = int(self.bEntry.get())
-        self.main.graphicWidget.point.params['b'] = int(self.bEntry.get())
-
-        self.main.savesManager.saves[save].points[time].c = int(self.cEntry.get())
-        self.main.graphicWidget.point.params['c'] = int(self.cEntry.get())
-
         self.main.timelineWidget.movePoint(tag, float(self.timeEntry.get()) * self.main.timelineWidget.pixPerSecond)
 
         self.main.graphicWidget.point.getCoordinates()
@@ -55,71 +43,6 @@ class PointMenuWidget:
         self.main.savesManager.save(self.main.savesManager.saves[self.main.savesManager.currentSave])
 
     def validate(self, action, value, entry):
-        return True
-        if not self.validation:
-            return
-
-        tag = self.main.timelineWidget.currentPoint[1]
-        time = self.main.timelineWidget.tag2time[int(tag[1::])]
-        save = self.main.savesManager.currentSave
-
-        try:
-            int(value)
-        except:
-            return True
-
-        try:
-            if entry == '.!frame3.!entry':
-                self.main.savesManager.saves[save].points[time].x = int(value)
-                self.main.graphicWidget.point.params['x'] = int(value)
-
-            elif entry == '.!frame3.!entry2':
-                print('validate y', value, time)
-                self.main.savesManager.saves[save].points[time].y = int(value)
-                self.main.graphicWidget.point.params['y'] = int(value)
-
-            elif entry == '.!frame3.!entry3':
-                self.main.savesManager.saves[save].points[time].z = int(value)
-                self.main.graphicWidget.point.params['z'] = int(value)
-
-            elif entry == '.!frame3.!entry8':
-                self.main.savesManager.saves[save].points[time].q = int(value)
-
-            elif entry == '.!frame3.!entry9':
-                self.main.savesManager.saves[save].points[time].e = int(value)
-
-            elif entry == '.!frame3.!entry10':
-                self.main.savesManager.saves[save].points[time].f = int(value)
-
-            elif entry == '.!frame3.!entry4':
-                self.main.savesManager.saves[save].points[time].rad = int(value)
-                self.main.graphicWidget.point.params['rad'] = int(value)
-
-            elif entry == '.!frame3.!entry5':
-                self.main.savesManager.saves[save].points[time].a = int(value)
-                self.main.graphicWidget.point.params['a'] = int(value)
-
-            elif entry == '.!frame3.!entry6':
-                self.main.savesManager.saves[save].points[time].b = int(value)
-                self.main.graphicWidget.point.params['b'] = int(value)
-
-            elif entry == '.!frame3.!entry7':
-                self.main.savesManager.saves[save].points[time].c = int(value)
-                self.main.graphicWidget.point.params['c'] = int(value)
-
-            elif entry == '.!frame3.!entry11':
-                self.main.timelineWidget.movePoint(tag, float(value) * self.main.timelineWidget.pixPerSecond)
-
-            self.main.graphicWidget.point.getCoordinates()
-            self.main.graphicWidget.point.getAngles()
-
-            self.main.graphicWidget.point.assignPointCoords()
-            self.main.savesManager.save(self.main.savesManager.saves[self.main.savesManager.currentSave])
-
-        except ValueError:
-            pass
-        except KeyError:
-            pass
         return True
 
     def onPointToRobotPressed(self):
@@ -132,10 +55,6 @@ class PointMenuWidget:
         self.eEntry.insert(0, int(float(self.main.controlPanelWidget.eLabel.cget('text')[2::])))
         self.fEntry.insert(0, int(float(self.main.controlPanelWidget.fLabel.cget('text')[2::])))
         self.setFGMode(self.main.manipulatorController.gMode, True)
-        self.radEntry.insert(0, str(0))
-        self.aEntry.insert(0, str(0))
-        self.bEntry.insert(0, str(0))
-        self.cEntry.insert(0, str(0))
         self.onEnterPressed(None)
 
     def onRobotToPoint(self):
@@ -189,10 +108,6 @@ class PointMenuWidget:
         self.eEntry.insert(0, point.e)
         self.fEntry.insert(0, point.f)
         self.setFGMode(point.gMode, True)
-        self.radEntry.insert(0, point.rad)
-        self.aEntry.insert(0, point.a)
-        self.bEntry.insert(0, point.b)
-        self.cEntry.insert(0, point.c)
         self.timeEntry.insert(0, point.time)
         self.validation = True
 
@@ -222,10 +137,6 @@ class PointMenuWidget:
         self.xEntry.delete(0, END)
         self.yEntry.delete(0, END)
         self.zEntry.delete(0, END)
-        self.radEntry.delete(0, END)
-        self.aEntry.delete(0, END)
-        self.bEntry.delete(0, END)
-        self.cEntry.delete(0, END)
         self.qEntry.delete(0, END)
         self.eEntry.delete(0, END)
         self.fEntry.delete(0, END)
@@ -238,10 +149,6 @@ class PointMenuWidget:
         self.xEntry.configure(state=state)
         self.yEntry.configure(state=state)
         self.zEntry.configure(state=state)
-        self.radEntry.configure(state=state)
-        self.aEntry.configure(state=state)
-        self.bEntry.configure(state=state)
-        self.cEntry.configure(state=state)
         self.timeEntry.configure(state=state)
         self.qEntry.configure(state=state)
         self.eEntry.configure(state=state)
@@ -252,10 +159,6 @@ class PointMenuWidget:
         self.xLabel.configure(state=state)
         self.yLabel.configure(state=state)
         self.zLabel.configure(state=state)
-        self.radLabel.configure(state=state)
-        self.aLabel.configure(state=state)
-        self.bLabel.configure(state=state)
-        self.cLabel.configure(state=state)
         self.timeLabel.configure(state=state)
         self.qLabel.configure(state=state)
         self.eLabel.configure(state=state)
@@ -366,102 +269,6 @@ class PointMenuWidget:
                             )
         self.zEntry.place(x=155, y=39)
         self.zEntry.bind('<Return>', self.onEnterPressed)
-
-        self.radLabel = Label(master=self.mainLabel,
-                            text="R: ",
-                            font="Arial 11",
-                            height=1,
-                            bg=cfg.SUBCOLOR,
-                            fg=cfg.TEXT_COLOR,
-                            state=DISABLED)
-        self.radLabel.place(x=5, y=95)
-
-        self.radEntry = Entry(width=3,
-                            master=self.mainLabel,
-                            font='Arial 11',
-                            bg=cfg.SUBCOLOR,
-                            bd=0,
-                            fg=cfg.TEXT_COLOR,
-                            justify=LEFT,
-                            state=DISABLED,
-                            disabledbackground=cfg.SUBCOLOR,
-                              validate='key',
-                              validatecommand=(self.validateCommand, '%d', '%P', '%W')
-                              )
-        self.radEntry.place(x=22, y=97)
-        self.radEntry.bind('<Return>', self.onEnterPressed)
-
-        self.aLabel = Label(master=self.mainLabel,
-                            text="α: ",
-                            font="Arial 11",
-                            height=1,
-                            bg=cfg.SUBCOLOR,
-                            fg=cfg.TEXT_COLOR,
-                            state=DISABLED)
-        self.aLabel.place(x=50, y=95)
-
-        self.aEntry = Entry(width=3,
-                            master=self.mainLabel,
-                            font='Arial 11',
-                            bg=cfg.SUBCOLOR,
-                            bd=0,
-                            fg=cfg.TEXT_COLOR,
-                            justify=LEFT,
-                            state=DISABLED,
-                            disabledbackground=cfg.SUBCOLOR,
-                            validate='key',
-                            validatecommand=(self.validateCommand, '%d', '%P', '%W')
-                            )
-        self.aEntry.place(x=65, y=97)
-        self.aEntry.bind('<Return>', self.onEnterPressed)
-
-        self.bLabel = Label(master=self.mainLabel,
-                            text="β: ",
-                            font="Arial 11",
-                            height=1,
-                            bg=cfg.SUBCOLOR,
-                            fg=cfg.TEXT_COLOR,
-                            state=DISABLED)
-        self.bLabel.place(x=100, y=95)
-
-        self.bEntry = Entry(width=3,
-                            master=self.mainLabel,
-                            font='Arial 11',
-                            bg=cfg.SUBCOLOR,
-                            bd=0,
-                            fg=cfg.TEXT_COLOR,
-                            justify=LEFT,
-                            state=DISABLED,
-                            disabledbackground=cfg.SUBCOLOR,
-                            validate='key',
-                            validatecommand=(self.validateCommand, '%d', '%P', '%W')
-                            )
-        self.bEntry.place(x=115, y=97)
-        self.bEntry.bind('<Return>', self.onEnterPressed)
-
-        self.cLabel = Label(master=self.mainLabel,
-                             text="γ: ",
-                             font="Arial 11",
-                             height=1,
-                             bg=cfg.SUBCOLOR,
-                             fg=cfg.TEXT_COLOR,
-                             state=DISABLED)
-        self.cLabel.place(x=145, y=95)
-
-        self.cEntry = Entry(width=3,
-                             master=self.mainLabel,
-                             font='Arial 11',
-                             bg=cfg.SUBCOLOR,
-                             bd=0,
-                             fg=cfg.TEXT_COLOR,
-                             justify=LEFT,
-                             state=DISABLED,
-                             disabledbackground=cfg.SUBCOLOR,
-                            validate='key',
-                            validatecommand=(self.validateCommand, '%d', '%P', '%W')
-                            )
-        self.cEntry.place(x=160, y=97)
-        self.cEntry.bind('<Return>', self.onEnterPressed)
 
         self.qLabel = Label(master=self.mainLabel,
                             text="Q: ",

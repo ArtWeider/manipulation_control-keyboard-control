@@ -150,6 +150,7 @@ class GraphicWidget:
 
         def spherical_movement(self, event):
             # клавиши управления
+            return
 
             if event.keysym == 'w':
                 self.params['rad'] += 5
@@ -235,11 +236,6 @@ class GraphicWidget:
             current_point.x = self.params['x']
             current_point.y = self.params['y']
             current_point.z = self.params['z']
-
-            current_point.rad = self.params['rad']
-            current_point.a = self.params['a']
-            current_point.b = self.params['b']
-            current_point.c = self.params['c']
 
             self.updateScreenFlag = True
 

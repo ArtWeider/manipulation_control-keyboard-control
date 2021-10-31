@@ -90,9 +90,7 @@ class ManipulatorController:
                     mess += f'{key.upper()}{int(kwargs[key])} '
         self.forceSend(mess, True)
         if self.main.pointMenuWidget.followManipulatorVar.get():
-            self.main.pointMenuWidget.setStateAll('normal', True)
             self.main.pointMenuWidget.onPointToRobotPressed()
-            self.main.pointMenuWidget.setStateAll('disabled', True)
         if 'x' in kwargs.keys() and 'y' in kwargs.keys():
             self.main.xyVisualisationWidget.update(x=int(kwargs['x']), y=int(kwargs['y']))
         if 'x' in kwargs.keys() and 'z' in kwargs.keys():
@@ -123,7 +121,7 @@ class ManipulatorController:
                     return
             toSend = data
             self.tn.write(toSend.encode('ascii'))
-            print('FORCE SEND:', toSend)
+
             self.lastSend = time.time()
 
     def sendAsync(self):

@@ -81,34 +81,18 @@ class HandVisualisationWidget:
         x = int(x / 1.36)
         y = int(y / 1.36)
 
-        print(x, z, y)
 
         self.main.controlPanelWidget.xEntry.insert(0, int(x))
         self.main.controlPanelWidget.yEntry.insert(0, int(y))
         self.main.controlPanelWidget.zEntry.insert(0, int(z))
 
-        _f = 100 - self.gloveData['g']
-        f = 90
-
-        if _f < 10:
-            f = 60
-        elif _f > 80:
-            f = 120
-        else:
-            f = 90
-
         q = -int(self.gloveData['hy'] - 90)
-        e = self.gloveData['hx']
 
         self.main.controlPanelWidget.qSlider.set((q / cfg.ManipulatorConfig.Q_LIMIT[1]) * 100)
-        self.main.controlPanelWidget.eSlider.set((e / cfg.ManipulatorConfig.E_LIMIT[1]) * 100)
-        self.main.controlPanelWidget.fSlider.set((f / cfg.ManipulatorConfig.F_LIMIT[1]) * 100)
 
         self.main.controlPanelWidget.qLabel.configure(text=f"Q: {q}")
-        self.main.controlPanelWidget.eLabel.configure(text=f"E: {e}")
-        self.main.controlPanelWidget.fLabel.configure(text=f"F: {f}")
 
-        self.main.manipulatorController.goToPoint(x=x, y=y, z=z, q=q, e=e, f=f)
+        self.main.manipulatorController.goToPoint(x=x, y=y, z=z, q=q)
 
     def GetPointPos(self, startPoint, length, angle):
 
