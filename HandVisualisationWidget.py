@@ -4,6 +4,7 @@ from config import Cfg as cfg
 import serial.tools.list_ports
 import threading
 from math import *
+from time import sleep
 
 def remap(old_value, old_min, old_max, new_min, new_max):
     out = ((old_value - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min
@@ -12,7 +13,6 @@ def remap(old_value, old_min, old_max, new_min, new_max):
     elif out < new_min:
         out = new_min
     return out
-
 
 class HandVisualisationWidget:
     X = 5 * cfg.SIZE_MULT
@@ -27,12 +27,9 @@ class HandVisualisationWidget:
     comPort = ''
 
     gloveData = {'sy': 0, 'sz': 0, 'wy': 0, 'hy': 0, 'hx': 0, 'g': 0}
+    send = {'x': 0, 'y': 0, 'z': 0, 'q': 0, 'e': 0, 'f': 0}
 
     def DrawHand(self):
-
-        if not self.main.manipulatorController.useHand:
-            return
-
         point_size = 5
         width = self.canvasSize[0]
         height = self.canvasSize[1]
@@ -40,10 +37,6 @@ class HandVisualisationWidget:
         shoulder_len = 80
         wrist_len = 70
         hand_len = 40
-
-        real_shoulder_len = 250
-        real_wrist_len = 240
-        real_hand_len = 180
 
         start = [10, height / 2]
         shoulder = self.GetPointPos(start, shoulder_len, self.gloveData['sy'])
@@ -71,34 +64,23 @@ class HandVisualisationWidget:
         self.main.controlPanelWidget.yEntry.delete(0, END)
         self.main.controlPanelWidget.zEntry.delete(0, END)
 
-        x, z = self.GetPointPos(start, real_shoulder_len, self.gloveData['sy'])
-        x, z = self.GetPointPos((x, z), real_wrist_len, self.gloveData['wy'])
-        x, z = self.GetPointPos((x, z), real_hand_len, self.gloveData['hy'])
-        x, y = self.GetPointPos((start[0], 0), x, self.gloveData['sz'])
-
-        z = int(z / -2.2 + 300)
-        # если не сработает поменять x и y местами
-        x = int(x / 1.36)
-        y = int(y / 1.36)
-
-
-        self.main.controlPanelWidget.xEntry.insert(0, int(x))
-        self.main.controlPanelWidget.yEntry.insert(0, int(y))
-        self.main.controlPanelWidget.zEntry.insert(0, int(z))
-
-        q = -int(self.gloveData['hy'] - 90)
-
-        self.main.controlPanelWidget.qSlider.set((q / cfg.ManipulatorConfig.Q_LIMIT[1]) * 100)
-
-        self.main.controlPanelWidget.qLabel.configure(text=f"Q: {q}")
-
-        self.main.manipulatorController.goToPoint(x=x, y=y, z=z, q=q)
+    def sendDataToManipulator(self):
+        while True:
+            try:
+                self.main.manipulatorController.goToPoint(
+                    x=self.send['x'],
+                    y=self.send['y'],
+                    z=self.send['z'],
+                    q=self.send['q'],
+                    e=self.send['e'],
+                    f=self.send['f']
+                )
+                sleep(0.5)
+            except: pass
 
     def GetPointPos(self, startPoint, length, angle):
-
         out = [int(startPoint[0] + length * cos(radians(angle))), int(startPoint[1] + length * sin(radians(angle)))]
         return out
-
 
     def connectToUART(self):
         # поиск порта подключенного устройства
@@ -120,9 +102,12 @@ class HandVisualisationWidget:
             return False
 
     def getDataFromGlove(self):
+        real_shoulder_len = 250
+        real_wrist_len = 240
+        real_hand_len = 180
         while True:
             try:
-                if self.ser.in_waiting:
+                if self.ser.in_waiting and self.main.manipulatorController.useHand:
                     packet = self.ser.readline().decode('utf-8').split('/')
 
                     self.A1Label['text'] = "S:" + packet[0] + "°"
@@ -142,13 +127,58 @@ class HandVisualisationWidget:
 
                     self.gloveData['g'] = float(packet[5])
 
+                    x, z = self.GetPointPos((0, 0), real_shoulder_len, self.gloveData['sy'])
+                    x, z = self.GetPointPos((x, z), real_wrist_len, self.gloveData['wy'])
+                    x, z = self.GetPointPos((x, z), real_hand_len, self.gloveData['hy'])
+                    x, y = self.GetPointPos((0, 0), x, self.gloveData['sz'])
+
+                    z = int(z / -2.2 + 300)
+                    y = int(y / 1.36)
+                    x = int(x / 1.36)
+
+                    if y > 450:
+                        y = 450
+                    elif y < -450:
+                        y = -450
+
+                    if x > 450: x = 450
+
+                    if z > 450: z = 450
+
+                    z += 200
+
+                    self.main.controlPanelWidget.xEntry.insert(0, int(x))
+                    self.main.controlPanelWidget.yEntry.insert(0, int(y))
+                    self.main.controlPanelWidget.zEntry.insert(0, int(z))
+
+                    f = self.gloveData['g']
+
+                    q = -int(self.gloveData['hy'] - 90)
+                    e = self.gloveData['hx']
+
+                    self.main.controlPanelWidget.qSlider.set((q / cfg.ManipulatorConfig.Q_LIMIT[1]) * 100)
+                    self.main.controlPanelWidget.eSlider.set((e / cfg.ManipulatorConfig.E_LIMIT[1]) * 100)
+                    self.main.controlPanelWidget.fSlider.set((f / cfg.ManipulatorConfig.F_LIMIT[1]) * 100)
+
+                    self.main.controlPanelWidget.qLabel.configure(text=f"Q: {q}")
+                    self.main.controlPanelWidget.eLabel.configure(text=f"E: {e}")
+                    self.main.controlPanelWidget.fLabel.configure(text=f"F: {f}")
+
+                    self.send['x'] = x
+                    self.send['y'] = y
+                    self.send['z'] = z
+                    self.send['q'] = q
+                    self.send['e'] = e
+                    self.send['f'] = f
+
                     self.DrawHand()
+
+                self.ser.write(b'r')
 
             except UnicodeDecodeError: continue
             except ValueError: continue
             except IndexError: continue
             except RuntimeError: continue
-
 
     def __init__(self, main):
         self.main = main
@@ -236,3 +266,4 @@ class HandVisualisationWidget:
             self.handCanvas.create_oval(0, 0, 1, 1, fill='SlateGray', outline='SlateGray', tag='p2')
 
             threading.Thread(target=self.getDataFromGlove).start()
+            threading.Thread(target=self.sendDataToManipulator).start()
