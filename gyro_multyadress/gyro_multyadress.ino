@@ -169,64 +169,64 @@ void getAngle(byte num, float last_gx, float last_gy, float last_gz, float zero_
     case 2:// hand
       output_str += String(-returned_gy, 2); output_str += String("/");
 
-      if (returned_gx > 21 || returned_gx < -18) {
-        if (returned_gx > 21) output_str += String(constrain(map(returned_gx-21, -10, 110, 0, 100), 0, 100));
-        else output_str += String(constrain(map(returned_gx+18, -50, -10, -50, 0), -50, 0));
-      }
+      if (returned_gx > 21) output_str += String(constrain(map(returned_gx-21, -10, 110, 0, 100), 0, 100));
+      else if(returned_gx < -18) output_str += String(constrain(map(returned_gx+18, -50, -10, -50, 0), -50, 0));
       else output_str += String(0.00);
       output_str += String("/");
 
-      output_str += String(int(filter(constrain(map(analogRead(A0), 150, 200, 100, 0), 0, 100)))); output_str += String("/");
-      output_str.toCharArray(output, 100);
+      if(analogRead(A0) < 75) output_str += "60";
+      else if(analogRead(A0) > 90) output_str += "120";
+      else output_str += "90";
       
+      output_str += String("/");
+      output_str.toCharArray(output, 100);
+      //Serial.println(analogRead(A0));
       Serial.println(output);
       output_str.remove(0);
-      delay(100);
       break;
   }
 
 }
 
 void loop() {
-  if (timer < micros()) {
+  if (timer < micros() and Serial.read()==114) {
     timer = micros() + TIME_GYRO;
+      for (byte i = 0; i < SENSORS_AMOUNT; i++) {
+        switch (i) {
+          case 0:
+            digitalWrite(SHOULDER, 1);
+            digitalWrite(WRIST, 0);
+            digitalWrite(HAND, 0);
 
-    for (byte i = 0; i < SENSORS_AMOUNT; i++) {
-      switch (i) {
-        case 0:
-          digitalWrite(SHOULDER, 1);
-          digitalWrite(WRIST, 0);
-          digitalWrite(HAND, 0);
+            getAngle(i, shoulder_gx, shoulder_gy, shoulder_gz, shoulder_zero_gx, shoulder_zero_gy, shoulder_zero_gz);
 
-          getAngle(i, shoulder_gx, shoulder_gy, shoulder_gz, shoulder_zero_gx, shoulder_zero_gy, shoulder_zero_gz);
+            shoulder_gx = returned_gx;
+            shoulder_gy = returned_gy;
+            shoulder_gz = returned_gz;
+            break;
+          case 1:
+            digitalWrite(SHOULDER, 0);
+            digitalWrite(WRIST, 1);
+            digitalWrite(HAND, 0);
 
-          shoulder_gx = returned_gx;
-          shoulder_gy = returned_gy;
-          shoulder_gz = returned_gz;
-          break;
-        case 1:
-          digitalWrite(SHOULDER, 0);
-          digitalWrite(WRIST, 1);
-          digitalWrite(HAND, 0);
+            getAngle(i, wrist_gx, wrist_gy, wrist_gz, wrist_zero_gx, wrist_zero_gy, wrist_zero_gz);
 
-          getAngle(i, wrist_gx, wrist_gy, wrist_gz, wrist_zero_gx, wrist_zero_gy, wrist_zero_gz);
+            wrist_gx = returned_gx;
+            wrist_gy = returned_gy;
+            wrist_gz = returned_gz;
+            break;
+          case 2:
+            digitalWrite(SHOULDER, 0);
+            digitalWrite(WRIST, 0);
+            digitalWrite(HAND, 1);
 
-          wrist_gx = returned_gx;
-          wrist_gy = returned_gy;
-          wrist_gz = returned_gz;
-          break;
-        case 2:
-          digitalWrite(SHOULDER, 0);
-          digitalWrite(WRIST, 0);
-          digitalWrite(HAND, 1);
+            getAngle(i, hand_gx, hand_gy, hand_gz, hand_zero_gx, hand_zero_gy, hand_zero_gz);
 
-          getAngle(i, hand_gx, hand_gy, hand_gz, hand_zero_gx, hand_zero_gy, hand_zero_gz);
-
-          hand_gx = returned_gx;
-          hand_gy = returned_gy;
-          hand_gz = returned_gz;
-          break;
+            hand_gx = returned_gx;
+            hand_gy = returned_gy;
+            hand_gz = returned_gz;
+            break;
+        }
       }
     }
   }
-}
